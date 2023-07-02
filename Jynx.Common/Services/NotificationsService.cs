@@ -9,7 +9,7 @@ namespace Jynx.Common.Services
     {
         public NotificationsService(
             NotificationsRepository repository,
-            ILogger logger)
+            ILogger<NotificationsService> logger)
             : base(repository, logger)
         {
         }

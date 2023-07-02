@@ -9,7 +9,7 @@ namespace Jynx.Common.Services
     {
         public DistrictUsersService(
             IDistrictUsersRepository repository,
-            ILogger logger)
+            ILogger<DistrictUsersService> logger)
             : base(repository, logger)
         {
         }

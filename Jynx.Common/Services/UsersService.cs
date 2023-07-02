@@ -9,7 +9,7 @@ namespace Jynx.Common.Services
     {
         public UsersService(
             IUsersRepository repository,
-            ILogger logger)
+            ILogger<UsersService> logger)
             : base(repository, logger)
         {
         }

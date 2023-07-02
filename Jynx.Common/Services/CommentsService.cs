@@ -9,7 +9,7 @@ namespace Jynx.Common.Services
     {
         public CommentsService(
             ICommentsRepository repository,
-            ILogger logger)
+            ILogger<CommentsService> logger)
             : base(repository, logger)
         {
         }
