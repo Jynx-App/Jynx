@@ -11,7 +11,7 @@ namespace Jynx.Common.Repositories.CosmosDb
     internal abstract class BaseCosmosDbRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : BaseEntity
     {
-        private Container _container;
+        private readonly Container _container;
 
         protected abstract CosmosDbContainerInfo ContainerInfo { get; }
 
