@@ -45,7 +45,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             }
             catch (CosmosException ex)
             {
-                if(ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == HttpStatusCode.Conflict)
                     throw new DuplicateEntityException(ex.Message);
 
                 throw;
@@ -64,7 +64,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
                 return response.Resource;
             }
-            catch(CosmosException ex)
+            catch (CosmosException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                     return null;

@@ -11,7 +11,7 @@ namespace Jynx.Common.Repositories.CosmosDb
     {
         public DistrictUserGroupsRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions, 
+            IOptions<CosmosDbOptions> cosmosDbOptions,
             ILogger<DistrictUserGroupsRepository> logger)
             : base(cosmosClient, cosmosDbOptions, logger)
         {
