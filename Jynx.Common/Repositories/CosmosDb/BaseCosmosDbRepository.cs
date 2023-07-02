@@ -35,8 +35,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
 
-            if(entity.Created == DateTime.MinValue)
-                entity.Created = DateTime.UtcNow;
+            entity.Created = DateTime.UtcNow;
 
             try
             {
@@ -74,9 +73,11 @@ namespace Jynx.Common.Repositories.CosmosDb
             }
         }
 
-        public override Task UpdateAsync(TEntity entity)
+        public override async Task UpdateAsync(TEntity entity)
         {
-            throw new Exception();
+            entity.Edited = DateTime.UtcNow;
+
+            await _container.UpsertItemAsync(entity, ResolvePartitionKey(entity));
         }
 
         public override async Task DeleteAsync(string compoundId)
