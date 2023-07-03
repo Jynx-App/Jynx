@@ -14,6 +14,8 @@ namespace Jynx.Common
         {
             services
                 // Repositories
+                .AddScoped<IApiAppsRepository, ApiAppsRepository>()
+                .AddScoped<IApiAppUsersRepository, ApiAppUsersRepository>()
                 .AddScoped<ICommentsRepository, CommentsRepository>()
                 .AddScoped<IDistrictsRepository, DistrictsRepository>()
                 .AddScoped<IDistrictUsersRepository, DistrictUsersRepository>()
@@ -22,6 +24,8 @@ namespace Jynx.Common
                 .AddScoped<IPostsRepository, PostsRepository>()
                 .AddScoped<IUsersRepository, UsersRepository>()
                 // Services
+                .AddScoped<IApiAppService, ApiAppService>()
+                .AddScoped<IApiAppUsersService, ApiAppUsersService>()
                 .AddScoped<ICommentsService, CommentsService>()
                 .AddScoped<IDistrictsService, DistrictsService>()
                 .AddScoped<IDistrictUsersService, DistrictUsersService>()
