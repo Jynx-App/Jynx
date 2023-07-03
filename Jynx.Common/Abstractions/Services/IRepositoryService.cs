@@ -1,5 +1,4 @@
 ﻿using Jynx.Common.Entities;
-using System.Formats.Tar;
 
 namespace Jynx.Common.Abstractions.Services
 {
@@ -10,5 +9,6 @@ namespace Jynx.Common.Abstractions.Services
         Task RemoveAsync(TEntity entity);
         Task<TEntity?> ReadAsync(string id);
         Task UpdateAsync(TEntity entity);
+        void Patch(TEntity target, ICanPatch<TEntity> source);
     }
 }

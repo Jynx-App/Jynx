@@ -2,7 +2,6 @@
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
 using Microsoft.Extensions.Logging;
-using System.Formats.Tar;
 
 namespace Jynx.Common.Services
 {
@@ -32,7 +31,10 @@ namespace Jynx.Common.Services
         public virtual Task RemoveAsync(string id)
             => Repository.RemoveAsync(id);
 
-        public Task RemoveAsync(TEntity entity)
+        public virtual Task RemoveAsync(TEntity entity)
             => Repository.RemoveAsync(entity);
+
+        public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
+            => source.Patch(target);
     }
 }

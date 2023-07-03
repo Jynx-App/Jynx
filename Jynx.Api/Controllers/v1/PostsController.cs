@@ -35,9 +35,9 @@ namespace Jynx.Api.Controllers.v1
             if (!await _districtsService.IsUserAllowedToPostAsync(request.DistrictId, userId))
                 return BadRequest(_notAllowedToPostMessage);
 
-            var post = request.ToEntity();
+            var entity = request.ToEntity();
 
-            var id = await _postsService.CreateAsync(post);
+            var id = await _postsService.CreateAsync(entity);
 
             return Ok(id);
         }
@@ -45,12 +45,12 @@ namespace Jynx.Api.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> Read(string id)
         {
-            var post = await _postsService.ReadAsync(id);
+            var entity = await _postsService.ReadAsync(id);
 
-            if (post is null)
+            if (entity is null)
                 return NotFound(_notFoundMessage);
 
-            var response = new ReadPostResponse(post);
+            var response = new ReadPostResponse(entity);
 
             return Ok(response);
         }
@@ -63,19 +63,19 @@ namespace Jynx.Api.Controllers.v1
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var post = await _postsService.ReadAsync(request.Id);
+            var entity = await _postsService.ReadAsync(request.Id);
 
-            if (post is null || post.UserId != userId)
+            if (entity is null || entity.UserId != userId)
                 return NotFound(_notFoundMessage);
 
-            if (!await _districtsService.IsUserAllowedToPostAsync(post.DistrictId, userId))
+            if (!await _districtsService.IsUserAllowedToPostAsync(entity.DistrictId, userId))
                 return BadRequest(_notAllowedToPostMessage);
 
-            request.PatchEntity(post);
+            _postsService.Patch(entity, request);
 
-            post.EditedById = userId;
+            entity.EditedById = userId;
 
-            await _postsService.UpdateAsync(post);
+            await _postsService.UpdateAsync(entity);
 
             return Ok();
         }
@@ -85,12 +85,12 @@ namespace Jynx.Api.Controllers.v1
         {
             var userId = Request.HttpContext.User.GetId()!;
 
-            var post = await _postsService.ReadAsync(id);
+            var entity = await _postsService.ReadAsync(id);
 
-            if (post is null || post.UserId != userId)
+            if (entity is null || entity.UserId != userId)
                 return NotFound(_notFoundMessage);
 
-            await _postsService.RemoveAsync(post);
+            await _postsService.RemoveAsync(entity);
 
             return Ok();
         }

@@ -2,15 +2,15 @@
 
 namespace Jynx.Api.Models.Requests
 {
-    public class UpdatePostRequest
+    public class UpdatePostRequest : ICanPatch<Post>
     {
         public string Id { get; set; } = "";
 
         public string Body { get; set; } = "";
 
-        public void PatchEntity(Post post)
+        void ICanPatch<Post>.Patch(Post entity)
         {
-            post.Body = Body;
+            entity.Body = Body;
         }
     }
 }

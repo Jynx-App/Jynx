@@ -88,11 +88,11 @@ namespace Jynx.Common.Repositories.CosmosDb
 
         public override async Task RemoveAsync(string compoundId)
         {
-            if(_isSoftRemovable)
+            if (_isSoftRemovable)
             {
                 var entity = await ReadAsync(compoundId);
 
-                if(entity is ISoftRemovableEntity softRemovableEntity)
+                if (entity is ISoftRemovableEntity softRemovableEntity)
                 {
                     softRemovableEntity.Removed = _dateTimeService.UtcNow;
 
