@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Jynx.Common.Auth
 {
@@ -14,6 +15,12 @@ namespace Jynx.Common.Auth
         private readonly IDistrictsService _districtsService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<RequireModerationPermissionHandler> _logger;
+        private readonly string[] _httpMethodsThatUseModel = new[]
+        {
+            "post",
+            "put",
+            "delete",
+        };
 
         public RequireModerationPermissionHandler(
             IDistrictsService districtsService,
@@ -34,7 +41,9 @@ namespace Jynx.Common.Auth
                 ? _httpContextAccessor.HttpContext.GetRouteData().Values["id"].ToString()
                 : null;
 
-            if (string.IsNullOrWhiteSpace(districtId) && _httpContextAccessor.HttpContext.Request.Method.Equals(HttpMethod.Post.ToString(), StringComparison.OrdinalIgnoreCase))
+            var httpMethod = _httpContextAccessor.HttpContext.Request.Method.ToLower();
+
+            if (string.IsNullOrWhiteSpace(districtId) && _httpMethodsThatUseModel.Contains(httpMethod))
             {
                 var json = await _httpContextAccessor.HttpContext.Request.GetBodyAsStringAsync();
 
