@@ -1,6 +1,8 @@
-﻿using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Chronometry;
+using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Azure.CosmosDb;
+using Jynx.Common.Chronometry;
 using Jynx.Common.Repositories.CosmosDb;
 using Jynx.Common.Services;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,7 @@ namespace Jynx.Common
                 .AddScoped<IApiAppService, ApiAppService>()
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
                 .AddScoped<ICommentsService, CommentsService>()
+                .AddScoped<IDateTimeService, JynxDateTimeService>()
                 .AddScoped<IDistrictsService, DistrictsService>()
                 .AddScoped<IDistrictUsersService, DistrictUsersService>()
                 .AddScoped<IDistrictUserGroupsService, DistrictUserGroupsService>()
