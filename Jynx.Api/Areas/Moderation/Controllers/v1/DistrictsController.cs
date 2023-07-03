@@ -22,7 +22,7 @@ namespace Jynx.Api.Areas.Moderation.Controllers.v1
 
         [HttpPut]
         [RequireModerationPermission(ModerationPermission.EditDistrict)]
-        public async Task<IActionResult> Update(UpdateDistrictRequest request)
+        public async Task<IActionResult> Update([FromBody] UpdateDistrictRequest request)
         {
             if (!ModelState.IsValid)
                 return ModelStateError();
@@ -37,13 +37,6 @@ namespace Jynx.Api.Areas.Moderation.Controllers.v1
             await _districtsService.UpdateAsync(entity);
 
             return Ok();
-        }
-
-        [HttpGet("{id}")]
-        [RequireModerationPermission(ModerationPermission.ApproveComments)]
-        public async Task<IActionResult> TestEndpoint(string id)
-        {
-            return Ok("Test");
         }
     }
 }
