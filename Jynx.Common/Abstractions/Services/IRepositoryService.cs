@@ -1,12 +1,14 @@
 ﻿using Jynx.Common.Entities;
+using System.Formats.Tar;
 
 namespace Jynx.Common.Abstractions.Services
 {
-    public interface IRepositoryService<TModel> where TModel : BaseEntity
+    public interface IRepositoryService<TEntity> where TEntity : BaseEntity
     {
-        Task<string> CreateAsync(TModel entity);
-        Task DeleteAsync(string id);
-        Task<TModel?> ReadAsync(string id);
-        Task UpdateAsync(TModel entity);
+        Task<string> CreateAsync(TEntity entity);
+        Task RemoveAsync(string id);
+        Task RemoveAsync(TEntity entity);
+        Task<TEntity?> ReadAsync(string id);
+        Task UpdateAsync(TEntity entity);
     }
 }

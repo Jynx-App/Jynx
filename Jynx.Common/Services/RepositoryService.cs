@@ -2,12 +2,13 @@
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
 using Microsoft.Extensions.Logging;
+using System.Formats.Tar;
 
 namespace Jynx.Common.Services
 {
-    internal abstract class RepositoryService<TRepository, TModel> : BaseService, IRepositoryService<TModel>
-        where TRepository : IRepository<TModel>
-        where TModel : BaseEntity
+    internal abstract class RepositoryService<TRepository, TEntity> : BaseService, IRepositoryService<TEntity>
+        where TRepository : IRepository<TEntity>
+        where TEntity : BaseEntity
     {
         public TRepository Repository { get; }
 
@@ -19,16 +20,19 @@ namespace Jynx.Common.Services
             Repository = repository;
         }
 
-        public virtual Task<string> CreateAsync(TModel entity)
+        public virtual Task<string> CreateAsync(TEntity entity)
             => Repository.CreateAsync(entity);
 
-        public virtual Task<TModel?> ReadAsync(string id)
+        public virtual Task<TEntity?> ReadAsync(string id)
             => Repository.ReadAsync(id);
 
-        public virtual Task UpdateAsync(TModel entity)
+        public virtual Task UpdateAsync(TEntity entity)
             => Repository.UpdateAsync(entity);
 
-        public virtual Task DeleteAsync(string id)
-            => Repository.DeleteAsync(id);
+        public virtual Task RemoveAsync(string id)
+            => Repository.RemoveAsync(id);
+
+        public Task RemoveAsync(TEntity entity)
+            => Repository.RemoveAsync(entity);
     }
 }

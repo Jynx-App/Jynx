@@ -4,6 +4,6 @@ namespace Jynx.Common.Abstractions.Services
 {
     public interface IDistrictsService : IRepositoryService<District>
     {
-
+        Task<bool> IsUserAllowedToPostAsync(string districtId, string userId);
     }
 }

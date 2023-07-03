@@ -1,4 +1,5 @@
-﻿using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Chronometry;
+using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
 using Microsoft.Azure.Cosmos;
@@ -12,8 +13,9 @@ namespace Jynx.Common.Repositories.CosmosDb
         public CommentsRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
+            IDateTimeService dateTimeService,
             ILogger<CommentsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, logger)
+            : base(cosmosClient, cosmosDbOptions, dateTimeService, logger)
         {
         }
 

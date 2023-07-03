@@ -1,4 +1,5 @@
-﻿using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Chronometry;
+using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.CosmosDb;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -11,8 +12,9 @@ namespace Jynx.Common.Repositories.CosmosDb
         public UsersRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
+            IDateTimeService dateTimeService,
             ILogger<UsersRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, logger)
+            : base(cosmosClient, cosmosDbOptions, dateTimeService, logger)
         {
         }
 

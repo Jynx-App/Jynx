@@ -1,4 +1,5 @@
-﻿using Jynx.Common.Azure.CosmosDb;
+﻿using Jynx.Common.Abstractions.Chronometry;
+using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
 using Jynx.Common.Repositories.CosmosDb.Exceptions;
 using Microsoft.Azure.Cosmos;
@@ -12,16 +13,21 @@ namespace Jynx.Common.Repositories.CosmosDb
         where TEntity : BaseEntity
     {
         private readonly Container _container;
+        private readonly IDateTimeService _dateTimeService;
+        private readonly bool _isSoftRemovable;
 
         protected abstract CosmosDbContainerInfo ContainerInfo { get; }
 
         protected BaseCosmosDbRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
+            IDateTimeService dateTimeService,
             ILogger logger)
             : base(logger)
         {
+            _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
             _container = cosmosClient.GetContainer(cosmosDbOptions.Value.DatabaseName, ContainerInfo.Name);
+            _dateTimeService = dateTimeService;
         }
 
         protected virtual string GenerateId(TEntity entity)
@@ -35,7 +41,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
 
-            entity.Created = DateTime.UtcNow;
+            entity.Created = _dateTimeService.UtcNow;
 
             try
             {
@@ -75,24 +81,38 @@ namespace Jynx.Common.Repositories.CosmosDb
 
         public override async Task UpdateAsync(TEntity entity)
         {
-            entity.Edited = DateTime.UtcNow;
+            entity.Edited = _dateTimeService.UtcNow;
 
             await _container.UpsertItemAsync(entity, ResolvePartitionKey(entity));
         }
 
-        public override async Task DeleteAsync(string compoundId)
+        public override async Task RemoveAsync(string compoundId)
         {
+            if(_isSoftRemovable)
+            {
+                var entity = await ReadAsync(compoundId);
+
+                if(entity is ISoftRemovableEntity softRemovableEntity)
+                {
+                    softRemovableEntity.Removed = _dateTimeService.UtcNow;
+
+                    await _container.UpsertItemAsync(entity, ResolvePartitionKey(entity));
+
+                    return;
+                }
+            }
+
             var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
 
             await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(pk));
         }
 
-        public override Task DeleteAsync(TEntity entity)
+        public override Task RemoveAsync(TEntity entity)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 throw new Exception("Can not delete an entity without an id");
 
-            return DeleteAsync(entity.Id);
+            return RemoveAsync(entity.Id);
         }
 
         private static (string id, string pk) GetIdAndPartitionKeyFromCompoundKey(string compoundId)

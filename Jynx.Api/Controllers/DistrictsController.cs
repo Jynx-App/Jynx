@@ -1,7 +1,7 @@
 ﻿using Jynx.Common.Abstractions.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jynx.Api.Areas.Users.Controllers
+namespace Jynx.Api.Controllers
 {
     public class DistrictsController : BaseController
     {

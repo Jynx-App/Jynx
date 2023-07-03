@@ -4,6 +4,8 @@
     {
         public string PostId { get; set; } = "";
 
+        public string ParentCommentId { get; set; } = "";
+
         public string UserId { get; set; } = "";
 
         public string? EditedById { get; set; }

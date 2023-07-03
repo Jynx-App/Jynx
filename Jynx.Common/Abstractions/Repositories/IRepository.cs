@@ -6,8 +6,8 @@ namespace Jynx.Common.Abstractions.Repositories
         where TEntity : BaseEntity
     {
         Task<string> CreateAsync(TEntity entity);
-        Task DeleteAsync(string id);
-        Task DeleteAsync(TEntity entity);
+        Task RemoveAsync(string id);
+        Task RemoveAsync(TEntity entity);
         Task<TEntity?> ReadAsync(string id);
         Task UpdateAsync(TEntity entity);
     }

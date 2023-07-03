@@ -20,8 +20,8 @@ namespace Jynx.Common.Repositories
 
         public abstract Task UpdateAsync(TEntity entity);
 
-        public abstract Task DeleteAsync(string id);
+        public abstract Task RemoveAsync(string id);
 
-        public abstract Task DeleteAsync(TEntity entity);
+        public abstract Task RemoveAsync(TEntity entity);
     }
 }

@@ -15,14 +15,16 @@ namespace Jynx.Common.Services
 
         }
 
-        public District GetEntityById(string id)
+        public async Task<bool> IsUserAllowedToPostAsync(string districtId, string userId)
         {
-            return new District()
-            {
-                Id = id,
-                Name = "Tulsa",
-                Description = "Tulsa, Ok -- District"
-            };
+            var district = await ReadAsync(districtId);
+
+            if (district is null)
+                return false;
+
+            //Todo: Logic for preventing users from posting to districts they're banned/suspended from goes here
+
+            return true;
         }
     }
 }

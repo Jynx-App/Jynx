@@ -1,24 +1,14 @@
-﻿using Jynx.Common.AspNetCore.Http;
-using Jynx.Common.ErrorHandling;
+﻿using Jynx.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jynx.Api.Areas
 {
     [Route("[area]/[controller]/[action]")]
-    public abstract class BaseAreaController : ControllerBase
+    public abstract class BaseAreaController : BaseController
     {
-        public BaseAreaController(ILogger logger)
+        protected BaseAreaController(ILogger logger)
+            : base(logger)
         {
-            Logger = logger;
         }
-
-        public ILogger Logger { get; }
-
-        public IActionResult NotFound(string message)
-            => NotFound(new GenericErrorModel
-            {
-                Message = message,
-                RequestId = Request.HttpContext.GetRequestId()
-            });
     }
 }
