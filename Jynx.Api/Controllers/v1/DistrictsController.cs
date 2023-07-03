@@ -1,8 +1,9 @@
 ﻿using Jynx.Common.Abstractions.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jynx.Api.Controllers
+namespace Jynx.Api.Controllers.v1
 {
+    [ApiVersion("1.0")]
     public class DistrictsController : BaseController
     {
         private readonly IDistrictsService _districtsService;
@@ -16,7 +17,6 @@ namespace Jynx.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ApiVersion("1.0")]
         public async Task<IActionResult> GetPosts(string id)
         {
             var district = await _districtsService.ReadAsync(id);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Jynx.Api.Controllers
 {
+    [Route("[controller]/[action]")]
     public abstract class BaseController : ControllerBase
     {
         public BaseController(ILogger logger)

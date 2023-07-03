@@ -4,8 +4,9 @@ using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jynx.Api.Controllers
+namespace Jynx.Api.Controllers.v1
 {
+    [ApiVersion("1.0")]
     public class PostsController : BaseController
     {
         private const string _notFoundMessage = "Post not found";
@@ -23,8 +24,7 @@ namespace Jynx.Api.Controllers
             _postsService = postsService;
         }
 
-        [HttpPost()]
-        [ApiVersion("1.0")]
+        [HttpPost]
         public async Task<IActionResult> Create(CreatePostRequest request)
         {
             if (!ModelState.IsValid)
@@ -42,8 +42,7 @@ namespace Jynx.Api.Controllers
             return Ok(id);
         }
 
-        [HttpGet()]
-        [ApiVersion("1.0")]
+        [HttpGet]
         public async Task<IActionResult> Read(string id)
         {
             var post = await _postsService.ReadAsync(id);
@@ -56,8 +55,7 @@ namespace Jynx.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost()]
-        [ApiVersion("1.0")]
+        [HttpPost]
         public async Task<IActionResult> Update(UpdatePostRequest request)
         {
             if (!ModelState.IsValid)
@@ -82,8 +80,7 @@ namespace Jynx.Api.Controllers
             return Ok();
         }
 
-        [HttpPost()]
-        [ApiVersion("1.0")]
+        [HttpPost]
         public async Task<IActionResult> Remove(string id)
         {
             var userId = Request.HttpContext.User.GetId()!;
