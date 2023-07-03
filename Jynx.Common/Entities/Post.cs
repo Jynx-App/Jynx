@@ -4,8 +4,6 @@
     {
         public string UserId { get; set; } = "";
 
-        public DateTime? Edited { get; set; }
-
         public string? EditedById { get; set; }
 
         public string Title { get; set; } = "";

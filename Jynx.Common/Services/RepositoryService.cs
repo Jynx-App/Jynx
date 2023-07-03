@@ -22,7 +22,7 @@ namespace Jynx.Common.Services
         public virtual Task<string> CreateAsync(TModel entity)
             => Repository.CreateAsync(entity);
 
-        public virtual Task<TModel> ReadAsync(string id)
+        public virtual Task<TModel?> ReadAsync(string id)
             => Repository.ReadAsync(id);
 
         public virtual Task UpdateAsync(TModel entity)

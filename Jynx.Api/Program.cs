@@ -1,4 +1,6 @@
 using Jynx.Common;
+using Jynx.Common.ErrorHandling;
+using Jynx.Common.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
@@ -8,7 +10,10 @@ namespace Jynx.Api
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
 
             builder.Services
                 .AddApiVersioning(options =>
@@ -26,7 +31,11 @@ namespace Jynx.Api
                     options.GroupNameFormat = "v'VVV";
                     options.SubstituteApiVersionInUrl = true;
                 })
-                .AddCommon(builder.Configuration);
+                .AddCommon(builder.Configuration)
+                .AddLogging(loggingBuilder =>
+                {
+                    loggingBuilder.AddSeq();
+                });
 
             // Add services to the container.
 
@@ -40,14 +49,22 @@ namespace Jynx.Api
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app
+                    .UseSwagger()
+                    .UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
+            app
+                .AddJynxLogging(state =>
+                {
+                    //
+                })
+                .AddJynxErrorHandling(ex =>
+                {
+                    return false; // Break here to view caught Exceptions.
+                })
+                .UseHttpsRedirection()
+                .UseAuthorization();
 
             app.MapControllers();
 

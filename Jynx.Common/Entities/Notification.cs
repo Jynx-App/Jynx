@@ -14,8 +14,6 @@
 
         public string Body { get; set; } = "";
 
-        public DateTime Created { get; set; }
-
         public bool Read { get; set; }
     }
 }

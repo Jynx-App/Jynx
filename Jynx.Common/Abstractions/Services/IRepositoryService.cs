@@ -6,7 +6,7 @@ namespace Jynx.Common.Abstractions.Services
     {
         Task<string> CreateAsync(TModel entity);
         Task DeleteAsync(string id);
-        Task<TModel> ReadAsync(string id);
+        Task<TModel?> ReadAsync(string id);
         Task UpdateAsync(TModel entity);
     }
 }

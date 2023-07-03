@@ -21,6 +21,11 @@ namespace Jynx.Api.Areas.Users.Controllers
         {
             var district = await _districtsService.ReadAsync(id);
 
+            Logger.LogInformation("Test");
+
+            if (district is null)
+                return NotFound("District not found");
+
             return Ok(district);
         }
     }
