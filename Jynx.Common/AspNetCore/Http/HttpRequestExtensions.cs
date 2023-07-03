@@ -8,15 +8,13 @@ namespace Jynx.Common.AspNetCore.Http
 
         public static async Task<string> GetBodyAsStringAsync(this HttpRequest request)
         {
-            var originalPosition = request.Body.Position;
-
             request.Body.Seek(0, SeekOrigin.Begin);
 
-            using var reader = new StreamReader(request.Body);
-
+            using var reader = new StreamReader(request.Body, leaveOpen: true);
+            
             var body = await reader.ReadToEndAsync();
 
-            request.Body.Position = originalPosition;
+            request.Body.Seek(0, SeekOrigin.Begin);
 
             return body;
         }
