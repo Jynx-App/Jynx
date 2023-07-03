@@ -6,11 +6,9 @@ namespace Jynx.Common.Entities
     {
         public string DistrictId { get; set; } = "";
 
-        public string UserId { get; set; } = "";
-
         public string? DistrictUserGroupId { get; set; }
 
-        public HashSet<ModerationPermissions> ModerationPermissions { get; set; } = new();
+        public HashSet<ModerationPermission> ModerationPermissions { get; set; } = new();
 
         public DateTime? BannedUntil { get; set; }
 

@@ -10,7 +10,9 @@
 
         public string Title { get; set; } = "";
 
-        public string Body { get; set; } = "";
+        public string? Body { get; set; }
+
+        public string? Url { get; set; }
 
         public bool CommentsLocked { get; set; }
         public DateTime? Removed { get; set; }

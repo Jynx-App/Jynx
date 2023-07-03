@@ -1,7 +1,8 @@
-﻿using Jynx.Common.Abstractions.Chronometry;
-using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
+using Jynx.Common.Repositories.CosmosDb.Exceptions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,9 +14,9 @@ namespace Jynx.Common.Repositories.CosmosDb
         public DistrictsRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
-            IDateTimeService dateTimeService,
+            ISystemClock systemClock,
             ILogger<DistrictsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, dateTimeService, logger)
+            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
         {
         }
 
@@ -23,5 +24,8 @@ namespace Jynx.Common.Repositories.CosmosDb
         {
             Name = "Districts"
         };
+
+        protected override string GenerateId(District entity)
+            => throw new GenerateIdException();
     }
 }

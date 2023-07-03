@@ -1,8 +1,12 @@
 ﻿using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Abstractions.Services;
+using Jynx.Common.Configuration;
+using Jynx.Common.Entities;
 using Jynx.Common.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Jynx.Api.Controllers.v1
 {
@@ -12,29 +16,45 @@ namespace Jynx.Api.Controllers.v1
         private const string _notFoundMessage = "User not found";
 
         private readonly IUsersService _usersService;
+        private readonly IApiAppUsersService _apiAppUsersService;
+        private readonly IOptions<OfficalApiAppOptions> _officalApiAppOptions;
 
         public UsersController(
             IUsersService usersService,
+            IApiAppUsersService apiAppUsersService,
+            IOptions<OfficalApiAppOptions> officalApiAppOptions,
             ILogger<UsersController> logger)
             : base(logger)
         {
             _usersService = usersService;
+            _apiAppUsersService = apiAppUsersService;
+            _officalApiAppOptions = officalApiAppOptions;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateUserRequest request)
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
-            if (!ModelState.IsValid)
-                return ModelStateError();
+            if (request is null || !ModelState.IsValid)
+                return ModelStateError(request);
 
-            var entity = request.ToEntity();
+            var user = request.ToEntity();
 
-            _ = await _usersService.CreateAsync(entity);
+            user.Id = await _usersService.CreateAsync(user);
+
+            var apiAppUser = new ApiAppUser
+            {
+                ApiAppId = _officalApiAppOptions.Value.Id,
+                UserId = user.Id
+            };
+
+            apiAppUser.Id = await _apiAppUsersService.CreateAsync(apiAppUser);
 
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Read(string id)
         {
             var entity = await _usersService.ReadAsync(id);
@@ -55,9 +75,9 @@ namespace Jynx.Api.Controllers.v1
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _usersService.ReadAsync(request.Id);
+            var entity = await _usersService.ReadAsync(userId);
 
-            if (entity is null || entity.Id != userId)
+            if (entity is null)
                 return NotFound(_notFoundMessage);
 
             _usersService.Patch(entity, request);

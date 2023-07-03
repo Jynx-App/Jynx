@@ -1,7 +1,7 @@
-﻿using Jynx.Common.Abstractions.Chronometry;
-using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,9 +13,9 @@ namespace Jynx.Common.Repositories.CosmosDb
         public PostsRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
-            IDateTimeService dateTimeService,
+            ISystemClock systemClock,
             ILogger<PostsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, dateTimeService, logger)
+            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
         {
         }
 
@@ -23,5 +23,11 @@ namespace Jynx.Common.Repositories.CosmosDb
         {
             Name = "Posts"
         };
+
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(Post.DistrictId);
+
+        protected override string CreateCompoundId(Post entity)
+            => $"{entity.DistrictId}.{entity.Id}";
     }
 }

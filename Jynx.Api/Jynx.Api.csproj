@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Jynx.Common\Jynx.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Moderation\Models\Responses\" />
+  </ItemGroup>
+
 </Project>

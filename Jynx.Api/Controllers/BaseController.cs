@@ -2,6 +2,7 @@
 using Jynx.Common.AspNetCore.Http;
 using Jynx.Common.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
+using Jynx.Common.AspNetCore.Mvc.ModelBinding;
 
 namespace Jynx.Api.Controllers
 {
@@ -36,7 +37,14 @@ namespace Jynx.Api.Controllers
                 RequestId = Request.HttpContext.GetRequestId()
             });
 
-        public IActionResult ModelStateError()
-            => MultiError(ModelState.Select(ms => $"{ms.Key}={ms.Value}"));
+        public IActionResult ModelStateError(object? model = null)
+        {
+            var errors = ModelState.GetErrors().ToList();
+
+            if (model is null && !errors.Any())
+                errors.Add("Missing json in request body");
+
+            return MultiError(errors);
+        }
     }
 }

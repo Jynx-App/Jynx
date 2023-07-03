@@ -10,6 +10,6 @@ namespace Jynx.Common.Entities
 
         public string Description { get; set; } = "";
 
-        public HashSet<ModerationPermissions> Permissions { get; set; } = new();
+        public HashSet<ModerationPermission> ModerationPermissions { get; set; } = new();
     }
 }

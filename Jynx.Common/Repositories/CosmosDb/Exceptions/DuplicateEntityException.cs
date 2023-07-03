@@ -1,23 +1,14 @@
-﻿using System.Runtime.Serialization;
+﻿using Jynx.Common.ErrorHandling.Exceptions;
+using System.Net;
 
 namespace Jynx.Common.Repositories.CosmosDb.Exceptions
 {
-    internal class DuplicateEntityException : Exception
+    internal class DuplicateEntityException : JynxException
     {
-        public DuplicateEntityException()
+        public DuplicateEntityException(Exception? innerException = null)
+            : base("Duplicate Entity", null, innerException)
         {
-        }
-
-        public DuplicateEntityException(string? message) : base(message)
-        {
-        }
-
-        public DuplicateEntityException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected DuplicateEntityException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
+            StatusCode = HttpStatusCode.BadRequest;
         }
     }
 }

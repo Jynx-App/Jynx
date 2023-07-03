@@ -1,11 +1,13 @@
-﻿using Jynx.Common.Abstractions.Chronometry;
-using Jynx.Common.Azure.CosmosDb;
+﻿using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
 using Jynx.Common.Repositories.CosmosDb.Exceptions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
+using System.Reflection;
+using System.Text.Json;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
@@ -13,46 +15,68 @@ namespace Jynx.Common.Repositories.CosmosDb
         where TEntity : BaseEntity
     {
         private readonly Container _container;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly ISystemClock _systemClock;
         private readonly bool _isSoftRemovable;
-
-        protected abstract CosmosDbContainerInfo ContainerInfo { get; }
 
         protected BaseCosmosDbRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
-            IDateTimeService dateTimeService,
+            ISystemClock systemClock,
             ILogger logger)
             : base(logger)
         {
             _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
             _container = cosmosClient.GetContainer(cosmosDbOptions.Value.DatabaseName, ContainerInfo.Name);
-            _dateTimeService = dateTimeService;
+            _systemClock = systemClock;
+
+            var type = GetType();
+            
+            var resolvePartitionKeyMethodInfo = type?.GetMethod(nameof(GetPartitionKeyPropertyName), BindingFlags.NonPublic | BindingFlags.Instance);
+
+            UsesCompoundId = resolvePartitionKeyMethodInfo?.DeclaringType == type;
         }
+
+        protected bool UsesCompoundId { get; }
+
+        protected abstract CosmosDbContainerInfo ContainerInfo { get; }
 
         protected virtual string GenerateId(TEntity entity)
             => Guid.NewGuid().ToString();
 
-        protected virtual PartitionKey ResolvePartitionKey(TEntity entity)
-            => new(entity.Id);
+        protected virtual string GetPartitionKeyPropertyName()
+            => nameof(BaseEntity.Id);
+
+        protected virtual string CreateCompoundId(TEntity entity)
+            => entity.Id!;
+
+        protected PartitionKey GetPartitionKey(TEntity entity)
+        {
+            var type = typeof(TEntity);
+
+            var partitionKeyPropertyName = GetPartitionKeyPropertyName();
+
+            var value = type.GetProperty(partitionKeyPropertyName)?.GetValue(entity) as string;
+
+            return new(value);
+        }
 
         public override async Task<string> CreateAsync(TEntity entity)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
 
-            entity.Created = _dateTimeService.UtcNow;
+            entity.Created = _systemClock.UtcNow.Date;
 
             try
             {
-                var result = await _container.CreateItemAsync(entity, ResolvePartitionKey(entity));
+                var result = await _container.CreateItemAsync(entity, GetPartitionKey(entity));
 
                 return result.Resource.Id!;
             }
             catch (CosmosException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
-                    throw new DuplicateEntityException(ex.Message);
+                    throw new DuplicateEntityException(ex);
 
                 throw;
             }
@@ -64,7 +88,7 @@ namespace Jynx.Common.Repositories.CosmosDb
         {
             try
             {
-                var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
+                var (id, pk) = GetIdAndPartitionKey(compoundId);
 
                 var response = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(pk));
 
@@ -72,37 +96,43 @@ namespace Jynx.Common.Repositories.CosmosDb
             }
             catch (CosmosException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                    return null;
-
-                throw;
+                return null;
             }
         }
 
         public override async Task UpdateAsync(TEntity entity)
         {
-            entity.Edited = _dateTimeService.UtcNow;
+            if (string.IsNullOrWhiteSpace(entity.Id))
+                throw new InvalidIdException();
 
-            await _container.UpsertItemAsync(entity, ResolvePartitionKey(entity));
+            if (!(await ExistsAsync(CreateCompoundId(entity))))
+                throw new NotFoundException();
+
+            entity.Edited = _systemClock.UtcNow.Date;
+
+            await _container.UpsertItemAsync(entity, GetPartitionKey(entity));
         }
 
         public override async Task RemoveAsync(string compoundId)
         {
+            if (!(await ExistsAsync(compoundId)))
+                throw new NotFoundException();
+
             if (_isSoftRemovable)
             {
                 var entity = await ReadAsync(compoundId);
 
                 if (entity is ISoftRemovableEntity softRemovableEntity)
                 {
-                    softRemovableEntity.Removed = _dateTimeService.UtcNow;
+                    softRemovableEntity.Removed = _systemClock.UtcNow.Date;
 
-                    await _container.UpsertItemAsync(entity, ResolvePartitionKey(entity));
+                    await _container.UpsertItemAsync(entity, GetPartitionKey(entity));
 
                     return;
                 }
             }
 
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
+            var (id, pk) = GetIdAndPartitionKey(compoundId);
 
             await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(pk));
         }
@@ -115,14 +145,46 @@ namespace Jynx.Common.Repositories.CosmosDb
             return RemoveAsync(entity.Id);
         }
 
-        private static (string id, string pk) GetIdAndPartitionKeyFromCompoundKey(string compoundId)
+        public override async Task<bool> ExistsAsync(string compoundId)
         {
+            var (id, pk) = GetIdAndPartitionKey(compoundId);
+
+            var partitionKeyPropertyName = JsonNamingPolicy.CamelCase.ConvertName(GetPartitionKeyPropertyName());
+
+            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyPropertyName} = @pk")
+                .WithParameter("@id", id)
+                .WithParameter("@pk", pk);
+
+            var result = await ExecuteQueryAsync(query);
+
+            return result.Any();
+        }
+
+        protected async Task<IEnumerable<TEntity>> ExecuteQueryAsync(QueryDefinition queryDefinition)
+        {
+            var query = _container.GetItemQueryIterator<TEntity>(queryDefinition);
+
+            var results = new List<TEntity>();
+
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ReadNextAsync());
+            }
+
+            return results;
+        }
+
+        protected (string id, string pk) GetIdAndPartitionKey(string compoundId)
+        {
+            if (!UsesCompoundId)
+                return (compoundId, compoundId);
+
             var parts = compoundId.Split(".");
 
-            if (parts.Length == 2)
-                return (parts[0], parts[1]);
+            if (parts.Length != 2)
+                throw new InvalidCompoundIdException();
 
-            return (compoundId, compoundId);
+            return (parts[1], parts[0]);
         }
     }
 }

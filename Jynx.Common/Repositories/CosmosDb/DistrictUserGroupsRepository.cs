@@ -1,7 +1,7 @@
-﻿using Jynx.Common.Abstractions.Chronometry;
-using Jynx.Common.Abstractions.Repositories;
+﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.CosmosDb;
 using Jynx.Common.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,9 +13,9 @@ namespace Jynx.Common.Repositories.CosmosDb
         public DistrictUserGroupsRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
-            IDateTimeService dateTimeService,
+            ISystemClock systemClock,
             ILogger<DistrictUserGroupsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, dateTimeService, logger)
+            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
         {
         }
 
@@ -23,5 +23,11 @@ namespace Jynx.Common.Repositories.CosmosDb
         {
             Name = "DistrictUserGroups"
         };
+
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(DistrictUserGroup.DistrictId);
+
+        protected override string CreateCompoundId(DistrictUserGroup entity)
+            => $"{entity.DistrictId}.{entity.Id}";
     }
 }

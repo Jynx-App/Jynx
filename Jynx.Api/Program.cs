@@ -1,8 +1,12 @@
 using Jynx.Common;
+using Jynx.Common.AspNetCore;
+using Jynx.Common.Auth;
 using Jynx.Common.ErrorHandling;
 using Jynx.Common.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Jynx.Api
 {
@@ -10,6 +14,12 @@ namespace Jynx.Api
     {
         public static void Main(string[] args)
         {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Logging.ClearProviders();
@@ -36,6 +46,19 @@ namespace Jynx.Api
                     loggingBuilder.AddSeq();
                 });
 
+            // Auth
+            builder.Services
+                .AddAuthorization(options =>
+                {
+                    
+                })
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = ApiUserAuthenticationHandler.Schema;
+
+                    options.AddScheme<ApiUserAuthenticationHandler>(ApiUserAuthenticationHandler.Schema, null);
+                });
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -44,6 +67,8 @@ namespace Jynx.Api
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            app.EnableRequestBodyBuffering();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

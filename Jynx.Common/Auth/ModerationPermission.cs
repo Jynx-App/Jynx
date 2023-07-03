@@ -1,8 +1,9 @@
 ﻿namespace Jynx.Common.Auth
 {
-    public enum ModerationPermissions
+    public enum ModerationPermission
     {
-        None,
+        EditDistrict,
+        ViewMail,
 
         ApprovePosts,
         EditPosts,

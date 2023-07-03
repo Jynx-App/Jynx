@@ -2,6 +2,7 @@
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jynx.Api.Controllers.v1
@@ -25,10 +26,10 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreatePostRequest request)
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest? request)
         {
-            if (!ModelState.IsValid)
-                return ModelStateError();
+            if (request is null || !ModelState.IsValid)
+                return ModelStateError(request);
 
             var userId = Request.HttpContext.User.GetId()!;
 
@@ -37,12 +38,15 @@ namespace Jynx.Api.Controllers.v1
 
             var entity = request.ToEntity();
 
+            entity.UserId = userId;
+
             var id = await _postsService.CreateAsync(entity);
 
-            return Ok(id);
+            return Ok($"\"{id}\"");
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Read(string id)
         {
             var entity = await _postsService.ReadAsync(id);
@@ -55,8 +59,8 @@ namespace Jynx.Api.Controllers.v1
             return Ok(response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Update(UpdatePostRequest request)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdatePostRequest request)
         {
             if (!ModelState.IsValid)
                 return ModelStateError();

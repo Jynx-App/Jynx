@@ -1,4 +1,6 @@
 ﻿using Jynx.Common.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Policy;
 
 namespace Jynx.Api.Models.Responses
 {
@@ -14,6 +16,7 @@ namespace Jynx.Api.Models.Responses
             EditedById = post.EditedById;
             Title = post.Title;
             Body = post.Body;
+            Url = post.Url;
             CommentsLocked = post.CommentsLocked;
         }
 
@@ -31,7 +34,9 @@ namespace Jynx.Api.Models.Responses
 
         public string Title { get; set; } = "";
 
-        public string Body { get; set; } = "";
+        public string? Body { get; set; } 
+
+        public string? Url { get; set; }
 
         public bool CommentsLocked { get; set; }
     }

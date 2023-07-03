@@ -1,4 +1,6 @@
-﻿namespace Jynx.Common.ErrorHandling.Exceptions
+﻿using System.Net;
+
+namespace Jynx.Common.ErrorHandling.Exceptions
 {
     public class JynxException : Exception
     {
@@ -12,5 +14,7 @@
         public string? SafeMessage { get; set; }
 
         public bool HasSafeMessage => !string.IsNullOrWhiteSpace(SafeMessage);
+
+        public HttpStatusCode StatusCode { get; protected set; }
     }
 }

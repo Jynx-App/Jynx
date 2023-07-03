@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Jynx.Common.ErrorHandling
 {
@@ -67,13 +68,15 @@ namespace Jynx.Common.ErrorHandling
                     RequestId = context.GetRequestId()
                 };
 
-                await RenderAsync(model, context);
+                await RenderAsync(model, context, jex?.StatusCode ?? HttpStatusCode.BadRequest);
             };
         }
 
-        private static async Task RenderAsync(object model, HttpContext context)
+        private static async Task RenderAsync(object model, HttpContext context, HttpStatusCode statusCode)
         {
             var executor = context.RequestServices.GetService<IActionResultExecutor<ViewResult>>();
+
+            context.Response.StatusCode = (int)statusCode;
 
             if (executor is null)
             {
