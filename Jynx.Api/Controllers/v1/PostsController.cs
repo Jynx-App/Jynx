@@ -84,7 +84,7 @@ namespace Jynx.Api.Controllers.v1
             return Ok();
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> Remove(string id)
         {
             var userId = Request.HttpContext.User.GetId()!;

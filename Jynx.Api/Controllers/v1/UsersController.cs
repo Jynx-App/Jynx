@@ -67,7 +67,7 @@ namespace Jynx.Api.Controllers.v1
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update(UpdateUserRequest request)
         {
             if (!ModelState.IsValid)

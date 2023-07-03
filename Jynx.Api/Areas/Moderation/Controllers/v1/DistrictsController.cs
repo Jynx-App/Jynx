@@ -20,7 +20,7 @@ namespace Jynx.Api.Areas.Moderation.Controllers.v1
             _districtsService = districtsService;
         }
 
-        [HttpPost]
+        [HttpPut]
         [RequireModerationPermission(ModerationPermission.EditDistrict)]
         public async Task<IActionResult> Update(UpdateDistrictRequest request)
         {
