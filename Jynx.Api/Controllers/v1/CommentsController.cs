@@ -78,7 +78,12 @@ namespace Jynx.Api.Controllers.v1
         {
             var entities = await _commentsService.GetByPostIdAsync(postId);
 
-            return Ok(entities);
+            var response = new GetCommentsByPostIdResponse
+            {
+                Comments = entities.Select(e => new ReadCommentResponse(e))
+            };
+
+            return Ok(response);
         }
 
         [HttpPut]
