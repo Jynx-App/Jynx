@@ -1,6 +1,7 @@
 ﻿using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Abstractions.Services;
+using Jynx.Common.Repositories.CosmosDb;
 using Jynx.Common.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,39 +9,52 @@ using Microsoft.AspNetCore.Mvc;
 namespace Jynx.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class PostsController : BaseController
+    public class CommentsController : BaseController
     {
-        private const string _notFoundMessage = "Post not found";
-        private const string _notAllowedToPostMessage = "You are not allowed to post to this district";
+        private const string _notFoundMessage = "Comment not found";
+        private const string _postNotFoundMessage = "Post not found";
+        private const string _notAllowedToCommentMessage = "You are not allowed to comment in this district";
+        private const string _lockedMessage = "Post is locked, no new comments can be created";
 
         private readonly IDistrictsService _districtsService;
         private readonly IPostsService _postsService;
+        private readonly ICommentsService _commentsService;
 
-        public PostsController(
+        public CommentsController(
             IDistrictsService districtsService,
             IPostsService postsService,
-            ILogger<PostsController> logger) : base(logger)
+            ICommentsService commentsService,
+            ILogger<CommentsController> logger) : base(logger)
         {
             _districtsService = districtsService;
             _postsService = postsService;
+            _commentsService = commentsService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePostRequest? request)
+        public async Task<IActionResult> Create([FromBody] CreateCommentRequest? request)
         {
             if (request is null || !ModelState.IsValid)
                 return ModelStateError(request);
 
             var userId = Request.HttpContext.User.GetId()!;
 
+            var parentPost = await _postsService.GetAsync(request.PostId);
+
+            if (parentPost is null)
+                return NotFound(_postNotFoundMessage);
+
+            if (parentPost.CommentsLocked)
+                return BadRequest(_lockedMessage);
+
             if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(request.DistrictId, userId))
-                return BadRequest(_notAllowedToPostMessage);
+                return BadRequest(_notAllowedToCommentMessage);
 
             var entity = request.ToEntity();
 
             entity.UserId = userId;
 
-            var id = await _postsService.CreateAsync(entity);
+            var id = await _commentsService.CreateAsync(entity);
 
             return Ok($"\"{id}\"");
         }
@@ -49,37 +63,46 @@ namespace Jynx.Api.Controllers.v1
         [AllowAnonymous]
         public async Task<IActionResult> Read(string id)
         {
-            var entity = await _postsService.GetAsync(id);
+            var entity = await _commentsService.GetAsync(id);
 
             if (entity is null)
                 return NotFound(_notFoundMessage);
 
-            var response = new ReadPostResponse(entity);
+            var response = new ReadCommentResponse(entity);
 
             return Ok(response);
         }
 
+        [HttpGet("{postId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByPostId(string postId)
+        {
+            var entities = await _commentsService.GetByPostIdAsync(postId);
+
+            return Ok(entities);
+        }
+
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdatePostRequest? request)
+        public async Task<IActionResult> Update([FromBody] UpdateCommentRequest? request)
         {
             if (request is null || !ModelState.IsValid)
                 return ModelStateError(request);
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _postsService.GetAsync(request.Id);
+            var entity = await _commentsService.GetAsync(request.Id);
 
             if (entity is null || entity.UserId != userId)
                 return NotFound(_notFoundMessage);
 
             if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(entity.DistrictId, userId))
-                return BadRequest(_notAllowedToPostMessage);
+                return BadRequest(_notAllowedToCommentMessage);
 
-            _postsService.Patch(entity, request);
+            _commentsService.Patch(entity, request);
 
             entity.EditedById = userId;
 
-            await _postsService.UpdateAsync(entity);
+            await _commentsService.UpdateAsync(entity);
 
             return Ok();
         }
@@ -92,12 +115,12 @@ namespace Jynx.Api.Controllers.v1
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _postsService.GetAsync(request.Id);
+            var entity = await _commentsService.GetAsync(request.Id);
 
             if (entity is null || entity.UserId != userId)
                 return NotFound(_notFoundMessage);
 
-            await _postsService.RemoveAsync(request.Id);
+            await _commentsService.RemoveAsync(request.Id);
 
             return Ok();
         }

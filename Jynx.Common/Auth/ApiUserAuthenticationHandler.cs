@@ -47,12 +47,12 @@ namespace Jynx.Common.Auth
             if (string.IsNullOrWhiteSpace(apiKey))
                 return AuthenticateResult.Fail(_invalidApiKeyMessage);
 
-            var apiAppUser = await _apiAppUsersService.ReadAsync(apiKey);
+            var apiAppUser = await _apiAppUsersService.GetAsync(apiKey);
 
             if (apiAppUser is null)
                 return AuthenticateResult.Fail(_invalidApiKeyMessage);
 
-            var user = await _usersService.ReadAsync(apiAppUser.UserId);
+            var user = await _usersService.GetAsync(apiAppUser.UserId);
 
             if (user is null)
                 return AuthenticateResult.Fail(_invalidUserMessage);

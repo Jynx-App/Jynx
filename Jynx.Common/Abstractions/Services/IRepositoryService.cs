@@ -6,8 +6,9 @@ namespace Jynx.Common.Abstractions.Services
     {
         Task<string> CreateAsync(TEntity entity);
         Task RemoveAsync(string id);
-        Task<TEntity?> ReadAsync(string id);
+        Task<TEntity?> GetAsync(string id);
         Task UpdateAsync(TEntity entity);
         void Patch(TEntity target, ICanPatch<TEntity> source);
+        void ExistsAsync(string id);
     }
 }

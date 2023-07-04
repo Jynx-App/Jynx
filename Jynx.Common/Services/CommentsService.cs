@@ -13,5 +13,8 @@ namespace Jynx.Common.Services
             : base(repository, logger)
         {
         }
+
+        public Task<IEnumerable<Comment>> GetByPostIdAsync(string postId)
+            => Repository.GetByPostIdAsync(postId);
     }
 }

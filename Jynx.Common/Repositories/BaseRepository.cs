@@ -16,7 +16,7 @@ namespace Jynx.Common.Repositories
 
         public abstract Task<string> CreateAsync(TEntity entity);
 
-        public abstract Task<TEntity?> ReadAsync(string id);
+        public abstract Task<TEntity?> GetAsync(string id);
 
         public abstract Task UpdateAsync(TEntity entity);
 

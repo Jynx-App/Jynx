@@ -33,7 +33,7 @@ namespace Jynx.Api.Controllers.v1
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest? request)
         {
             if (request is null || !ModelState.IsValid)
                 return ModelStateError(request);
@@ -57,7 +57,7 @@ namespace Jynx.Api.Controllers.v1
         [AllowAnonymous]
         public async Task<IActionResult> Read(string username)
         {
-            var entity = await _usersService.ReadByUsernameAsync(username);
+            var entity = await _usersService.GetByUsernameAsync(username);
 
             if (entity is null)
                 return NotFound(_notFoundMessage);
@@ -68,14 +68,14 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequest? request)
         {
-            if (!ModelState.IsValid)
-                return ModelStateError();
+            if (request is null || !ModelState.IsValid)
+                return ModelStateError(request);
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _usersService.ReadAsync(userId);
+            var entity = await _usersService.GetAsync(userId);
 
             if (entity is null)
                 return NotFound(_notFoundMessage);

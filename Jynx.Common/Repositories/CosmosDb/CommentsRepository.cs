@@ -25,9 +25,22 @@ namespace Jynx.Common.Repositories.CosmosDb
         };
 
         protected override string GetPartitionKeyPropertyName()
-            => nameof(Comment.PostId);
+            => nameof(Comment.DistrictId);
 
         protected override string GetCompoundId(Comment entity)
-            => CosmosDbRepositoryUtility.CreateCompoundId(entity.PostId, entity.Id!);
+            => CosmosDbRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+
+        public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
+        {
+            var (postId, postPk) = CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
+
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.PostId = @postId AND c.DistrictId = @postPk")
+                .WithParameter("@postId", postId)
+                .WithParameter("@postPk", postPk);
+
+            var results = await ExecuteQueryAsync(query);
+
+            return results;
+        }
     }
 }

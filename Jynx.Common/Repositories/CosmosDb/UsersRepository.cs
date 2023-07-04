@@ -38,14 +38,14 @@ namespace Jynx.Common.Repositories.CosmosDb
 
         public async Task UpdatePasswordAsync(string userId, string newPassword)
         {
-            var user = await ReadAsync(userId) ?? throw new NotFoundException();
+            var user = await GetAsync(userId) ?? throw new NotFoundException();
 
             user.Password = _passwordHasher.HashPassword(user, newPassword);
 
             await UpdateAsync(user);
         }
 
-        public async Task<Entities.User?> ReadByUsernameAsync(string username)
+        public async Task<Entities.User?> GetByUsernameAsync(string username)
         {
             var query = new QueryDefinition("SELECT * FROM c WHERE c.username = @username")
                 .WithParameter("@username", username);

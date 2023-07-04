@@ -14,7 +14,7 @@ namespace Jynx.Common.Services
         {
         }
 
-        public Task<User?> ReadByUsernameAsync(string username)
-            => Repository.ReadByUsernameAsync(username);
+        public Task<User?> GetByUsernameAsync(string username)
+            => Repository.GetByUsernameAsync(username);
     }
 }

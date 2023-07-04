@@ -7,7 +7,7 @@ namespace Jynx.Common.Abstractions.Repositories
     {
         Task<string> CreateAsync(TEntity entity);
         Task RemoveAsync(string id);
-        Task<TEntity?> ReadAsync(string id);
+        Task<TEntity?> GetAsync(string id);
         Task UpdateAsync(TEntity entity);
         Task<bool> ExistsAsync(string compoundId);
     }

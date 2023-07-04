@@ -22,14 +22,17 @@ namespace Jynx.Common.Services
         public virtual Task<string> CreateAsync(TEntity entity)
             => Repository.CreateAsync(entity);
 
-        public virtual Task<TEntity?> ReadAsync(string id)
-            => Repository.ReadAsync(id);
+        public virtual Task<TEntity?> GetAsync(string id)
+            => Repository.GetAsync(id);
 
         public virtual Task UpdateAsync(TEntity entity)
             => Repository.UpdateAsync(entity);
 
         public virtual Task RemoveAsync(string id)
             => Repository.RemoveAsync(id);
+
+        public virtual void ExistsAsync(string id)
+            => Repository.ExistsAsync(id);
 
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
             => source.Patch(target);

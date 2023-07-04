@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal static class CosmosDbRepositoryUtility
+    public static class CosmosDbRepositoryUtility
     {
         public static string CreateCompoundId(params string[] parts)
             => string.Join("+", parts);

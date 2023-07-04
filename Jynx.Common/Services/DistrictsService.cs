@@ -22,9 +22,9 @@ namespace Jynx.Common.Services
             _districtUserGroupsService = districtUserGroupsService;
         }
 
-        public async Task<bool> IsUserAllowedToPostAsync(string districtId, string userId)
+        public async Task<bool> IsUserAllowedToPostAndCommentAsync(string districtId, string userId)
         {
-            var district = await ReadAsync(districtId);
+            var district = await GetAsync(districtId);
 
             if (district is null)
                 return false;
@@ -45,7 +45,7 @@ namespace Jynx.Common.Services
         {
             var compoundId = $"{districtId}+{userId}";
 
-            var districtUser = await _districtUsersService.ReadAsync(compoundId);
+            var districtUser = await _districtUsersService.GetAsync(compoundId);
 
             if (districtUser is null)
                 return false;
@@ -55,7 +55,7 @@ namespace Jynx.Common.Services
 
             if (!string.IsNullOrWhiteSpace(districtUser.DistrictUserGroupId))
             {
-                var districtUserGroup = await _districtUserGroupsService.ReadAsync(compoundId);
+                var districtUserGroup = await _districtUserGroupsService.GetAsync(compoundId);
 
                 if (districtUserGroup is not null && districtUserGroup.ModerationPermissions.Contains(permission))
                     return true;

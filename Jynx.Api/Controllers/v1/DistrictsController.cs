@@ -27,7 +27,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateDistrictRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateDistrictRequest? request)
         {
             if (request is null || !ModelState.IsValid)
                 return ModelStateError(request);
@@ -53,7 +53,7 @@ namespace Jynx.Api.Controllers.v1
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(string id)
         {
-            var entity = await _districtsService.ReadAsync(id);
+            var entity = await _districtsService.GetAsync(id);
 
             if (entity is null)
                 return NotFound(_notFoundMessage);

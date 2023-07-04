@@ -84,7 +84,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             }
         }
 
-        public override async Task<TEntity?> ReadAsync(string compoundId)
+        public override async Task<TEntity?> GetAsync(string compoundId)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
                 return response.Resource;
             }
-            catch (CosmosException)
+            catch (CosmosException ex)
             {
                 return null;
             }
@@ -123,7 +123,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             if (_isSoftRemovable)
             {
-                var entity = await ReadAsync(compoundId);
+                var entity = await GetAsync(compoundId);
 
                 if (entity is ISoftRemovableEntity softRemovableEntity)
                 {
