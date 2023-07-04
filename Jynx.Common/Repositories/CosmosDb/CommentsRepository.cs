@@ -32,15 +32,20 @@ namespace Jynx.Common.Repositories.CosmosDb
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {
-            var (postId, postPk) = CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
+            var (_, postPk) = CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
 
-            var query = new QueryDefinition("SELECT * FROM c WHERE c.PostId = @postId AND c.DistrictId = @postPk")
-                .WithParameter("@postId", postId)
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.districtId = @postPk")
+                .WithParameter("@postId", compoundPostId)
                 .WithParameter("@postPk", postPk);
 
-            var results = await ExecuteQueryAsync(query);
+            var entities = await ExecuteQueryAsync(query);
 
-            return results;
+            foreach(var entity in entities)
+            {
+                entity.Id = GetCompoundId(entity);
+            }
+
+            return entities;
         }
     }
 }

@@ -50,15 +50,10 @@ namespace Jynx.Common.Repositories.CosmosDb
             => entity.Id!;
 
         protected PartitionKey GetPartitionKey(TEntity entity)
-        {
-            var type = typeof(TEntity);
+            => new(GetPartitionKeyPropertyInfo()?.GetValue(entity) as string);
 
-            var partitionKeyPropertyName = GetPartitionKeyPropertyName();
-
-            var value = type.GetProperty(partitionKeyPropertyName)?.GetValue(entity) as string;
-
-            return new(value);
-        }
+        protected void UpdatePartitionKey(TEntity entity, object value)
+            => GetPartitionKeyPropertyInfo()?.SetValue(entity, value);
 
         public override async Task<string> CreateAsync(TEntity entity)
         {
@@ -95,6 +90,8 @@ namespace Jynx.Common.Repositories.CosmosDb
                 if (response.Resource is ISoftRemovableEntity softRemovableEntity && softRemovableEntity.Removed is not null)
                     return null;
 
+                response.Resource.Id = GetCompoundId(response.Resource);
+
                 return response.Resource;
             }
             catch (CosmosException ex)
@@ -108,10 +105,15 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (string.IsNullOrWhiteSpace(entity.Id))
                 throw new InvalidIdException();
 
-            if (!(await ExistsAsync(GetCompoundId(entity))))
+            if (!(await ExistsAsync(entity.Id)))
                 throw new NotFoundException();
 
+            var (id, pk) = GetIdAndPartitionKey(entity.Id);
+
+            entity.Id = id;
             entity.Edited = _systemClock.UtcNow.Date;
+
+            UpdatePartitionKey(entity, pk);
 
             await _container.UpsertItemAsync(entity, GetPartitionKey(entity));
         }
@@ -176,5 +178,8 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             return CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundId);
         }
+
+        private PropertyInfo? GetPartitionKeyPropertyInfo()
+            => typeof(TEntity).GetProperty(GetPartitionKeyPropertyName());
     }
 }
