@@ -16,7 +16,14 @@ namespace Jynx.Common.Azure.Cosmos
                 {
                     var options = sp.GetIOptions<CosmosOptions>().Value;
 
-                    return new CosmosClient(options.Endpoint, options.PrimaryKey);
+                    return new CosmosClient(options.Endpoint, options.PrimaryKey, new()
+                    {
+                        SerializerOptions = new CosmosSerializationOptions
+                        {
+                            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+                            IgnoreNullValues = true
+                        }
+                    });
                 });
 
             return services;
