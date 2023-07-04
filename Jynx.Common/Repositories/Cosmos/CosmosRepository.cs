@@ -176,7 +176,20 @@ namespace Jynx.Common.Repositories.Cosmos
             if (!UsesCompoundId)
                 return (compoundId, compoundId);
 
-            return CosmosRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundId);
+            return GetIdAndPartitionKeyFromCompoundKey(compoundId);
+        }
+
+        protected static string CreateCompoundId(params string[] parts)
+            => string.Join(".", parts);
+
+        protected static (string id, string pk) GetIdAndPartitionKeyFromCompoundKey(string compoundId)
+        {
+            var parts = compoundId.Split(".");
+
+            if (parts.Length != 2)
+                throw new InvalidCompoundIdException();
+
+            return (parts[1], parts[0]);
         }
 
         private PropertyInfo? GetPartitionKeyPropertyInfo()

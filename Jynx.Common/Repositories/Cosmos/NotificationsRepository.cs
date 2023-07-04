@@ -28,6 +28,6 @@ namespace Jynx.Common.Repositories.Cosmos
             => nameof(Notification.UserId);
 
         protected override string GetCompoundId(Notification entity)
-            => CosmosRepositoryUtility.CreateCompoundId(entity.UserId, entity.Id!);
+            => CreateCompoundId(entity.UserId, entity.Id!);
     }
 }

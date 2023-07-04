@@ -33,6 +33,6 @@ namespace Jynx.Common.Repositories.Cosmos
             => throw new GenerateIdException(); // Id should be same as Id of User entity
 
         protected override string GetCompoundId(DistrictUser entity)
-            => CosmosRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+            => CreateCompoundId(entity.DistrictId, entity.Id!);
     }
 }

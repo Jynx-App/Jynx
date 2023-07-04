@@ -28,11 +28,11 @@ namespace Jynx.Common.Repositories.Cosmos
             => nameof(Comment.DistrictId);
 
         protected override string GetCompoundId(Comment entity)
-            => CosmosRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+            => CreateCompoundId(entity.DistrictId, entity.Id!);
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {
-            var (_, postPk) = CosmosRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
+            var (_, postPk) = GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
 
             var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.districtId = @postPk")
                 .WithParameter("@postId", compoundPostId)

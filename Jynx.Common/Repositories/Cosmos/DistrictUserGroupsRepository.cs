@@ -28,6 +28,6 @@ namespace Jynx.Common.Repositories.Cosmos
             => nameof(DistrictUserGroup.DistrictId);
 
         protected override string GetCompoundId(DistrictUserGroup entity)
-            => CosmosRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+            => CreateCompoundId(entity.DistrictId, entity.Id!);
     }
 }
