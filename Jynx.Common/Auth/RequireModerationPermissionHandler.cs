@@ -14,7 +14,6 @@ namespace Jynx.Common.Auth
     {
         private readonly IDistrictsService _districtsService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<RequireModerationPermissionHandler> _logger;
         private readonly string[] _httpMethodsThatUseModel = new[]
         {
             "post",
@@ -24,12 +23,10 @@ namespace Jynx.Common.Auth
 
         public RequireModerationPermissionHandler(
             IDistrictsService districtsService,
-            IHttpContextAccessor httpContextAccessor,
-            ILogger<RequireModerationPermissionHandler> logger)
+            IHttpContextAccessor httpContextAccessor)
         {
             _districtsService = districtsService;
             _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
         }
 
         protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, RequireModerationPermissionRequirement requirement)

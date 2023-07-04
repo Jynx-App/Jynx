@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal class DistrictsRepository : BaseCosmosDbRepository<District>, IDistrictsRepository
+    internal class DistrictsRepository : CosmosDbRepository<District>, IDistrictsRepository
     {
         public DistrictsRepository(
             CosmosClient cosmosClient,

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Jynx.Common.ErrorHandling
 {
@@ -81,6 +82,8 @@ namespace Jynx.Common.ErrorHandling
             if (executor is null)
             {
                 var json = JsonConvert.SerializeObject(model);
+
+                context.Response.ContentType = Application.Json;
 
                 await context.Response.WriteAsync(json);
 

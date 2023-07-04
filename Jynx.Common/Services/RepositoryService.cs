@@ -31,9 +31,6 @@ namespace Jynx.Common.Services
         public virtual Task RemoveAsync(string id)
             => Repository.RemoveAsync(id);
 
-        public virtual Task RemoveAsync(TEntity entity)
-            => Repository.RemoveAsync(entity);
-
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
             => source.Patch(target);
     }

@@ -11,14 +11,14 @@ using System.Text.Json;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal abstract class BaseCosmosDbRepository<TEntity> : BaseRepository<TEntity>
+    internal abstract class CosmosDbRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : BaseEntity
     {
         private readonly Container _container;
         private readonly ISystemClock _systemClock;
         private readonly bool _isSoftRemovable;
 
-        protected BaseCosmosDbRepository(
+        protected CosmosDbRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosDbOptions> cosmosDbOptions,
             ISystemClock systemClock,
@@ -41,12 +41,12 @@ namespace Jynx.Common.Repositories.CosmosDb
         protected abstract CosmosDbContainerInfo ContainerInfo { get; }
 
         protected virtual string GenerateId(TEntity entity)
-            => Guid.NewGuid().ToString();
+            => Guid.NewGuid().ToString().Replace("-", "");
 
         protected virtual string GetPartitionKeyPropertyName()
             => nameof(BaseEntity.Id);
 
-        protected virtual string CreateCompoundId(TEntity entity)
+        protected virtual string GetCompoundId(TEntity entity)
             => entity.Id!;
 
         protected PartitionKey GetPartitionKey(TEntity entity)
@@ -71,7 +71,9 @@ namespace Jynx.Common.Repositories.CosmosDb
             {
                 var result = await _container.CreateItemAsync(entity, GetPartitionKey(entity));
 
-                return result.Resource.Id!;
+                var compoundId = GetCompoundId(result.Resource);
+
+                return compoundId;
             }
             catch (CosmosException ex)
             {
@@ -80,8 +82,6 @@ namespace Jynx.Common.Repositories.CosmosDb
 
                 throw;
             }
-
-            throw new Exception();
         }
 
         public override async Task<TEntity?> ReadAsync(string compoundId)
@@ -92,9 +92,12 @@ namespace Jynx.Common.Repositories.CosmosDb
 
                 var response = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(pk));
 
+                if (response.Resource is ISoftRemovableEntity softRemovableEntity && softRemovableEntity.Removed is not null)
+                    return null;
+
                 return response.Resource;
             }
-            catch (CosmosException ex)
+            catch (CosmosException)
             {
                 return null;
             }
@@ -105,7 +108,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (string.IsNullOrWhiteSpace(entity.Id))
                 throw new InvalidIdException();
 
-            if (!(await ExistsAsync(CreateCompoundId(entity))))
+            if (!(await ExistsAsync(GetCompoundId(entity))))
                 throw new NotFoundException();
 
             entity.Edited = _systemClock.UtcNow.Date;
@@ -137,14 +140,6 @@ namespace Jynx.Common.Repositories.CosmosDb
             await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(pk));
         }
 
-        public override Task RemoveAsync(TEntity entity)
-        {
-            if (string.IsNullOrWhiteSpace(entity.Id))
-                throw new Exception("Can not delete an entity without an id");
-
-            return RemoveAsync(entity.Id);
-        }
-
         public override async Task<bool> ExistsAsync(string compoundId)
         {
             var (id, pk) = GetIdAndPartitionKey(compoundId);
@@ -157,7 +152,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             var result = await ExecuteQueryAsync(query);
 
-            return result.Any();
+            return result.Any(e => e is not ISoftRemovableEntity se || se.Removed is null);
         }
 
         protected async Task<IEnumerable<TEntity>> ExecuteQueryAsync(QueryDefinition queryDefinition)
@@ -179,12 +174,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (!UsesCompoundId)
                 return (compoundId, compoundId);
 
-            var parts = compoundId.Split(".");
-
-            if (parts.Length != 2)
-                throw new InvalidCompoundIdException();
-
-            return (parts[1], parts[0]);
+            return CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundId);
         }
     }
 }

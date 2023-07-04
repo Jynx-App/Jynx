@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal class CommentsRepository : BaseCosmosDbRepository<Comment>, ICommentsRepository
+    internal class CommentsRepository : CosmosDbRepository<Comment>, ICommentsRepository
     {
         public CommentsRepository(
             CosmosClient cosmosClient,
@@ -27,7 +27,7 @@ namespace Jynx.Common.Repositories.CosmosDb
         protected override string GetPartitionKeyPropertyName()
             => nameof(Comment.PostId);
 
-        protected override string CreateCompoundId(Comment entity)
-            => $"{entity.PostId}.{entity.Id}";
+        protected override string GetCompoundId(Comment entity)
+            => CosmosDbRepositoryUtility.CreateCompoundId(entity.PostId, entity.Id!);
     }
 }

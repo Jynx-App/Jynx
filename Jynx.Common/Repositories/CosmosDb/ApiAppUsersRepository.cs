@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal class ApiAppUsersRepository : BaseCosmosDbRepository<ApiAppUser>, IApiAppUsersRepository
+    internal class ApiAppUsersRepository : CosmosDbRepository<ApiAppUser>, IApiAppUsersRepository
     {
         public ApiAppUsersRepository(
             CosmosClient cosmosClient,

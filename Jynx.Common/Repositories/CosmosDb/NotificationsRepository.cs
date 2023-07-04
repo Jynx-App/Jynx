@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal class NotificationsRepository : BaseCosmosDbRepository<Notification>, INotificationsRepository
+    internal class NotificationsRepository : CosmosDbRepository<Notification>, INotificationsRepository
     {
         public NotificationsRepository(
             CosmosClient cosmosClient,
@@ -27,7 +27,7 @@ namespace Jynx.Common.Repositories.CosmosDb
         protected override string GetPartitionKeyPropertyName()
             => nameof(Notification.UserId);
 
-        protected override string CreateCompoundId(Notification entity)
-            => $"{entity.UserId}.{entity.Id}";
+        protected override string GetCompoundId(Notification entity)
+            => CosmosDbRepositoryUtility.CreateCompoundId(entity.UserId, entity.Id!);
     }
 }

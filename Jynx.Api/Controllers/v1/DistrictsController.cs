@@ -47,7 +47,7 @@ namespace Jynx.Api.Controllers.v1
 
             districtUser.Id = await _districtUsersService.CreateAsync(districtUser);
 
-            return Ok();
+            return Ok($"\"{district.Id}\"");
         }
 
         [HttpGet("{id}")]

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.CosmosDb
 {
-    internal class UsersRepository : BaseCosmosDbRepository<Entities.User>, IUsersRepository
+    internal class UsersRepository : CosmosDbRepository<Entities.User>, IUsersRepository
     {
         private readonly IPasswordHasher<Entities.User> _passwordHasher;
 

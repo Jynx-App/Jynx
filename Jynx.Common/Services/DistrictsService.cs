@@ -43,7 +43,7 @@ namespace Jynx.Common.Services
         /// <returns></returns>
         public async Task<bool> DoesUserHavePermissionAsync(string districtId, string userId, ModerationPermission permission)
         {
-            var compoundId = $"{districtId}.{userId}";
+            var compoundId = $"{districtId}+{userId}";
 
             var districtUser = await _districtUsersService.ReadAsync(compoundId);
 

@@ -85,16 +85,16 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Remove(string id)
+        public async Task<IActionResult> Remove([FromBody] IdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _postsService.ReadAsync(id);
+            var entity = await _postsService.ReadAsync(request.Id);
 
             if (entity is null || entity.UserId != userId)
                 return NotFound(_notFoundMessage);
 
-            await _postsService.RemoveAsync(entity);
+            await _postsService.RemoveAsync(request.Id);
 
             return Ok();
         }
