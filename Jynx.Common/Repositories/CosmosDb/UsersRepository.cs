@@ -44,5 +44,15 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             await UpdateAsync(user);
         }
+
+        public async Task<Entities.User?> ReadByUsernameAsync(string username)
+        {
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.username = @username")
+                .WithParameter("@username", username);
+
+            var results = await ExecuteQueryAsync(query);
+
+            return results.FirstOrDefault();
+        }
     }
 }

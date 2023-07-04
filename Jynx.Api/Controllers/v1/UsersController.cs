@@ -50,14 +50,14 @@ namespace Jynx.Api.Controllers.v1
 
             apiAppUser.Id = await _apiAppUsersService.CreateAsync(apiAppUser);
 
-            return Ok();
+            return Ok($"\"{user.Username}\"");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{username}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Read(string id)
+        public async Task<IActionResult> Read(string username)
         {
-            var entity = await _usersService.ReadAsync(id);
+            var entity = await _usersService.ReadByUsernameAsync(username);
 
             if (entity is null)
                 return NotFound(_notFoundMessage);
@@ -68,7 +68,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateUserRequest request)
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
         {
             if (!ModelState.IsValid)
                 return ModelStateError();

@@ -13,5 +13,8 @@ namespace Jynx.Common.Services
             : base(repository, logger)
         {
         }
+
+        public Task<User?> ReadByUsernameAsync(string username)
+            => Repository.ReadByUsernameAsync(username);
     }
 }
