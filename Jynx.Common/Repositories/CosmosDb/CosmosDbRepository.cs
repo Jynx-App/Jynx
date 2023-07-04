@@ -49,12 +49,6 @@ namespace Jynx.Common.Repositories.CosmosDb
         protected virtual string GetCompoundId(TEntity entity)
             => entity.Id!;
 
-        protected PartitionKey GetPartitionKey(TEntity entity)
-            => new(GetPartitionKeyPropertyInfo()?.GetValue(entity) as string);
-
-        protected void UpdatePartitionKey(TEntity entity, object value)
-            => GetPartitionKeyPropertyInfo()?.SetValue(entity, value);
-
         public override async Task<string> CreateAsync(TEntity entity)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
@@ -170,6 +164,12 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             return results;
         }
+
+        protected PartitionKey GetPartitionKey(TEntity entity)
+            => new(GetPartitionKeyPropertyInfo()?.GetValue(entity) as string);
+
+        protected void UpdatePartitionKey(TEntity entity, object value)
+            => GetPartitionKeyPropertyInfo()?.SetValue(entity, value);
 
         protected (string id, string pk) GetIdAndPartitionKey(string compoundId)
         {
