@@ -1,8 +1,8 @@
-﻿namespace Jynx.Common.Azure.CosmosDb
+﻿namespace Jynx.Common.Azure.Cosmos
 {
-    public class CosmosDbOptions
+    public class CosmosOptions
     {
-        public const string DefaultKey = "CosmosDb";
+        public const string DefaultKey = "Cosmos";
 
         public string DatabaseName { get; set; } = "";
 

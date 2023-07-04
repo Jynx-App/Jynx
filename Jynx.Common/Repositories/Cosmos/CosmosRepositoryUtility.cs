@@ -1,8 +1,8 @@
-﻿using Jynx.Common.Repositories.CosmosDb.Exceptions;
+﻿using Jynx.Common.Repositories.Cosmos.Exceptions;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    public static class CosmosDbRepositoryUtility
+    public static class CosmosRepositoryUtility
     {
         public static string CreateCompoundId(params string[] parts)
             => string.Join("+", parts);

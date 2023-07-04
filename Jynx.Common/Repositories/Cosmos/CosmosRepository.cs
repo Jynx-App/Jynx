@@ -1,6 +1,6 @@
-﻿using Jynx.Common.Azure.CosmosDb;
+﻿using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
-using Jynx.Common.Repositories.CosmosDb.Exceptions;
+using Jynx.Common.Repositories.Cosmos.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -9,24 +9,24 @@ using System.Net;
 using System.Reflection;
 using System.Text.Json;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    internal abstract class CosmosDbRepository<TEntity> : BaseRepository<TEntity>
+    internal abstract class CosmosRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : BaseEntity
     {
         private readonly Container _container;
         private readonly ISystemClock _systemClock;
         private readonly bool _isSoftRemovable;
 
-        protected CosmosDbRepository(
+        protected CosmosRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions,
+            IOptions<CosmosOptions> CosmosOptions,
             ISystemClock systemClock,
             ILogger logger)
             : base(logger)
         {
             _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
-            _container = cosmosClient.GetContainer(cosmosDbOptions.Value.DatabaseName, ContainerInfo.Name);
+            _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
             _systemClock = systemClock;
 
             var type = GetType();
@@ -38,7 +38,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
         protected bool UsesCompoundId { get; }
 
-        protected abstract CosmosDbContainerInfo ContainerInfo { get; }
+        protected abstract CosmosContainerInfo ContainerInfo { get; }
 
         protected virtual string GenerateId(TEntity entity)
             => Guid.NewGuid().ToString().Replace("-", "");
@@ -176,7 +176,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             if (!UsesCompoundId)
                 return (compoundId, compoundId);
 
-            return CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundId);
+            return CosmosRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundId);
         }
 
         private PropertyInfo? GetPartitionKeyPropertyInfo()

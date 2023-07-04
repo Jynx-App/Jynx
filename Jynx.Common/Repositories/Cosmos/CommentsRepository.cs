@@ -1,25 +1,25 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Azure.CosmosDb;
+using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class CommentsRepository : CosmosDbRepository<Comment>, ICommentsRepository
+    internal class CommentsRepository : CosmosRepository<Comment>, ICommentsRepository
     {
         public CommentsRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions,
+            IOptions<CosmosOptions> CosmosOptions,
             ISystemClock systemClock,
             ILogger<CommentsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, systemClock, logger)
         {
         }
 
-        protected override CosmosDbContainerInfo ContainerInfo => new()
+        protected override CosmosContainerInfo ContainerInfo => new()
         {
             Name = "Comments"
         };
@@ -28,11 +28,11 @@ namespace Jynx.Common.Repositories.CosmosDb
             => nameof(Comment.DistrictId);
 
         protected override string GetCompoundId(Comment entity)
-            => CosmosDbRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+            => CosmosRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {
-            var (_, postPk) = CosmosDbRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
+            var (_, postPk) = CosmosRepositoryUtility.GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
 
             var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.districtId = @postPk")
                 .WithParameter("@postId", compoundPostId)

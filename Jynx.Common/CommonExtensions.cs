@@ -1,10 +1,10 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Auth;
-using Jynx.Common.Azure.CosmosDb;
+using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Configuration;
 using Jynx.Common.Entities;
-using Jynx.Common.Repositories.CosmosDb;
+using Jynx.Common.Repositories.Cosmos;
 using Jynx.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -46,7 +46,7 @@ namespace Jynx.Common
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
                 .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>()
-                .AddCosmosDb(configuration);
+                .AddCosmos(configuration);
 
             return services;
         }

@@ -1,7 +1,7 @@
 ﻿using Jynx.Common.ErrorHandling.Exceptions;
 using System.Net;
 
-namespace Jynx.Common.Repositories.CosmosDb.Exceptions
+namespace Jynx.Common.Repositories.Cosmos.Exceptions
 {
     public class InvalidIdException : JynxException
     {

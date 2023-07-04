@@ -4,17 +4,17 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jynx.Common.Azure.CosmosDb
+namespace Jynx.Common.Azure.Cosmos
 {
-    internal static class CosmosDbExtensions
+    internal static class CosmosExtensions
     {
-        public static IServiceCollection AddCosmosDb(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCosmos(this IServiceCollection services, IConfiguration configuration)
         {
             services
-                .ConfigureByDefaultKey<CosmosDbOptions>(configuration)
+                .ConfigureByDefaultKey<CosmosOptions>(configuration)
                 .AddSingleton(sp =>
                 {
-                    var options = sp.GetIOptions<CosmosDbOptions>().Value;
+                    var options = sp.GetIOptions<CosmosOptions>().Value;
 
                     return new CosmosClient(options.Endpoint, options.PrimaryKey);
                 });

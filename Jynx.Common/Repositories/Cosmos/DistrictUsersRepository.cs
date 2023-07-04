@@ -1,27 +1,27 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Azure.CosmosDb;
+using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
-using Jynx.Common.Repositories.CosmosDb.Exceptions;
+using Jynx.Common.Repositories.Cosmos.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class DistrictUsersRepository : CosmosDbRepository<DistrictUser>, IDistrictUsersRepository
+    internal class DistrictUsersRepository : CosmosRepository<DistrictUser>, IDistrictUsersRepository
     {
         public DistrictUsersRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions,
+            IOptions<CosmosOptions> CosmosOptions,
             ISystemClock systemClock,
             ILogger<DistrictUsersRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, systemClock, logger)
         {
 
         }
 
-        protected override CosmosDbContainerInfo ContainerInfo => new()
+        protected override CosmosContainerInfo ContainerInfo => new()
         {
             Name = "DistrictUsers"
         };
@@ -33,6 +33,6 @@ namespace Jynx.Common.Repositories.CosmosDb
             => throw new GenerateIdException(); // Id should be same as Id of User entity
 
         protected override string GetCompoundId(DistrictUser entity)
-            => CosmosDbRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
+            => CosmosRepositoryUtility.CreateCompoundId(entity.DistrictId, entity.Id!);
     }
 }

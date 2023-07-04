@@ -1,30 +1,30 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Azure.CosmosDb;
-using Jynx.Common.Repositories.CosmosDb.Exceptions;
+using Jynx.Common.Azure.Cosmos;
+using Jynx.Common.Repositories.Cosmos.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class UsersRepository : CosmosDbRepository<Entities.User>, IUsersRepository
+    internal class UsersRepository : CosmosRepository<Entities.User>, IUsersRepository
     {
         private readonly IPasswordHasher<Entities.User> _passwordHasher;
 
         public UsersRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions,
+            IOptions<CosmosOptions> CosmosOptions,
             ISystemClock systemClock,
             IPasswordHasher<Entities.User> passwordHasher,
             ILogger<UsersRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, systemClock, logger)
         {
             _passwordHasher = passwordHasher;
         }
 
-        protected override CosmosDbContainerInfo ContainerInfo => new()
+        protected override CosmosContainerInfo ContainerInfo => new()
         {
             Name = "Users"
         };

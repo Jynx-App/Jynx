@@ -1,25 +1,25 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Azure.CosmosDb;
+using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Jynx.Common.Repositories.CosmosDb
+namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class NotificationsRepository : CosmosDbRepository<Notification>, INotificationsRepository
+    internal class NotificationsRepository : CosmosRepository<Notification>, INotificationsRepository
     {
         public NotificationsRepository(
             CosmosClient cosmosClient,
-            IOptions<CosmosDbOptions> cosmosDbOptions,
+            IOptions<CosmosOptions> CosmosOptions,
             ISystemClock systemClock,
             ILogger<NotificationsRepository> logger)
-            : base(cosmosClient, cosmosDbOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, systemClock, logger)
         {
         }
 
-        protected override CosmosDbContainerInfo ContainerInfo => new()
+        protected override CosmosContainerInfo ContainerInfo => new()
         {
             Name = "Notifications"
         };
@@ -28,6 +28,6 @@ namespace Jynx.Common.Repositories.CosmosDb
             => nameof(Notification.UserId);
 
         protected override string GetCompoundId(Notification entity)
-            => CosmosDbRepositoryUtility.CreateCompoundId(entity.UserId, entity.Id!);
+            => CosmosRepositoryUtility.CreateCompoundId(entity.UserId, entity.Id!);
     }
 }
