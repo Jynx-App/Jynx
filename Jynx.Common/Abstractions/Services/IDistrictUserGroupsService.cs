@@ -1,5 +1,4 @@
-﻿using Jynx.Common.Auth;
-using Jynx.Common.Entities;
+﻿using Jynx.Common.Entities;
 
 namespace Jynx.Common.Abstractions.Services
 {

@@ -1,7 +1,6 @@
 ﻿using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Abstractions.Services;
-using Jynx.Common.Repositories.CosmosDb;
 using Jynx.Common.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -22,7 +22,7 @@ namespace Jynx.Common.Auth
 
         public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
         {
-            if(policyName.StartsWith(_policyPrefix, StringComparison.OrdinalIgnoreCase))
+            if (policyName.StartsWith(_policyPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 var permissionName = policyName[_policyPrefix.Length..];
 

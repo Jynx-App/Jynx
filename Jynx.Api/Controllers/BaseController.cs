@@ -1,8 +1,8 @@
 ﻿using Jynx.Api.Models.Responses;
 using Jynx.Common.AspNetCore.Http;
+using Jynx.Common.AspNetCore.Mvc.ModelBinding;
 using Jynx.Common.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
-using Jynx.Common.AspNetCore.Mvc.ModelBinding;
 
 namespace Jynx.Api.Controllers
 {

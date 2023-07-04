@@ -21,7 +21,7 @@ namespace Jynx.Common.Auth
         public const string Schema = "ApiUser";
 
         public ApiUserAuthenticationHandler(
-            IOptionsMonitor<AuthenticationSchemeOptions> options, 
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
             IUsersService usersService,
             IApiAppUsersService apiAppUsersService,
             ILoggerFactory logger, UrlEncoder encoder,
@@ -87,7 +87,7 @@ namespace Jynx.Common.Auth
             var identity = new ClaimsIdentity(claims, Schema);
 
             var identities = new List<ClaimsIdentity> { identity };
-            
+
             var principal = new ClaimsPrincipal(identities);
 
             return new(principal, Schema);

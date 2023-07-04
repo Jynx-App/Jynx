@@ -30,7 +30,7 @@ namespace Jynx.Common.Repositories.CosmosDb
             _systemClock = systemClock;
 
             var type = GetType();
-            
+
             var resolvePartitionKeyMethodInfo = type?.GetMethod(nameof(GetPartitionKeyPropertyName), BindingFlags.NonPublic | BindingFlags.Instance);
 
             UsesCompoundId = resolvePartitionKeyMethodInfo?.DeclaringType == type;

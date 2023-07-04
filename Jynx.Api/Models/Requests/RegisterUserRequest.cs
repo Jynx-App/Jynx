@@ -8,7 +8,7 @@ namespace Jynx.Api.Models.Requests
         [StringLength(32)]
         [RegularExpression("^[a-zA-Z][a-zA-Z0-9_-]+$")]
         public string Username { get; set; } = "";
-        
+
         [StringLength(320)]
         public string Email { get; set; } = "";
 

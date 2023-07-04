@@ -1,6 +1,4 @@
 ﻿using Jynx.Common.Entities;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Policy;
 
 namespace Jynx.Api.Models.Responses
 {
@@ -34,7 +32,7 @@ namespace Jynx.Api.Models.Responses
 
         public string Title { get; set; } = "";
 
-        public string? Body { get; set; } 
+        public string? Body { get; set; }
 
         public string? Url { get; set; }
 

@@ -40,7 +40,7 @@ namespace Jynx.Common.Repositories.CosmosDb
 
             var entities = await ExecuteQueryAsync(query);
 
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Id = GetCompoundId(entity);
             }

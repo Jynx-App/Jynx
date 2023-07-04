@@ -6,7 +6,7 @@ namespace Jynx.Common.AspNetCore.Mvc.ModelBinding
     {
         public static IEnumerable<string> GetErrors(this ModelStateDictionary modelStateDictionary)
         {
-            foreach(var kvp in modelStateDictionary)
+            foreach (var kvp in modelStateDictionary)
             {
                 var fieldName = kvp.Key;
 

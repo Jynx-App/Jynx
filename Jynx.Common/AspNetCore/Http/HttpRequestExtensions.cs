@@ -11,7 +11,7 @@ namespace Jynx.Common.AspNetCore.Http
             request.Body.Seek(0, SeekOrigin.Begin);
 
             using var reader = new StreamReader(request.Body, leaveOpen: true);
-            
+
             var body = await reader.ReadToEndAsync();
 
             request.Body.Seek(0, SeekOrigin.Begin);

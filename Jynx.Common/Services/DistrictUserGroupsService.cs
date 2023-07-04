@@ -1,6 +1,5 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
-using Jynx.Common.Auth;
 using Jynx.Common.Entities;
 using Microsoft.Extensions.Logging;
 

@@ -1,7 +1,5 @@
 ﻿using Jynx.Common.Entities;
 
-using System.Security.Policy;
-
 namespace Jynx.Api.Models.Responses
 {
     public class ReadCommentResponse
@@ -35,6 +33,6 @@ namespace Jynx.Api.Models.Responses
 
         public string? EditedById { get; set; }
 
-        public string Body { get; set; } 
+        public string Body { get; set; }
     }
 }

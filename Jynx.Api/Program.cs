@@ -50,7 +50,7 @@ namespace Jynx.Api
             builder.Services
                 .AddAuthorization(options =>
                 {
-                    
+
                 })
                 .AddAuthentication(options =>
                 {
