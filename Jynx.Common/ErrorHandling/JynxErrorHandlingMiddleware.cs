@@ -18,7 +18,7 @@ namespace Jynx.Common.ErrorHandling
     public class JynxErrorHandlingMiddleware
     {
         private const string _exceptionLogMessage = "An unhandled exception has occurred while executing the request.";
-        private const string _defaultSafeMessage = "An Unhandled Error has occured";
+        private const string _defaultSafeMessage = "An Unhandled Error has occurred";
         private const string _genericErrorViewName = "Errors/GenericError";
 
         private readonly RequestDelegate _next;
