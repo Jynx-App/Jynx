@@ -68,7 +68,16 @@ namespace Jynx.Api
 
             var app = builder.Build();
 
-            app.EnableRequestBodyBuffering();
+            app
+                .EnableRequestBodyBuffering()
+                .AddJynxLogging((context, state) =>
+                {
+                    //
+                })
+                .AddJynxErrorHandling(ex =>
+                {
+                    return false; // Break here to view caught Exceptions.
+                });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -79,14 +88,6 @@ namespace Jynx.Api
             }
 
             app
-                .AddJynxLogging(state =>
-                {
-                    //
-                })
-                .AddJynxErrorHandling(ex =>
-                {
-                    return false; // Break here to view caught Exceptions.
-                })
                 .UseHttpsRedirection()
                 .UseAuthorization();
 

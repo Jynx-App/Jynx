@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace Jynx.Common.Logging
 {
     public static class LoggingExtensions
     {
-        public static IApplicationBuilder AddJynxLogging(this IApplicationBuilder app, Action<Dictionary<string, object>> stateHandler)
+        public static IApplicationBuilder AddJynxLogging(this IApplicationBuilder app, Action<HttpContext, Dictionary<string, object>> stateHandler)
         {
             app.UseMiddleware<JynxLoggingMiddleware>(stateHandler);
 

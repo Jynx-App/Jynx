@@ -9,11 +9,11 @@ namespace Jynx.Common.Logging
     {
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
-        private readonly Action<Dictionary<string, object?>> _stateHandler;
+        private readonly Action<HttpContext, Dictionary<string, object?>> _stateHandler;
 
         public JynxLoggingMiddleware(
             RequestDelegate next,
-            Action<Dictionary<string, object?>> stateHandler,
+            Action<HttpContext, Dictionary<string, object?>> stateHandler,
             ILogger<JynxLoggingMiddleware> logger)
         {
             _next = next;
@@ -29,7 +29,7 @@ namespace Jynx.Common.Logging
                 ["UserId"] = context.User.GetId()
             };
 
-            _stateHandler(state);
+            _stateHandler(context, state);
 
             try
             {
