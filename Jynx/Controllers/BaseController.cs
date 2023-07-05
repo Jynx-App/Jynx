@@ -4,11 +4,11 @@ namespace Jynx.Controllers
 {
     public abstract class BaseController : Controller
     {
-        private readonly ILogger _logger;
-
         public BaseController(ILogger logger)
         {
-            _logger = logger;
+            Logger = logger;
         }
+
+        protected readonly ILogger Logger;
     }
 }
