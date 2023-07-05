@@ -29,18 +29,23 @@ namespace Jynx.Common.Auth
 
         protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, RequireModerationPermissionRequirement requirement)
         {
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext is null)
+                return;
+
             if (context.User is null)
                 return;
 
-            var districtId = _httpContextAccessor.HttpContext.GetRouteData().Values.ContainsKey("id")
-                ? _httpContextAccessor.HttpContext.GetRouteData().Values["id"].ToString()
+            var districtId = httpContext.GetRouteData().Values.ContainsKey("id")
+                ? httpContext.GetRouteData().Values["id"]?.ToString()
                 : null;
 
-            var httpMethod = _httpContextAccessor.HttpContext.Request.Method.ToLower();
+            var httpMethod = httpContext.Request.Method.ToLower();
 
             if (string.IsNullOrWhiteSpace(districtId) && _httpMethodsThatUseModel.Contains(httpMethod))
             {
-                var json = await _httpContextAccessor.HttpContext.Request.GetBodyAsStringAsync();
+                var json = await httpContext.Request.GetBodyAsStringAsync();
 
                 var model = JsonConvert.DeserializeObject<RequireModerationPermissionModel>(json);
 
