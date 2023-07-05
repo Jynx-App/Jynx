@@ -10,12 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ConsoleAppFramework" Version="4.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Jynx.Common\Jynx.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ConsoleAppFramework">
+      <HintPath>..\..\ConsoleAppFramework\src\ConsoleAppFramework\bin\Debug\net6.0\ConsoleAppFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

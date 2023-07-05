@@ -1,5 +1,7 @@
-﻿using Jynx.Cli.Commands;
+﻿using ConsoleAppFramework;
+using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
+using Jynx.Common.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,13 +12,10 @@ namespace Jynx.Cli
 {
     internal class Program
     {
-        private const string _defaultCommand = "api-app create --name Test --owner-id Test";
-
         static async Task Main(string[] args)
         {
-#if DEBUG
-            args = _defaultCommand.Split(' ');
-#endif
+            //if (Debugger.IsAttached)
+                //args = GetDebuggerArgs();
 
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
@@ -41,8 +40,52 @@ namespace Jynx.Cli
             var app = builder.Build();
 
             app.AddSubCommands<ApiAppCommands>();
+            app.AddSubCommands<ApiAppUserCommands>();
+            app.AddSubCommands<CommentCommands>();
+            app.AddSubCommands<DistrictCommands>();
+            app.AddSubCommands<DistrictUserCommands>();
+            app.AddSubCommands<DistrictUserGroupCommands>();
+            app.AddSubCommands<NotificationCommands>();
+            app.AddSubCommands<PostCommands>();
+            app.AddSubCommands<UserCommands>();
 
             await app.RunAsync();
+        }
+
+        private static string[] GetDebuggerArgs()
+        {
+            var command = "api-apps create --entity {0}";
+
+            var entity = new ApiApp
+            {
+                Name = "Test"
+            };
+
+            var json = JsonConvert.SerializeObject(entity);
+
+            command = string.Format(command, json);
+
+            var args = SplitCommandLineIntoArguments(command);
+
+            return args.ToArray();
+        }
+
+        private static string[] SplitCommandLineIntoArguments(string commandLine)
+        {
+            var chars = commandLine.ToCharArray();
+
+            var inQuote = false;
+
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (chars[i] == '"')
+                    inQuote = !inQuote;
+
+                if (!inQuote && chars[i] == ' ')
+                    chars[i] = '\n';
+            }
+
+            return (new string(chars)).Split('\n');
         }
     }
 }
