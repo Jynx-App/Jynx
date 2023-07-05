@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class PostsRepository : CosmosRepository<Post>, IPostsRepository
+    internal class PostsRepository : CosmosRepositoryWithCompoundId<Post>, IPostsRepository
     {
         public PostsRepository(
             CosmosClient cosmosClient,
@@ -24,10 +24,7 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "Posts"
         };
 
-        protected override string GetCompoundId(Post entity)
-            => CreateCompoundId(entity.DistrictId, entity.Id!);
-
-        protected override string GetPartitionKeyValue(Post entity)
-            => CreatePartitionKeyHash(entity.DistrictId);
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(Post.DistrictId);
     }
 }

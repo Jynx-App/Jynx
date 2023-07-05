@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class ApiAppUsersRepository : CosmosRepository<ApiAppUser>, IApiAppUsersRepository
+    internal class ApiAppUsersRepository : CosmosRepositoryWithCompoundId<ApiAppUser>, IApiAppUsersRepository
     {
         public ApiAppUsersRepository(
             CosmosClient cosmosClient,
@@ -23,5 +23,8 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             Name = "ApiAppUsers"
         };
+
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(ApiAppUser.ApiAppId);
     }
 }

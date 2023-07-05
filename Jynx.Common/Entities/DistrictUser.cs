@@ -4,6 +4,8 @@ namespace Jynx.Common.Entities
 {
     public class DistrictUser : BaseEntity
     {
+        // The Id of DistrictUser should match the associated User
+
         public string DistrictId { get; set; } = "";
 
         public string? DistrictUserGroupId { get; set; }

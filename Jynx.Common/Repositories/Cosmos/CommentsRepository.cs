@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class CommentsRepository : CosmosRepository<Comment>, ICommentsRepository
+    internal class CommentsRepository : CosmosRepositoryWithCompoundId<Comment>, ICommentsRepository
     {
         public CommentsRepository(
             CosmosClient cosmosClient,
@@ -24,17 +24,14 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "Comments"
         };
 
-        protected override string GetCompoundId(Comment entity)
-            => CreateCompoundId(entity.DistrictId, entity.Id!);
-
-        protected override string GetPartitionKeyValue(Comment entity)
-            => CreatePartitionKeyHash(entity.DistrictId, entity.PostId);
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(Comment.PostId);
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {
             var (_, postPk) = GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
 
-            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.districtId = @postPk")
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.pk = @postPk")
                 .WithParameter("@postId", compoundPostId)
                 .WithParameter("@postPk", postPk);
 

@@ -7,8 +7,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
+using System.Reflection;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
@@ -33,35 +32,29 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
 
+        protected virtual string GetPartitionKeyPropertyName()
+            => nameof(BaseEntity.Id);
+
         protected virtual string GenerateId(TEntity entity)
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
-        protected virtual string GetCompoundId(TEntity entity)
-            => CreateCompoundId(GetPartitionKeyValue(entity), entity.Id!);
-
-        protected virtual string GetPartitionKeyValue(TEntity entity)
-            => CreatePartitionKeyHash(entity.Id!);
-
         public override async Task<string> CreateAsync(TEntity entity)
+            => await InternalCreateAsync(entity, null);
+
+        protected async Task<string> InternalCreateAsync(TEntity entity, string? partitionKey)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
 
             entity.Created = _systemClock.UtcNow.Date;
 
+            partitionKey ??= GetPartitionKey(entity);
+
             try
             {
-                var pk = GetPartitionKeyValue(entity);
+                var result = await _container.CreateItemAsync(entity, new PartitionKey(partitionKey));
 
-                var cosmosEntity = entity.ToDynamic();
-                cosmosEntity.pk = pk;
-
-                var result = await _container.CreateItemAsync(cosmosEntity, new PartitionKey(pk));
-                entity.Id = result.Resource.id;
-
-                var compoundId = GetCompoundId(entity);
-
-                return compoundId;
+                return result.Resource.Id!;
             }
             catch (CosmosException ex)
             {
@@ -72,18 +65,17 @@ namespace Jynx.Common.Repositories.Cosmos
             }
         }
 
-        public override async Task<TEntity?> GetAsync(string compoundId)
+        public override Task<TEntity?> GetAsync(string id)
+            => InternalGetAsync(id, id);
+
+        protected async Task<TEntity?> InternalGetAsync(string id, string partitionKey)
         {
             try
             {
-                var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
-
-                var response = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(pk));
+                var response = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(partitionKey));
 
                 if (response.Resource is ISoftRemovableEntity softRemovableEntity && softRemovableEntity.Removed is not null)
                     return null;
-
-                response.Resource.Id = GetCompoundId(response.Resource);
 
                 return response.Resource;
             }
@@ -93,53 +85,56 @@ namespace Jynx.Common.Repositories.Cosmos
             }
         }
 
-        public override async Task UpdateAsync(TEntity entity)
+        public override Task UpdateAsync(TEntity entity)
+            => InternalUpdateAsync(entity, null);
+
+        protected async Task InternalUpdateAsync(TEntity entity, string? partitionKey)
         {
+            partitionKey ??= GetPartitionKey(entity);
+
             if (string.IsNullOrWhiteSpace(entity.Id))
                 throw new InvalidIdException();
 
-            if (!(await ExistsAsync(entity.Id)))
+            if (!(await InternalExistsAsync(entity.Id, partitionKey)))
                 throw new NotFoundException();
 
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id);
-
-            entity.Id = id;
             entity.Edited = _systemClock.UtcNow.Date;
 
-            await _container.UpsertItemAsync(entity, new PartitionKey(pk));
+            await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
         }
 
-        public override async Task RemoveAsync(string compoundId)
+        public override Task RemoveAsync(string id)
+            => InternalRemoveAsync(id, id);
+
+        protected async Task InternalRemoveAsync(string id, string partitionKey)
         {
-            if (!(await ExistsAsync(compoundId)))
-                throw new NotFoundException();
-
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
-
             if (_isSoftRemovable)
             {
-                var entity = await GetAsync(compoundId);
+                var entity = await InternalGetAsync(id, partitionKey);
 
                 if (entity is ISoftRemovableEntity softRemovableEntity)
                 {
                     softRemovableEntity.Removed = _systemClock.UtcNow.Date;
 
-                    await _container.UpsertItemAsync(entity, new PartitionKey(pk));
+                    await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
 
                     return;
                 }
             }
 
-            await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(pk));
+            await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(partitionKey));
         }
 
-        public override async Task<bool> ExistsAsync(string compoundId)
-        {
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
+        public override Task<bool> ExistsAsync(string id)
+            => InternalExistsAsync(id, id);
 
-            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.pk = @pk")
+        protected async Task<bool> InternalExistsAsync(string id, string partitionKey)
+        {
+            var partitionKeyPropertyName = GetPartitionKeyPropertyName();
+
+            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyPropertyName} = @pk")
                 .WithParameter("@id", id)
-                .WithParameter("@pk", pk);
+                .WithParameter("@pk", partitionKey);
 
             var result = await ExecuteQueryAsync(query);
 
@@ -160,30 +155,10 @@ namespace Jynx.Common.Repositories.Cosmos
             return results;
         }
 
-        protected static string CreateCompoundId(params string[] parts)
-            => string.Join(".", parts);
+        protected string GetPartitionKey(TEntity entity)
+            => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string;
 
-        protected static (string id, string pk) GetIdAndPartitionKeyFromCompoundKey(string compoundId)
-        {
-            var parts = compoundId.Split(".");
-
-            if (parts.Length != 2)
-                throw new InvalidCompoundIdException();
-
-            return (parts[1], parts[0]);
-        }
-
-        protected static string CreatePartitionKeyHash(params object[] parts)
-        {
-            using var sha1 = SHA1.Create();
-
-            var bytes = Encoding.UTF8.GetBytes(string.Join('+', parts.Select(o => o.ToString())));
-
-            var hashBytes = sha1.ComputeHash(bytes);
-
-            var hash = WebEncoders.Base64UrlEncode(hashBytes);
-
-            return hash;
-        }
+        private PropertyInfo? GetPartitionKeyPropertyInfo()
+            => typeof(TEntity).GetProperty(GetPartitionKeyPropertyName());
     }
 }

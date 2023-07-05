@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
-    internal class DistrictUsersRepository : CosmosRepository<DistrictUser>, IDistrictUsersRepository
+    internal class DistrictUsersRepository : CosmosRepositoryWithCompoundId<DistrictUser>, IDistrictUsersRepository
     {
         public DistrictUsersRepository(
             CosmosClient cosmosClient,
@@ -29,10 +29,7 @@ namespace Jynx.Common.Repositories.Cosmos
         protected override string GenerateId(DistrictUser entity)
             => throw new GenerateIdException(); // Id should be same as Id of User entity
 
-        protected override string GetCompoundId(DistrictUser entity)
-            => CreateCompoundId(entity.DistrictId, entity.Id!);
-
-        protected override string GetPartitionKeyValue(DistrictUser entity)
-            => CreatePartitionKeyHash(entity.DistrictId);
+        protected override string GetPartitionKeyPropertyName()
+            => nameof(DistrictUser.DistrictId);
     }
 }
