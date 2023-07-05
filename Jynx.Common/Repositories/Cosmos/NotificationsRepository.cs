@@ -24,10 +24,10 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "Notifications"
         };
 
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(Notification.UserId);
-
         protected override string GetCompoundId(Notification entity)
             => CreateCompoundId(entity.UserId, entity.Id!);
+
+        protected override string GetPartitionKeyValue(Notification entity)
+            => CreatePartitionKeyHash(entity.UserId);
     }
 }

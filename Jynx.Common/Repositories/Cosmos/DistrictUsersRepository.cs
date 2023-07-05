@@ -26,13 +26,13 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "DistrictUsers"
         };
 
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(DistrictUser.DistrictId);
-
         protected override string GenerateId(DistrictUser entity)
             => throw new GenerateIdException(); // Id should be same as Id of User entity
 
         protected override string GetCompoundId(DistrictUser entity)
             => CreateCompoundId(entity.DistrictId, entity.Id!);
+
+        protected override string GetPartitionKeyValue(DistrictUser entity)
+            => CreatePartitionKeyHash(entity.DistrictId);
     }
 }

@@ -24,10 +24,10 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "DistrictUserGroups"
         };
 
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(DistrictUserGroup.DistrictId);
-
         protected override string GetCompoundId(DistrictUserGroup entity)
             => CreateCompoundId(entity.DistrictId, entity.Id!);
+
+        protected override string GetPartitionKeyValue(DistrictUserGroup entity)
+            => CreatePartitionKeyHash(entity.DistrictId);
     }
 }

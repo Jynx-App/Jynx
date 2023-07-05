@@ -2,11 +2,14 @@
 using Jynx.Common.Entities;
 using Jynx.Common.Repositories.Cosmos.Exceptions;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Jynx.Common.Repositories.Cosmos
@@ -28,26 +31,18 @@ namespace Jynx.Common.Repositories.Cosmos
             _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
             _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
             _systemClock = systemClock;
-
-            var type = GetType();
-
-            var resolvePartitionKeyMethodInfo = type?.GetMethod(nameof(GetPartitionKeyPropertyName), BindingFlags.NonPublic | BindingFlags.Instance);
-
-            UsesCompoundId = resolvePartitionKeyMethodInfo?.DeclaringType == type;
         }
-
-        protected bool UsesCompoundId { get; }
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
 
         protected virtual string GenerateId(TEntity entity)
-            => Guid.NewGuid().ToString().Replace("-", "");
-
-        protected virtual string GetPartitionKeyPropertyName()
-            => nameof(BaseEntity.Id);
+            => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
         protected virtual string GetCompoundId(TEntity entity)
-            => entity.Id!;
+            => CreateCompoundId(GetPartitionKeyValue(entity), entity.Id!);
+
+        protected virtual string GetPartitionKeyValue(TEntity entity)
+            => CreatePartitionKeyHash(entity.Id!);
 
         public override async Task<string> CreateAsync(TEntity entity)
         {
@@ -58,9 +53,15 @@ namespace Jynx.Common.Repositories.Cosmos
 
             try
             {
-                var result = await _container.CreateItemAsync(entity, GetPartitionKey(entity));
+                var pk = GetPartitionKeyValue(entity);
 
-                var compoundId = GetCompoundId(result.Resource);
+                var cosmosEntity = entity.ToDynamic();
+                cosmosEntity.pk = pk;
+
+                var result = await _container.CreateItemAsync(cosmosEntity, new PartitionKey(pk));
+                entity.Id = result.Resource.id;
+
+                var compoundId = GetCompoundId(entity);
 
                 return compoundId;
             }
@@ -77,7 +78,7 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             try
             {
-                var (id, pk) = GetIdAndPartitionKey(compoundId);
+                var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
 
                 var response = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(pk));
 
@@ -102,20 +103,20 @@ namespace Jynx.Common.Repositories.Cosmos
             if (!(await ExistsAsync(entity.Id)))
                 throw new NotFoundException();
 
-            var (id, pk) = GetIdAndPartitionKey(entity.Id);
+            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id);
 
             entity.Id = id;
             entity.Edited = _systemClock.UtcNow.Date;
 
-            UpdatePartitionKey(entity, pk);
-
-            await _container.UpsertItemAsync(entity, GetPartitionKey(entity));
+            await _container.UpsertItemAsync(entity, new PartitionKey(pk));
         }
 
         public override async Task RemoveAsync(string compoundId)
         {
             if (!(await ExistsAsync(compoundId)))
                 throw new NotFoundException();
+
+            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
 
             if (_isSoftRemovable)
             {
@@ -125,24 +126,20 @@ namespace Jynx.Common.Repositories.Cosmos
                 {
                     softRemovableEntity.Removed = _systemClock.UtcNow.Date;
 
-                    await _container.UpsertItemAsync(entity, GetPartitionKey(entity));
+                    await _container.UpsertItemAsync(entity, new PartitionKey(pk));
 
                     return;
                 }
             }
-
-            var (id, pk) = GetIdAndPartitionKey(compoundId);
 
             await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(pk));
         }
 
         public override async Task<bool> ExistsAsync(string compoundId)
         {
-            var (id, pk) = GetIdAndPartitionKey(compoundId);
+            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
 
-            var partitionKeyPropertyName = JsonNamingPolicy.CamelCase.ConvertName(GetPartitionKeyPropertyName());
-
-            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyPropertyName} = @pk")
+            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.pk = @pk")
                 .WithParameter("@id", id)
                 .WithParameter("@pk", pk);
 
@@ -165,20 +162,6 @@ namespace Jynx.Common.Repositories.Cosmos
             return results;
         }
 
-        protected PartitionKey GetPartitionKey(TEntity entity)
-            => new(GetPartitionKeyPropertyInfo()?.GetValue(entity) as string);
-
-        protected void UpdatePartitionKey(TEntity entity, object value)
-            => GetPartitionKeyPropertyInfo()?.SetValue(entity, value);
-
-        protected (string id, string pk) GetIdAndPartitionKey(string compoundId)
-        {
-            if (!UsesCompoundId)
-                return (compoundId, compoundId);
-
-            return GetIdAndPartitionKeyFromCompoundKey(compoundId);
-        }
-
         protected static string CreateCompoundId(params string[] parts)
             => string.Join(".", parts);
 
@@ -192,7 +175,17 @@ namespace Jynx.Common.Repositories.Cosmos
             return (parts[1], parts[0]);
         }
 
-        private PropertyInfo? GetPartitionKeyPropertyInfo()
-            => typeof(TEntity).GetProperty(GetPartitionKeyPropertyName());
+        protected static string CreatePartitionKeyHash(params object[] parts)
+        {
+            using var sha1 = SHA1.Create();
+
+            var bytes = Encoding.UTF8.GetBytes(string.Join('+', parts.Select(o => o.ToString())));
+
+            var hashBytes = sha1.ComputeHash(bytes);
+
+            var hash = WebEncoders.Base64UrlEncode(hashBytes);
+
+            return hash;
+        }
     }
 }

@@ -24,11 +24,11 @@ namespace Jynx.Common.Repositories.Cosmos
             Name = "Comments"
         };
 
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(Comment.DistrictId);
-
         protected override string GetCompoundId(Comment entity)
             => CreateCompoundId(entity.DistrictId, entity.Id!);
+
+        protected override string GetPartitionKeyValue(Comment entity)
+            => CreatePartitionKeyHash(entity.DistrictId, entity.PostId);
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {
