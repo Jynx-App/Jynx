@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Diagnostics;
 
 namespace Jynx.Cli
 {
@@ -14,8 +15,8 @@ namespace Jynx.Cli
     {
         static async Task Main(string[] args)
         {
-            //if (Debugger.IsAttached)
-                //args = GetDebuggerArgs();
+            if (Debugger.IsAttached)
+                args = GetDebuggerArgs();
 
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
@@ -53,22 +54,7 @@ namespace Jynx.Cli
         }
 
         private static string[] GetDebuggerArgs()
-        {
-            var command = "api-apps create --entity {0}";
-
-            var entity = new ApiApp
-            {
-                Name = "Test"
-            };
-
-            var json = JsonConvert.SerializeObject(entity);
-
-            command = string.Format(command, json);
-
-            var args = SplitCommandLineIntoArguments(command);
-
-            return args.ToArray();
-        }
+            => Array.Empty<string>();
 
         private static string[] SplitCommandLineIntoArguments(string commandLine)
         {
