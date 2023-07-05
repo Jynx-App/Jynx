@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Reference Include="ConsoleAppFramework">
-      <HintPath>..\..\ConsoleAppFramework\src\ConsoleAppFramework\bin\Debug\net6.0\ConsoleAppFramework.dll</HintPath>
+      <HintPath>..\libs\ConsoleAppFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
 
