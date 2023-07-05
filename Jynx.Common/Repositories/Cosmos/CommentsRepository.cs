@@ -31,9 +31,8 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             var (_, postPk) = GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
 
-            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId AND c.pk = @postPk")
-                .WithParameter("@postId", compoundPostId)
-                .WithParameter("@postPk", postPk);
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId")
+                .WithParameter("@postId", compoundPostId);
 
             var entities = await ExecuteQueryAsync(query);
 

@@ -54,7 +54,23 @@ namespace Jynx.Cli
         }
 
         private static string[] GetDebuggerArgs()
-            => Array.Empty<string>();
+        {
+            var command = "api-app-users create --entity {0}";
+
+            var entity = new ApiAppUser
+            {
+                ApiAppId = "AKZXD-wv9U6zsGVnIcmTew",
+                UserId = "66F8V2icEkO0Sz_aeNMvhw"
+            };
+
+            var json = JsonConvert.SerializeObject(entity);
+
+            command = string.Format(command, json);
+
+            var args = SplitCommandLineIntoArguments(command);
+
+            return args.ToArray();
+        }
 
         private static string[] SplitCommandLineIntoArguments(string commandLine)
         {
