@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
-namespace Jynx.Common.Entities
+﻿namespace Jynx.Common.Entities
 {
     public abstract class BaseEntity
     {
