@@ -21,7 +21,9 @@ namespace Jynx.Cli.Commands
                 UserId = ownerId
             };
 
-            await _apiAppService.CreateAsync(entity);
+            var id = await _apiAppService.CreateAsync(entity);
+
+            Console.WriteLine($"ApiApp Created! {id}");
         }
     }
 }
