@@ -6,7 +6,7 @@ namespace Jynx.Common.Repositories.Cosmos.Exceptions
     public class InvalidCompoundIdException : JynxException
     {
         public InvalidCompoundIdException(Exception? innerException = null)
-            : base("Invalid Id", null, innerException)
+            : base("Invalid Compound Id", null, innerException)
         {
             StatusCode = HttpStatusCode.BadRequest;
         }

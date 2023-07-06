@@ -2,9 +2,9 @@
 using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
+using Jynx.Common.Entities.Validation;
 using Jynx.Common.Services.Exceptions;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Services
@@ -18,6 +18,8 @@ namespace Jynx.Common.Services
         public TRepository Repository { get; }
         public IValidator<TEntity> Validator { get; }
         public ISystemClock SystemClock { get; }
+
+        public virtual string DefaultNotFoundMessage { get; } = $"{typeof(TEntity).Name} not found";
 
         protected RepositoryService(
             TRepository repository,
@@ -33,15 +35,9 @@ namespace Jynx.Common.Services
             _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
         }
 
-        protected virtual string GenerateId(TEntity entity)
-            => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
-
         public virtual async Task<string> CreateAsync(TEntity entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.Id))
-                entity.Id = GenerateId(entity);
-
-            var (isEntityValid, validationErrors) = await IsValidAsync(entity);
+            var (isEntityValid, validationErrors) = await IsValidAsync(entity, ValidationMode.Create);
 
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
@@ -56,7 +52,7 @@ namespace Jynx.Common.Services
 
         public virtual async Task<bool> UpdateAsync(TEntity entity)
         {
-            var (isEntityValid, validationErrors) = await IsValidAsync(entity);
+            var (isEntityValid, validationErrors) = await IsValidAsync(entity, ValidationMode.Update);
 
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
@@ -89,9 +85,9 @@ namespace Jynx.Common.Services
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
             => source.Patch(target);
 
-        public async Task<(bool isValid, IEnumerable<string> errorMessages)> IsValidAsync(TEntity entity)
+        public async Task<(bool isValid, IEnumerable<string> errorMessages)> IsValidAsync(TEntity entity, ValidationMode validationMode = default)
         {
-            var validationResult = await Validator.ValidateAsync(entity);
+            var validationResult = await Validator.ValidateAsync(entity, options => options.IncludeRuleSets(ValidationMode.Default.ToString(), validationMode.ToString()));
 
             var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage);
 

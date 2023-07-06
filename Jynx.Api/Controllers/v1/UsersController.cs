@@ -11,36 +11,35 @@ using Microsoft.Extensions.Options;
 namespace Jynx.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class UsersController : RepositoryServiceController<IUsersService, User>
+    public class UsersController : BaseController
     {
+        private readonly IUsersService _usersService;
         private readonly IApiAppUsersService _apiAppUsersService;
-        private readonly IOptions<OfficalApiAppOptions> _officalApiAppOptions;
+        private readonly IOptions<OfficialApiAppOptions> _officialApiAppOptions;
 
         public UsersController(
             IUsersService usersService,
             IApiAppUsersService apiAppUsersService,
-            IOptions<OfficalApiAppOptions> officalApiAppOptions,
+            IOptions<OfficialApiAppOptions> officialApiAppOptions,
             ILogger<UsersController> logger)
-            : base(usersService, logger)
+            : base(logger)
         {
+            _usersService = usersService;
             _apiAppUsersService = apiAppUsersService;
-            _officalApiAppOptions = officalApiAppOptions;
+            _officialApiAppOptions = officialApiAppOptions;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequest? request)
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var user = request.ToEntity();
 
-            user.Id = await RepositoryService.CreateAsync(user);
+            user.Id = await _usersService.CreateAsync(user);
 
             var apiAppUser = new ApiAppUser
             {
-                ApiAppId = _officalApiAppOptions.Value.Id,
+                ApiAppId = _officialApiAppOptions.Value.Id,
                 UserId = user.Id
             };
 
@@ -51,12 +50,12 @@ namespace Jynx.Api.Controllers.v1
 
         [HttpGet("{username}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Read(string username)
+        public async Task<IActionResult> Get(string username)
         {
-            var entity = await RepositoryService.GetByUsernameAsync(username);
+            var entity = await _usersService.GetByUsernameAsync(username);
 
             if (entity is null)
-                return NotFound(DefaultNotFoundMessage);
+                return NotFound(_usersService.DefaultNotFoundMessage);
 
             var response = new ReadUserResponse(entity);
 
@@ -64,21 +63,18 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateUserRequest? request)
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await RepositoryService.GetAsync(userId);
+            var entity = await _usersService.GetAsync(userId);
 
             if (entity is null)
-                return NotFound(DefaultNotFoundMessage);
+                return NotFound(_usersService.DefaultNotFoundMessage);
 
-            RepositoryService.Patch(entity, request);
+            _usersService.Patch(entity, request);
 
-            await RepositoryService.UpdateAsync(entity);
+            await _usersService.UpdateAsync(entity);
 
             return Ok();
         }

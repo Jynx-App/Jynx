@@ -74,10 +74,14 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             var parts = compoundId.Split(".");
 
-            if (parts.Length != 2)
+            if (parts.Length < 2)
                 throw new InvalidCompoundIdException();
 
-            return (parts[1], parts[0]);
+            var id = parts.Last();
+
+            var pk = string.Join('.', parts.Take(parts.Length - 1));
+
+            return (id, pk);
         }
 
         protected string GetCompoundId(TEntity entity)

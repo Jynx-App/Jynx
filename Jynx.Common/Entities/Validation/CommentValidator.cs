@@ -6,24 +6,25 @@ namespace Jynx.Common.Entities.Validation
     {
         protected override void ConfigureRules()
         {
-            RuleFor(x => x.Id)
+            base.ConfigureRules();
+
+            RuleSet(ValidationMode.Default, () =>
+            {
+                RuleFor(x => x.DistrictId)
                 .NotEmpty()
                 .MaximumLength(80);
 
-            RuleFor(x => x.DistrictId)
-                .NotEmpty()
-                .MaximumLength(80);
+                RuleFor(x => x.PostId)
+                    .NotEmpty()
+                    .MaximumLength(80);
 
-            RuleFor(x => x.PostId)
-                .NotEmpty()
-                .MaximumLength(80);
+                RuleFor(x => x.ParentCommentId)
+                    .MaximumLength(80);
 
-            RuleFor(x => x.ParentCommentId)
-                .MaximumLength(80);
-
-            RuleFor(x => x.Body)
-                .NotEmpty()
-                .MaximumLength(40000);
+                RuleFor(x => x.Body)
+                    .NotEmpty()
+                    .MaximumLength(40000);
+            });
         }
     }
 }

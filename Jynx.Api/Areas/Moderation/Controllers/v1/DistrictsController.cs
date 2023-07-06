@@ -22,11 +22,8 @@ namespace Jynx.Api.Areas.Moderation.Controllers.v1
 
         [HttpPut]
         [RequireModerationPermission(ModerationPermission.EditDistrict)]
-        public async Task<IActionResult> Update([FromBody] UpdateDistrictRequest? request)
+        public async Task<IActionResult> Update([FromBody] UpdateDistrictRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var entity = await _districtsService.GetAsync(request.Id);
 
             if (entity is null)

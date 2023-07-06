@@ -6,24 +6,25 @@ namespace Jynx.Common.Entities.Validation
     {
         protected override void ConfigureRules()
         {
-            RuleFor(x => x.Id)
+            base.ConfigureRules();
+
+            RuleSet(ValidationMode.Default, () =>
+            {
+                RuleFor(x => x.DistrictId)
                 .NotEmpty()
                 .MaximumLength(80);
 
-            RuleFor(x => x.DistrictId)
-                .NotEmpty()
-                .MaximumLength(80);
+                RuleFor(x => x.Name)
+                    .NotEmpty()
+                    .MinimumLength(3)
+                    .MaximumLength(32);
 
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .MinimumLength(3)
-                .MaximumLength(32);
+                RuleFor(x => x.Description)
+                    .MaximumLength(200);
 
-            RuleFor(x => x.Description)
-                .MaximumLength(200);
-
-            RuleForEach(x => x.ModerationPermissions)
-                .IsInEnum();
+                RuleForEach(x => x.ModerationPermissions)
+                    .IsInEnum();
+            });
         }
     }
 }

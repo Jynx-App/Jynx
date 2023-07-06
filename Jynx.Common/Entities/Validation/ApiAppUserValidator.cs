@@ -6,17 +6,18 @@ namespace Jynx.Common.Entities.Validation
     {
         protected override void ConfigureRules()
         {
-            RuleFor(x => x.Id)
+            base.ConfigureRules();
+
+            RuleSet(ValidationMode.Default, () =>
+            {
+                RuleFor(x => x.ApiAppId)
                 .NotEmpty()
                 .MaximumLength(80);
 
-            RuleFor(x => x.ApiAppId)
-                .NotEmpty()
-                .MaximumLength(80);
-
-            RuleFor(x => x.UserId)
-                .NotEmpty()
-                .MaximumLength(80);
+                RuleFor(x => x.UserId)
+                    .NotEmpty()
+                    .MaximumLength(80);
+            });
         }
     }
 }

@@ -4,5 +4,6 @@ namespace Jynx.Common.Abstractions.Services
 {
     public interface IPostsService : IRepositoryService<Post>
     {
+        string DefaultLockedMessage { get; }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
 using Jynx.Common.Repositories.Exceptions;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Jynx.Common.Repositories.Cosmos
 {
@@ -25,6 +27,9 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
 
+        protected virtual string GenerateId(TEntity entity)
+            => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
+
         protected virtual string GetPartitionKeyPropertyName()
             => nameof(BaseEntity.Id);
 
@@ -33,6 +38,9 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected async Task<string> InternalCreateAsync(TEntity entity, string? partitionKey)
         {
+            if (string.IsNullOrWhiteSpace(entity.Id))
+                entity.Id = GenerateId(entity);
+
             partitionKey ??= GetPartitionKey(entity);
 
             try
@@ -103,9 +111,9 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected async Task<bool> InternalExistsAsync(string id, string partitionKey)
         {
-            var partitionKeyPropertyName = GetPartitionKeyPropertyName();
+            var partitionKeyFieldName = GetPartitionKeyFieldName();
 
-            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyPropertyName} = @pk")
+            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyFieldName} = @pk")
                 .WithParameter("@id", id)
                 .WithParameter("@pk", partitionKey);
 
@@ -133,5 +141,8 @@ namespace Jynx.Common.Repositories.Cosmos
 
         private PropertyInfo? GetPartitionKeyPropertyInfo()
             => typeof(TEntity).GetProperty(GetPartitionKeyPropertyName());
+
+        private string GetPartitionKeyFieldName()
+            => JsonNamingPolicy.CamelCase.ConvertName(GetPartitionKeyPropertyName());
     }
 }

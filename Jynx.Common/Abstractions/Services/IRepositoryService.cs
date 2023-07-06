@@ -4,6 +4,8 @@ namespace Jynx.Common.Abstractions.Services
 {
     public interface IRepositoryService<TEntity> where TEntity : BaseEntity
     {
+        string DefaultNotFoundMessage { get; }
+
         Task<string> CreateAsync(TEntity entity);
         Task<bool> RemoveAsync(string id);
         Task<TEntity?> GetAsync(string id);

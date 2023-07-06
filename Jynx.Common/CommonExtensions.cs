@@ -20,7 +20,7 @@ namespace Jynx.Common
         {
             services
                 // Configuration
-                .ConfigureByDefaultKey<OfficalApiAppOptions>(configuration)
+                .ConfigureByDefaultKey<OfficialApiAppOptions>(configuration)
                 // Repositories
                 .AddScoped<IApiAppsRepository, ApiAppsRepository>()
                 .AddScoped<IApiAppUsersRepository, ApiAppUsersRepository>()

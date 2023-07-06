@@ -1,6 +1,7 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
+using Jynx.Common.Repositories.Exceptions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -21,5 +22,8 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             Name = "Districts"
         };
+
+        protected override string GenerateId(District entity)
+            => throw new GenerateIdException();
     }
 }

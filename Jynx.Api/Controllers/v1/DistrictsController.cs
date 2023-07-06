@@ -11,8 +11,6 @@ namespace Jynx.Api.Controllers.v1
     [ApiVersion("1.0")]
     public class DistrictsController : BaseController
     {
-        private const string _notFoundMessage = "District not found";
-
         private readonly IDistrictsService _districtsService;
         private readonly IDistrictUsersService _districtUsersService;
 
@@ -27,11 +25,8 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateDistrictRequest? request)
+        public async Task<IActionResult> Create([FromBody] CreateDistrictRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var userId = Request.HttpContext.User.GetId()!;
 
             var district = request.ToEntity();
@@ -51,12 +46,12 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Read(string id)
+        public async Task<IActionResult> Get(string id)
         {
             var entity = await _districtsService.GetAsync(id);
 
             if (entity is null)
-                return NotFound(_notFoundMessage);
+                return NotFound(_districtsService.DefaultNotFoundMessage);
 
             var response = new ReadDistrictResponse(entity);
 

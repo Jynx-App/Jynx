@@ -9,6 +9,8 @@ namespace Jynx.Common.Services
 {
     internal class PostsService : RepositoryService<IPostsRepository, Post>, IPostsService
     {
+        public string DefaultLockedMessage => "Post is locked, no new comments can be created";
+
         public PostsService(
             IPostsRepository postRepository,
             IValidator<Post> validator,

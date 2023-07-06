@@ -3,7 +3,6 @@ using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Entities;
-using Jynx.Common.Services.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +12,9 @@ namespace Jynx.Common.Services
     {
         private readonly IDistrictUsersService _districtUsersService;
         private readonly IDistrictUserGroupsService _districtUserGroupsService;
+
+        public string DefaultNotAllowedToPostMessage => "You are not allowed to post in this district";
+        public string DefaultNotAllowedToCommentMessage => "You are not allowed to comment in this district";
 
         public DistrictsService(
             IDistrictsRepository districtRepository,
@@ -26,9 +28,6 @@ namespace Jynx.Common.Services
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;
         }
-
-        protected override string GenerateId(District entity)
-            => throw new GenerateIdException();
 
         public async Task<bool> IsUserAllowedToPostAndCommentAsync(string districtId, string userId)
         {
@@ -51,9 +50,7 @@ namespace Jynx.Common.Services
         /// <returns></returns>
         public async Task<bool> DoesUserHavePermissionAsync(string districtId, string userId, ModerationPermission permission)
         {
-            var compoundId = $"{districtId}+{userId}";
-
-            var districtUser = await _districtUsersService.GetAsync(compoundId);
+            var districtUser = await _districtUsersService.GetByDistrictIdAndUserId(districtId, userId);
 
             if (districtUser is null)
                 return false;
@@ -63,7 +60,7 @@ namespace Jynx.Common.Services
 
             if (!string.IsNullOrWhiteSpace(districtUser.DistrictUserGroupId))
             {
-                var districtUserGroup = await _districtUserGroupsService.GetAsync(compoundId);
+                var districtUserGroup = await _districtUserGroupsService.GetAsync(districtUser.DistrictUserGroupId);
 
                 if (districtUserGroup is not null && districtUserGroup.ModerationPermissions.Contains(permission))
                     return true;

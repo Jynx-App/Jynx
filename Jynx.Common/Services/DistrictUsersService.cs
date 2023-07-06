@@ -2,7 +2,6 @@
 using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
-using Jynx.Common.Services.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +18,7 @@ namespace Jynx.Common.Services
         {
         }
 
-        protected override string GenerateId(DistrictUser entity)
-            => throw new GenerateIdException(); // Id should be same as Id of User entity
+        public Task<DistrictUser?> GetByDistrictIdAndUserId(string districtId, string userId)
+            => Repository.GetByDistrictIdAndUserId(districtId, userId);
     }
 }

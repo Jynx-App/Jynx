@@ -10,7 +10,6 @@ namespace Jynx.Api.Controllers.v1
     [ApiVersion("1.0")]
     public class PostsController : BaseController
     {
-        private const string _notFoundMessage = "Post not found";
         private const string _notAllowedToPostMessage = "You are not allowed to post to this district";
 
         private readonly IDistrictsService _districtsService;
@@ -26,11 +25,8 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePostRequest? request)
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var userId = Request.HttpContext.User.GetId()!;
 
             if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(request.DistrictId, userId))
@@ -47,12 +43,12 @@ namespace Jynx.Api.Controllers.v1
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Read(string id)
+        public async Task<IActionResult> Get(string id)
         {
             var entity = await _postsService.GetAsync(id);
 
             if (entity is null)
-                return NotFound(_notFoundMessage);
+                return NotFound(_postsService.DefaultNotFoundMessage);
 
             var response = new ReadPostResponse(entity);
 
@@ -60,17 +56,14 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdatePostRequest? request)
+        public async Task<IActionResult> Update([FromBody] UpdatePostRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var userId = Request.HttpContext.User.GetId()!;
 
             var entity = await _postsService.GetAsync(request.Id);
 
             if (entity is null || entity.UserId != userId)
-                return NotFound(_notFoundMessage);
+                return NotFound(_postsService.DefaultNotFoundMessage);
 
             if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(entity.DistrictId, userId))
                 return BadRequest(_notAllowedToPostMessage);
@@ -85,17 +78,14 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Remove([FromBody] IdRequest? request)
+        public async Task<IActionResult> Remove([FromBody] IdRequest request)
         {
-            if (request is null || !ModelState.IsValid)
-                return ModelStateError(request);
-
             var userId = Request.HttpContext.User.GetId()!;
 
             var entity = await _postsService.GetAsync(request.Id);
 
             if (entity is null || entity.UserId != userId)
-                return NotFound(_notFoundMessage);
+                return NotFound(_postsService.DefaultNotFoundMessage);
 
             await _postsService.RemoveAsync(request.Id);
 

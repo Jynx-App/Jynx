@@ -6,15 +6,23 @@ namespace Jynx.Common.Entities.Validation
     {
         protected override void ConfigureRules()
         {
-            RuleFor(x => x.Id)
-                .NotEmpty()
+            RuleSet(ValidationMode.Default, () =>
+            {
+                RuleFor(x => x.Id)
                 .Matches("^[a-z][a-z0-9_-]+$")
                 .MinimumLength(3)
                 .MaximumLength(32);
 
-            RuleFor(x => x.Description)
-                .NotEmpty()
-                .MaximumLength(200);
+                RuleFor(x => x.Description)
+                    .NotEmpty()
+                    .MaximumLength(200);
+            });
+
+            RuleSet(ValidationMode.Update.ToString(), () =>
+            {
+                RuleFor(x => x.Id)
+                    .NotEmpty();
+            });
         }
     }
 }

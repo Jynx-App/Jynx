@@ -1,6 +1,6 @@
 ﻿using Jynx.Common.ErrorHandling.Exceptions;
 
-namespace Jynx.Common.Services.Exceptions
+namespace Jynx.Common.Repositories.Exceptions
 {
     public class GenerateIdException : JynxException
     {
