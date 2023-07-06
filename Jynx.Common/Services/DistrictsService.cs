@@ -36,7 +36,13 @@ namespace Jynx.Common.Services
             if (district is null)
                 return false;
 
-            //Todo: Logic for preventing users from posting to districts they're banned/suspended from goes here
+            var districtUser = await _districtUsersService.GetByDistrictIdAndUserId(districtId, userId);
+
+            if (districtUser is null)
+                return true;
+
+            if (districtUser.BannedUntil <= SystemClock.UtcNow)
+                return false;
 
             return true;
         }
