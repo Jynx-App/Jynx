@@ -1,5 +1,6 @@
-﻿using Jynx.Api.Areas.Moderation.Models.Requests;
-using Jynx.Common.Abstractions.Services;
+﻿using Jynx.Abstractions.Entities.Auth;
+using Jynx.Abstractions.Services;
+using Jynx.Api.Areas.Moderation.Models.Requests;
 using Jynx.Common.Auth;
 using Microsoft.AspNetCore.Mvc;
 

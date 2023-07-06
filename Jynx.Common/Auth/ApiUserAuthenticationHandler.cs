@@ -1,6 +1,6 @@
-﻿using Jynx.Common.Abstractions.Services;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 using Jynx.Common.AspNetCore.Http;
-using Jynx.Common.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;

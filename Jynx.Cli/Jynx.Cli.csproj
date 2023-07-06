@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jynx.Common\Jynx.Common.csproj" />
+    <ProjectReference Include="..\Jynx.Data.Cosmos\Jynx.Data.Cosmos.csproj" />
   </ItemGroup>
 
   <ItemGroup>

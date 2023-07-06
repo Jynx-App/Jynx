@@ -1,4 +1,4 @@
-﻿using Jynx.Common.Entities;
+﻿using Jynx.Abstractions.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Jynx.Api.Models.Requests

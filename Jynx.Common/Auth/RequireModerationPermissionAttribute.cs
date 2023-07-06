@@ -1,4 +1,5 @@
-﻿using BaseAuthorizationAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
+﻿using Jynx.Abstractions.Entities.Auth;
+using BaseAuthorizationAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace Jynx.Common.Auth
 {

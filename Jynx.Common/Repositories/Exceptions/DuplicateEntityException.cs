@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Jynx.Common.Repositories.Exceptions
 {
-    internal class DuplicateEntityException : JynxException
+    public class DuplicateEntityException : JynxException
     {
         public DuplicateEntityException(Exception? innerException = null)
             : base("Duplicate Entity", null, innerException)

@@ -1,10 +1,10 @@
-﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Entities;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Repositories
 {
-    internal abstract class BaseRepository<TEntity> : IRepository<TEntity>
+    public abstract class BaseRepository<TEntity> : IRepository<TEntity>
         where TEntity : BaseEntity
     {
         protected BaseRepository(ILogger logger)

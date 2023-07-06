@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
 using Jynx.Common.Validation;
 
 namespace Jynx.Common.Entities.Validation

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Abstractions.Services;
-using Jynx.Common.Entities;
+using Jynx.Abstractions.Repositories;
+using Jynx.Abstractions.Services;
+using Jynx.Abstractions.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

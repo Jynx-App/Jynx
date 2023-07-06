@@ -1,6 +1,6 @@
 ﻿using ConsoleAppFramework;
-using Jynx.Common.Abstractions.Services;
-using Jynx.Common.Entities;
+using Jynx.Abstractions.Services;
+using Jynx.Abstractions.Entities;
 using Jynx.Common.Services.Exceptions;
 using Newtonsoft.Json;
 

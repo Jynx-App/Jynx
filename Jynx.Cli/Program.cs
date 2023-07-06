@@ -1,13 +1,14 @@
 ﻿using ConsoleAppFramework;
 using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
-using Jynx.Common.Entities;
+using Jynx.Abstractions.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Diagnostics;
+using Jynx.Data.Cosmos;
 
 namespace Jynx.Cli
 {
@@ -35,6 +36,7 @@ namespace Jynx.Cli
                 {
                     services
                         .AddCommon(context.Configuration)
+                        .AddCosmos(context.Configuration)
                         .AddSingleton<ISystemClock, SystemClock>();
                 });
 

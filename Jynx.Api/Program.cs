@@ -3,6 +3,7 @@ using Jynx.Common.AspNetCore;
 using Jynx.Common.Auth;
 using Jynx.Common.ErrorHandling;
 using Jynx.Common.Logging;
+using Jynx.Data.Cosmos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json;
@@ -45,6 +46,7 @@ namespace Jynx.Api
                     options.SubstituteApiVersionInUrl = true;
                 })
                 .AddCommon(builder.Configuration)
+                .AddCosmos(builder.Configuration)
                 .AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddSeq();

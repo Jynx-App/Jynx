@@ -1,10 +1,8 @@
-﻿using Jynx.Common.Abstractions.Services;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 using Jynx.Common.Auth;
-using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Configuration;
-using Jynx.Common.Entities;
 using Jynx.Common.Entities.Validation;
-using Jynx.Common.Repositories.Cosmos;
 using Jynx.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -36,9 +34,7 @@ namespace Jynx.Common
                 .AddEntityValidators()
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
-                .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>()
-                .AddCosmosClient(configuration)
-                .AddCosmosRepositories();
+                .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>();
 
             return services;
         }

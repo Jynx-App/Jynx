@@ -1,8 +1,8 @@
-﻿using Jynx.Api.Models.Requests;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Entities.Auth;
+using Jynx.Abstractions.Services;
+using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
-using Jynx.Common.Abstractions.Services;
-using Jynx.Common.Auth;
-using Jynx.Common.Entities;
 using Jynx.Common.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 

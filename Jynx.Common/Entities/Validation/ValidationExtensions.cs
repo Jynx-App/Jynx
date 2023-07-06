@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jynx.Common.Entities.Validation
