@@ -24,12 +24,15 @@ namespace Jynx.Common.Repositories.Cosmos
         {
             _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
 
-            Database database = cosmosClient.CreateDatabaseIfNotExistsAsync(CosmosOptions.Value.DatabaseName).Result;
+            if (CosmosOptions.Value.CreateContainersIfMissing)
+            {
+                Database database = cosmosClient.CreateDatabaseIfNotExistsAsync(CosmosOptions.Value.DatabaseName).Result;
 
-            database.CreateContainerIfNotExistsAsync(
-                ContainerInfo.Name,
-                $"/{GetPartitionKeyFieldName()}",
-                ContainerInfo.Throughput).Wait();
+                database.CreateContainerIfNotExistsAsync(
+                    ContainerInfo.Name,
+                    $"/{GetPartitionKeyFieldName()}",
+                    ContainerInfo.Throughput).Wait();
+            }
         }
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }

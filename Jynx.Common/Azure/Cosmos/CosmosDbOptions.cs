@@ -9,5 +9,7 @@
         public string Endpoint { get; set; } = "";
 
         public string PrimaryKey { get; set; } = "";
+
+        public bool CreateContainersIfMissing { get; set; }
     }
 }
