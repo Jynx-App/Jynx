@@ -1,1 +1,1 @@
-Jynx is an open source media framework.
+Jynx is an open source social network framework.
