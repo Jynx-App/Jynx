@@ -41,7 +41,7 @@ namespace Jynx.Common.Services
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
 
-            var (isEntityValid, validationErrors) = await IsEntityValidAsync(entity);
+            var (isEntityValid, validationErrors) = await IsValidAsync(entity);
 
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
@@ -56,7 +56,7 @@ namespace Jynx.Common.Services
 
         public virtual async Task<bool> UpdateAsync(TEntity entity)
         {
-            var (isEntityValid, validationErrors) = await IsEntityValidAsync(entity);
+            var (isEntityValid, validationErrors) = await IsValidAsync(entity);
 
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
@@ -89,7 +89,7 @@ namespace Jynx.Common.Services
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
             => source.Patch(target);
 
-        protected async Task<(bool isValid, IEnumerable<string> errorMessages)> IsEntityValidAsync(TEntity entity)
+        public async Task<(bool isValid, IEnumerable<string> errorMessages)> IsValidAsync(TEntity entity)
         {
             var validationResult = await Validator.ValidateAsync(entity);
 
