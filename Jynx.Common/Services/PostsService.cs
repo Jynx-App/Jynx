@@ -1,4 +1,5 @@
-﻿using Jynx.Common.Abstractions.Repositories;
+﻿using FluentValidation;
+using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
 using Microsoft.Extensions.Logging;
@@ -9,8 +10,9 @@ namespace Jynx.Common.Services
     {
         public PostsService(
             IPostsRepository postRepository,
+            IValidator<Post> validator,
             ILogger<PostsService> logger)
-            : base(postRepository, logger)
+            : base(postRepository, validator, logger)
         {
 
         }

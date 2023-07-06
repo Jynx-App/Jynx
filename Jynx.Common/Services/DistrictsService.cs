@@ -1,4 +1,5 @@
-﻿using Jynx.Common.Abstractions.Repositories;
+﻿using FluentValidation;
+using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Entities;
@@ -15,8 +16,9 @@ namespace Jynx.Common.Services
             IDistrictsRepository districtRepository,
             IDistrictUsersService districtUsersService,
             IDistrictUserGroupsService districtUserGroupsService,
+            IValidator<District> validator,
             ILogger<DistrictsService> logger)
-            : base(districtRepository, logger)
+            : base(districtRepository, validator, logger)
         {
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;

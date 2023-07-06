@@ -4,6 +4,7 @@ using Jynx.Common.Auth;
 using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Configuration;
 using Jynx.Common.Entities;
+using Jynx.Common.Entities.Validation;
 using Jynx.Common.Repositories.Cosmos;
 using Jynx.Common.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -43,6 +44,7 @@ namespace Jynx.Common
                 // PolicyProviders
                 .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
                 // Other
+                .AddEntityValidators()
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
                 .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>()
