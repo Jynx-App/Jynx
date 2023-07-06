@@ -19,11 +19,9 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected override CosmosContainerInfo ContainerInfo => new()
         {
-            Name = "Comments"
+            Name = "Comments",
+            PartitionKey = nameof(Comment.PostId)
         };
-
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(Comment.PostId);
 
         public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
         {

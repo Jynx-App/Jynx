@@ -19,10 +19,8 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected override CosmosContainerInfo ContainerInfo => new()
         {
-            Name = "DistrictUserGroups"
+            Name = "DistrictUserGroups",
+            PartitionKey = nameof(DistrictUserGroup.DistrictId)
         };
-
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(DistrictUserGroup.DistrictId);
     }
 }

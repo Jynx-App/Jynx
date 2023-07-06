@@ -12,7 +12,8 @@ namespace Jynx.Common.Entities.Validation
 
         protected virtual void ConfigureRules()
         {
-            RuleSet(ValidationMode.Default, () => {
+            RuleSet(ValidationMode.Default, () =>
+            {
                 RuleFor(x => x.Id)
                     .MaximumLength(80);
             });

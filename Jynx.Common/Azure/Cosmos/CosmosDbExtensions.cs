@@ -3,12 +3,11 @@ using Jynx.Common.DependencyInjection;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace Jynx.Common.Azure.Cosmos
 {
     internal static class CosmosExtensions
     {
-        public static IServiceCollection AddCosmos(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCosmosClient(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .ConfigureByDefaultKey<CosmosOptions>(configuration)
@@ -16,7 +15,7 @@ namespace Jynx.Common.Azure.Cosmos
                 {
                     var options = sp.GetIOptions<CosmosOptions>().Value;
 
-                    return new CosmosClient(options.Endpoint, options.PrimaryKey, new()
+                    var cosmosClient = new CosmosClient(options.Endpoint, options.PrimaryKey, new()
                     {
                         SerializerOptions = new CosmosSerializationOptions
                         {
@@ -24,6 +23,8 @@ namespace Jynx.Common.Azure.Cosmos
                             IgnoreNullValues = true
                         }
                     });
+
+                    return cosmosClient;
                 });
 
             return services;

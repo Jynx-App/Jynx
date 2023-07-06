@@ -19,10 +19,8 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected override CosmosContainerInfo ContainerInfo => new()
         {
-            Name = "Notifications"
+            Name = "Notifications",
+            PartitionKey = nameof(Notification.UserId)
         };
-
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(Notification.UserId);
     }
 }

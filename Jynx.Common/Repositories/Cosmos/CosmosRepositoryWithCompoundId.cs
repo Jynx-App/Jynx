@@ -18,9 +18,6 @@ namespace Jynx.Common.Repositories.Cosmos
         {
         }
 
-        protected override string GetPartitionKeyPropertyName()
-            => "pk";
-
         public override async Task<string> CreateAsync(TEntity entity)
         {
             var partitionKey = GetPartitionKey(entity);

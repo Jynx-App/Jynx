@@ -19,10 +19,8 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected override CosmosContainerInfo ContainerInfo => new()
         {
-            Name = "ApiAppUsers"
+            Name = "ApiAppUsers",
+            PartitionKey = nameof(ApiAppUser.ApiAppId)
         };
-
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(ApiAppUser.ApiAppId);
     }
 }

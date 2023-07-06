@@ -23,15 +23,19 @@ namespace Jynx.Common.Repositories.Cosmos
             : base(logger)
         {
             _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
+
+            Database database = cosmosClient.CreateDatabaseIfNotExistsAsync(CosmosOptions.Value.DatabaseName).Result;
+
+            database.CreateContainerIfNotExistsAsync(
+                ContainerInfo.Name,
+                $"/{GetPartitionKeyFieldName()}",
+                ContainerInfo.Throughput).Wait();
         }
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
 
         protected virtual string GenerateId(TEntity entity)
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
-
-        protected virtual string GetPartitionKeyPropertyName()
-            => nameof(BaseEntity.Id);
 
         public override async Task<string> CreateAsync(TEntity entity)
             => await InternalCreateAsync(entity, null);
@@ -140,9 +144,9 @@ namespace Jynx.Common.Repositories.Cosmos
             => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string;
 
         private PropertyInfo? GetPartitionKeyPropertyInfo()
-            => typeof(TEntity).GetProperty(GetPartitionKeyPropertyName());
+            => typeof(TEntity).GetProperty(ContainerInfo.PartitionKey);
 
         private string GetPartitionKeyFieldName()
-            => JsonNamingPolicy.CamelCase.ConvertName(GetPartitionKeyPropertyName());
+            => JsonNamingPolicy.CamelCase.ConvertName(ContainerInfo.PartitionKey);
     }
 }

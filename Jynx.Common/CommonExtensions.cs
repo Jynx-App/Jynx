@@ -1,5 +1,4 @@
-﻿using Jynx.Common.Abstractions.Repositories;
-using Jynx.Common.Abstractions.Services;
+﻿using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Configuration;
@@ -21,16 +20,6 @@ namespace Jynx.Common
             services
                 // Configuration
                 .ConfigureByDefaultKey<OfficialApiAppOptions>(configuration)
-                // Repositories
-                .AddScoped<IApiAppsRepository, ApiAppsRepository>()
-                .AddScoped<IApiAppUsersRepository, ApiAppUsersRepository>()
-                .AddScoped<ICommentsRepository, CommentsRepository>()
-                .AddScoped<IDistrictsRepository, DistrictsRepository>()
-                .AddScoped<IDistrictUsersRepository, DistrictUsersRepository>()
-                .AddScoped<IDistrictUserGroupsRepository, DistrictUserGroupsRepository>()
-                .AddScoped<INotificationsRepository, NotificationsRepository>()
-                .AddScoped<IPostsRepository, PostsRepository>()
-                .AddScoped<IUsersRepository, UsersRepository>()
                 // Services
                 .AddScoped<IApiAppService, ApiAppService>()
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
@@ -48,7 +37,8 @@ namespace Jynx.Common
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
                 .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>()
-                .AddCosmos(configuration);
+                .AddCosmosClient(configuration)
+                .AddCosmosRepositories();
 
             return services;
         }

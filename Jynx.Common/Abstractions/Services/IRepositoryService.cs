@@ -2,7 +2,8 @@
 
 namespace Jynx.Common.Abstractions.Services
 {
-    public interface IRepositoryService<TEntity> where TEntity : BaseEntity
+    public interface IRepositoryService<TEntity>
+        where TEntity : BaseEntity
     {
         string DefaultNotFoundMessage { get; }
 

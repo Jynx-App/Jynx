@@ -21,11 +21,9 @@ namespace Jynx.Common.Repositories.Cosmos
 
         protected override CosmosContainerInfo ContainerInfo => new()
         {
-            Name = "DistrictUsers"
+            Name = "DistrictUsers",
+            PartitionKey = nameof(DistrictUser.DistrictId)
         };
-
-        protected override string GetPartitionKeyPropertyName()
-            => nameof(DistrictUser.DistrictId);
 
         protected override string GenerateId(DistrictUser entity)
             => throw new GenerateIdException(); // Id should be same as Id of User entity
