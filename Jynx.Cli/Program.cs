@@ -37,7 +37,7 @@ namespace Jynx.Cli
                         .AddCommon(context.Configuration)
                         .AddSingleton<ISystemClock, SystemClock>();
                 });
-            
+
             var app = builder.Build();
 
             app.AddSubCommands<ApiAppCommands>();

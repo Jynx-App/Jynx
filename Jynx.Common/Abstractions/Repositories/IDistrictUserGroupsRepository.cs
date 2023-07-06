@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface IDistrictUserGroupsRepository : IRepository<DistrictUserGroup>
+    internal interface IDistrictUserGroupsRepository : IRepository<DistrictUserGroup>
     {
     }
 }

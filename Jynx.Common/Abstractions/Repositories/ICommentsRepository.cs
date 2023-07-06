@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface ICommentsRepository : IRepository<Comment>
+    internal interface ICommentsRepository : IRepository<Comment>
     {
         Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId);
     }

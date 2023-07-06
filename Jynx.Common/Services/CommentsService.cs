@@ -2,6 +2,7 @@
 using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Services
@@ -11,8 +12,9 @@ namespace Jynx.Common.Services
         public CommentsService(
             ICommentsRepository repository,
             IValidator<Comment> validator,
+            ISystemClock systemClock,
             ILogger<CommentsService> logger)
-            : base(repository, validator, logger)
+            : base(repository, validator, systemClock, logger)
         {
         }
 

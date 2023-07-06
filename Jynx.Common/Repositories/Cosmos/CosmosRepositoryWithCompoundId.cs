@@ -1,7 +1,6 @@
 ﻿using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
 using Jynx.Common.Repositories.Cosmos.Exceptions;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,9 +13,8 @@ namespace Jynx.Common.Repositories.Cosmos
         public CosmosRepositoryWithCompoundId(
             CosmosClient cosmosClient,
             IOptions<CosmosOptions> CosmosOptions,
-            ISystemClock systemClock,
             ILogger logger)
-            : base(cosmosClient, CosmosOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, logger)
         {
         }
 
@@ -40,26 +38,26 @@ namespace Jynx.Common.Repositories.Cosmos
 
             var entity = await InternalGetAsync(id, pk);
 
-            if(entity is not null)
+            if (entity is not null)
                 entity.Id = compoundId;
 
             return entity;
         }
 
-        public override async Task UpdateAsync(TEntity entity)
+        public override async Task<bool> UpdateAsync(TEntity entity)
         {
             var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
 
             entity.Id = id;
 
-            await InternalUpdateAsync(entity, pk);
+            return await InternalUpdateAsync(entity, pk);
         }
 
-        public override async Task RemoveAsync(string compoundId)
+        public override async Task<bool> RemoveAsync(string compoundId)
         {
             var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(compoundId);
 
-            await InternalRemoveAsync(id, pk);
+            return await InternalRemoveAsync(id, pk);
         }
 
         public override async Task<bool> ExistsAsync(string compoundId)

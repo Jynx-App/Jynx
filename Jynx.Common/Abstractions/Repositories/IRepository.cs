@@ -2,13 +2,13 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface IRepository<TEntity>
+    internal interface IRepository<TEntity>
         where TEntity : BaseEntity
     {
         Task<string> CreateAsync(TEntity entity);
-        Task RemoveAsync(string id);
+        Task<bool> RemoveAsync(string id);
         Task<TEntity?> GetAsync(string id);
-        Task UpdateAsync(TEntity entity);
+        Task<bool> UpdateAsync(TEntity entity);
         Task<bool> ExistsAsync(string compoundId);
     }
 }

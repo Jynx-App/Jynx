@@ -1,8 +1,6 @@
 ﻿using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
-using Jynx.Common.Repositories.Cosmos.Exceptions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.WebUtilities;
+using Jynx.Common.Repositories.Exceptions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,19 +13,14 @@ namespace Jynx.Common.Repositories.Cosmos
         where TEntity : BaseEntity
     {
         private readonly Container _container;
-        private readonly ISystemClock _systemClock;
-        private readonly bool _isSoftRemovable;
 
         protected CosmosRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosOptions> CosmosOptions,
-            ISystemClock systemClock,
             ILogger logger)
             : base(logger)
         {
-            _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
             _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
-            _systemClock = systemClock;
         }
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
@@ -35,19 +28,11 @@ namespace Jynx.Common.Repositories.Cosmos
         protected virtual string GetPartitionKeyPropertyName()
             => nameof(BaseEntity.Id);
 
-        protected virtual string GenerateId(TEntity entity)
-            => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
-
         public override async Task<string> CreateAsync(TEntity entity)
             => await InternalCreateAsync(entity, null);
 
         protected async Task<string> InternalCreateAsync(TEntity entity, string? partitionKey)
         {
-            if (string.IsNullOrWhiteSpace(entity.Id))
-                entity.Id = GenerateId(entity);
-
-            entity.Created = _systemClock.UtcNow.Date;
-
             partitionKey ??= GetPartitionKey(entity);
 
             try
@@ -85,10 +70,10 @@ namespace Jynx.Common.Repositories.Cosmos
             }
         }
 
-        public override Task UpdateAsync(TEntity entity)
+        public override Task<bool> UpdateAsync(TEntity entity)
             => InternalUpdateAsync(entity, null);
 
-        protected async Task InternalUpdateAsync(TEntity entity, string? partitionKey)
+        protected async Task<bool> InternalUpdateAsync(TEntity entity, string? partitionKey)
         {
             partitionKey ??= GetPartitionKey(entity);
 
@@ -98,31 +83,19 @@ namespace Jynx.Common.Repositories.Cosmos
             if (!(await InternalExistsAsync(entity.Id, partitionKey)))
                 throw new NotFoundException();
 
-            entity.Edited = _systemClock.UtcNow.Date;
+            var result = await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
 
-            await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
+            return result.StatusCode == HttpStatusCode.OK;
         }
 
-        public override Task RemoveAsync(string id)
+        public override Task<bool> RemoveAsync(string id)
             => InternalRemoveAsync(id, id);
 
-        protected async Task InternalRemoveAsync(string id, string partitionKey)
+        protected async Task<bool> InternalRemoveAsync(string id, string partitionKey)
         {
-            if (_isSoftRemovable)
-            {
-                var entity = await InternalGetAsync(id, partitionKey);
+            var result = await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(partitionKey));
 
-                if (entity is ISoftRemovableEntity softRemovableEntity)
-                {
-                    softRemovableEntity.Removed = _systemClock.UtcNow.Date;
-
-                    await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
-
-                    return;
-                }
-            }
-
-            await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(partitionKey));
+            return result.StatusCode == HttpStatusCode.OK;
         }
 
         public override Task<bool> ExistsAsync(string id)

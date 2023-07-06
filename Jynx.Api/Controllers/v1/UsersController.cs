@@ -11,11 +11,8 @@ using Microsoft.Extensions.Options;
 namespace Jynx.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class UsersController : BaseController
+    public class UsersController : RepositoryServiceController<IUsersService, User>
     {
-        private const string _notFoundMessage = "User not found";
-
-        private readonly IUsersService _usersService;
         private readonly IApiAppUsersService _apiAppUsersService;
         private readonly IOptions<OfficalApiAppOptions> _officalApiAppOptions;
 
@@ -24,9 +21,8 @@ namespace Jynx.Api.Controllers.v1
             IApiAppUsersService apiAppUsersService,
             IOptions<OfficalApiAppOptions> officalApiAppOptions,
             ILogger<UsersController> logger)
-            : base(logger)
+            : base(usersService, logger)
         {
-            _usersService = usersService;
             _apiAppUsersService = apiAppUsersService;
             _officalApiAppOptions = officalApiAppOptions;
         }
@@ -40,7 +36,7 @@ namespace Jynx.Api.Controllers.v1
 
             var user = request.ToEntity();
 
-            user.Id = await _usersService.CreateAsync(user);
+            user.Id = await RepositoryService.CreateAsync(user);
 
             var apiAppUser = new ApiAppUser
             {
@@ -57,10 +53,10 @@ namespace Jynx.Api.Controllers.v1
         [AllowAnonymous]
         public async Task<IActionResult> Read(string username)
         {
-            var entity = await _usersService.GetByUsernameAsync(username);
+            var entity = await RepositoryService.GetByUsernameAsync(username);
 
             if (entity is null)
-                return NotFound(_notFoundMessage);
+                return NotFound(DefaultNotFoundMessage);
 
             var response = new ReadUserResponse(entity);
 
@@ -75,14 +71,14 @@ namespace Jynx.Api.Controllers.v1
 
             var userId = Request.HttpContext.User.GetId()!;
 
-            var entity = await _usersService.GetAsync(userId);
+            var entity = await RepositoryService.GetAsync(userId);
 
             if (entity is null)
-                return NotFound(_notFoundMessage);
+                return NotFound(DefaultNotFoundMessage);
 
-            _usersService.Patch(entity, request);
+            RepositoryService.Patch(entity, request);
 
-            await _usersService.UpdateAsync(entity);
+            await RepositoryService.UpdateAsync(entity);
 
             return Ok();
         }

@@ -2,8 +2,9 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface IUsersRepository : IRepository<User>
+    internal interface IUsersRepository : IRepository<User>
     {
         Task<User?> GetByUsernameAsync(string username);
+        Task<bool> IsUsernameUsed(string username);
     }
 }

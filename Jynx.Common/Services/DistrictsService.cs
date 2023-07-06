@@ -3,6 +3,8 @@ using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Entities;
+using Jynx.Common.Services.Exceptions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Services
@@ -17,12 +19,16 @@ namespace Jynx.Common.Services
             IDistrictUsersService districtUsersService,
             IDistrictUserGroupsService districtUserGroupsService,
             IValidator<District> validator,
+            ISystemClock systemClock,
             ILogger<DistrictsService> logger)
-            : base(districtRepository, validator, logger)
+            : base(districtRepository, validator, systemClock, logger)
         {
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;
         }
+
+        protected override string GenerateId(District entity)
+            => throw new GenerateIdException();
 
         public async Task<bool> IsUserAllowedToPostAndCommentAsync(string districtId, string userId)
         {

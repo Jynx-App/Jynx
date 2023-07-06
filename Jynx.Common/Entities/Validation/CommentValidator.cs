@@ -19,11 +19,6 @@ namespace Jynx.Common.Entities.Validation
                 .MaximumLength(80);
 
             RuleFor(x => x.ParentCommentId)
-                .NotEmpty()
-                .MaximumLength(80);
-
-            RuleFor(x => x.ParentCommentId)
-                .NotEmpty()
                 .MaximumLength(80);
 
             RuleFor(x => x.Body)

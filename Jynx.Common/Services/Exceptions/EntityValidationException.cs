@@ -13,5 +13,7 @@ namespace Jynx.Common.Services.Exceptions
         }
 
         public IEnumerable<string> Errors { get; }
+
+        public override string? SafeMessage => string.Join('\n', Errors);
     }
 }

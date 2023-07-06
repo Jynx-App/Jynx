@@ -1,7 +1,6 @@
 ﻿using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Azure.Cosmos;
 using Jynx.Common.Entities;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,9 +12,8 @@ namespace Jynx.Common.Repositories.Cosmos
         public ApiAppsRepository(
             CosmosClient cosmosClient,
             IOptions<CosmosOptions> CosmosOptions,
-            ISystemClock systemClock,
             ILogger<ApiAppsRepository> logger)
-            : base(cosmosClient, CosmosOptions, systemClock, logger)
+            : base(cosmosClient, CosmosOptions, logger)
         {
         }
 

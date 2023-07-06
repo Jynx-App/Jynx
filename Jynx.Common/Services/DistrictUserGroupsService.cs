@@ -2,6 +2,7 @@
 using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Services
@@ -11,8 +12,9 @@ namespace Jynx.Common.Services
         public DistrictUserGroupsService(
             IDistrictUserGroupsRepository repository,
             IValidator<DistrictUserGroup> validator,
+            ISystemClock systemClock,
             ILogger<DistrictUserGroupsService> logger)
-            : base(repository, validator, logger)
+            : base(repository, validator, systemClock, logger)
         {
         }
     }

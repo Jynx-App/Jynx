@@ -2,6 +2,7 @@
 using Jynx.Common.Abstractions.Repositories;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
 namespace Jynx.Common.Services
@@ -11,8 +12,9 @@ namespace Jynx.Common.Services
         public PostsService(
             IPostsRepository postRepository,
             IValidator<Post> validator,
+            ISystemClock systemClock,
             ILogger<PostsService> logger)
-            : base(postRepository, validator, logger)
+            : base(postRepository, validator, systemClock, logger)
         {
 
         }

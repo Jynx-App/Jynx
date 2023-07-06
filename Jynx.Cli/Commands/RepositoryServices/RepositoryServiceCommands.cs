@@ -1,6 +1,7 @@
 ﻿using ConsoleAppFramework;
 using Jynx.Common.Abstractions.Services;
 using Jynx.Common.Entities;
+using Jynx.Common.Services.Exceptions;
 using Newtonsoft.Json;
 
 namespace Jynx.Cli.Commands.RepositoryServices
@@ -19,18 +20,32 @@ namespace Jynx.Cli.Commands.RepositoryServices
         [Description("Creates and adds an Entity to the database")]
         public virtual async Task Create(TEntity entity)
         {
-            var id = await Service.CreateAsync(entity);
+            try
+            {
+                var id = await Service.CreateAsync(entity);
 
-            Console.WriteLine($"{entity.GetType().Name} Created!");
-            Console.WriteLine($"Id={id}");
+                Console.WriteLine($"{entity.GetType().Name} Created!");
+                Console.WriteLine($"Id={id}");
+            }
+            catch (EntityValidationException e)
+            {
+                RepositoryServiceCommands<TService, TEntity>.HandleEntityValidationException(e);
+            }
         }
 
         [Description("Updates an Entity in the database")]
         public virtual async Task Update(TEntity entity)
         {
-            await Service.UpdateAsync(entity);
+            try
+            {
+                await Service.UpdateAsync(entity);
 
-            Console.WriteLine($"{entity.GetType().Name} Updated!");
+                Console.WriteLine($"{entity.GetType().Name} Updated!");
+            }
+            catch (EntityValidationException e)
+            {
+                RepositoryServiceCommands<TService, TEntity>.HandleEntityValidationException(e);
+            }
         }
 
         [Description("Gets an Entity from the database")]
@@ -39,6 +54,12 @@ namespace Jynx.Cli.Commands.RepositoryServices
             var entity = await Service.GetAsync(id);
 
             Console.WriteLine(JsonConvert.SerializeObject(entity, Formatting.Indented));
+        }
+
+        private static void HandleEntityValidationException(EntityValidationException e)
+        {
+            Console.WriteLine("Errors:");
+            ConsoleEx.WriteLines(e.Errors, (value, i) => $"{i}: ");
         }
     }
 }

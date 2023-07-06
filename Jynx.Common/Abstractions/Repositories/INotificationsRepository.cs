@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface INotificationsRepository : IRepository<Notification>
+    internal interface INotificationsRepository : IRepository<Notification>
     {
     }
 }

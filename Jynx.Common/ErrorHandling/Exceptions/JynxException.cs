@@ -11,7 +11,7 @@ namespace Jynx.Common.ErrorHandling.Exceptions
 
         public JynxExceptionSeverity Severity { get; set; } = JynxExceptionSeverity.Normal;
 
-        public string? SafeMessage { get; set; }
+        public virtual string? SafeMessage { get; }
 
         public bool HasSafeMessage => !string.IsNullOrWhiteSpace(SafeMessage);
 

@@ -25,6 +25,10 @@ namespace Jynx.Api
             builder.Logging.ClearProviders();
 
             builder.Services
+                .Configure<ApiBehaviorOptions>(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                })
                 .AddApiVersioning(options =>
                 {
                     options.AssumeDefaultVersionWhenUnspecified = true;

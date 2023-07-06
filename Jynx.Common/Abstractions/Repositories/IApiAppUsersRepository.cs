@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface IApiAppUsersRepository : IRepository<ApiAppUser>
+    internal interface IApiAppUsersRepository : IRepository<ApiAppUser>
     {
     }
 }

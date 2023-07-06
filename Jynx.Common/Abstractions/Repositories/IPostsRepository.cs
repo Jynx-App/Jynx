@@ -2,7 +2,7 @@
 
 namespace Jynx.Common.Abstractions.Repositories
 {
-    public interface IPostsRepository : IRepository<Post>
+    internal interface IPostsRepository : IRepository<Post>
     {
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Jynx.Common.ErrorHandling.Exceptions;
 using System.Net;
 
-namespace Jynx.Common.Repositories.Cosmos.Exceptions
+namespace Jynx.Common.Repositories.Exceptions
 {
     internal class DuplicateEntityException : JynxException
     {
