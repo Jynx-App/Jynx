@@ -29,7 +29,7 @@ namespace Jynx.Cli.Commands.RepositoryServices
             }
             catch (EntityValidationException e)
             {
-                RepositoryServiceCommands<TService, TEntity>.HandleEntityValidationException(e);
+                HandleEntityValidationException(e);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Jynx.Cli.Commands.RepositoryServices
             }
             catch (EntityValidationException e)
             {
-                RepositoryServiceCommands<TService, TEntity>.HandleEntityValidationException(e);
+                HandleEntityValidationException(e);
             }
         }
 

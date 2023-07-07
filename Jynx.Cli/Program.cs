@@ -1,5 +1,6 @@
 ﻿using ConsoleAppFramework;
 using Jynx.Abstractions.Entities;
+using Jynx.Cli.Commands;
 using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
 using Jynx.Data.Cosmos;
@@ -42,6 +43,7 @@ namespace Jynx.Cli
 
             var app = builder.Build();
 
+            app.AddSubCommands<SetupCommands>();
             app.AddSubCommands<ApiAppCommands>();
             app.AddSubCommands<ApiAppUserCommands>();
             app.AddSubCommands<CommentCommands>();
