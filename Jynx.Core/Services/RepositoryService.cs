@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Jynx.Core.Services
 {
-    internal abstract class RepositoryService<TRepository, TEntity> : BaseService, IRepositoryService<TEntity>
+    internal abstract class RepositoryService<TRepository, TEntity> : BaseService, IEntityService<TEntity>
         where TRepository : IRepository<TEntity>
         where TEntity : BaseEntity
     {

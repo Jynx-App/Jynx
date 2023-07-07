@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface INotificationsService : IRepositoryService<Notification>
+    public interface INotificationsService : IEntityService<Notification>
     {
     }
 }

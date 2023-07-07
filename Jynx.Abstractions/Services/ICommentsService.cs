@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface ICommentsService : IRepositoryService<Comment>
+    public interface ICommentsService : IEntityService<Comment>
     {
         Task<IEnumerable<Comment>> GetByPostIdAsync(string postId);
     }

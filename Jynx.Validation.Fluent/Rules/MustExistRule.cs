@@ -14,7 +14,7 @@ namespace Jynx.Validation.Fluent.Rules
         }
 
         public IRuleBuilder<T, string?> Using<TRepositoryService>(IServiceProvider services)
-            where TRepositoryService : IRepositoryService
+            where TRepositoryService : IEntityService
         {
             _ruleBuilder.MustAsync(async (v, c) =>
             {

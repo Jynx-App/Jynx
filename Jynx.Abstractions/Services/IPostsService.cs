@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IPostsService : IRepositoryService<Post>
+    public interface IPostsService : IEntityService<Post>
     {
         Task<bool> ClearVoteAsync(string postId, string userId);
         Task<bool> DownVoteAsync(string postId, string userId);

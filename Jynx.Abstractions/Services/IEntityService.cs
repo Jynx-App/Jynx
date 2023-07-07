@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IRepositoryService<TEntity> : IRepositoryService
+    public interface IEntityService<TEntity> : IEntityService
         where TEntity : BaseEntity
     {
         Task<string> CreateAsync(TEntity entity);
@@ -12,7 +12,7 @@ namespace Jynx.Abstractions.Services
         Task<string> UpsertAsync(TEntity entity);
     }
 
-    public interface IRepositoryService
+    public interface IEntityService
     {
         string DefaultNotFoundMessage { get; }
 

@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IApiAppUsersService : IRepositoryService<ApiAppUser>
+    public interface IApiAppUsersService : IEntityService<ApiAppUser>
     {
     }
 }

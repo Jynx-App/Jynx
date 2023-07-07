@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IDistrictUsersService : IRepositoryService<DistrictUser>
+    public interface IDistrictUsersService : IEntityService<DistrictUser>
     {
         Task<DistrictUser?> GetByDistrictIdAndUserId(string districtId, string userId);
     }

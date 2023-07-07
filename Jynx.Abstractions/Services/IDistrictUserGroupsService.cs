@@ -2,7 +2,7 @@
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IDistrictUserGroupsService : IRepositoryService<DistrictUserGroup>
+    public interface IDistrictUserGroupsService : IEntityService<DistrictUserGroup>
     {
     }
 }

@@ -3,7 +3,7 @@ using Jynx.Abstractions.Entities.Auth;
 
 namespace Jynx.Abstractions.Services
 {
-    public interface IDistrictsService : IRepositoryService<District>
+    public interface IDistrictsService : IEntityService<District>
     {
         string DefaultNotAllowedToPostMessage { get; }
         string DefaultNotAllowedToCommentMessage { get; }
