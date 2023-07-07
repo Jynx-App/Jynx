@@ -10,7 +10,7 @@ namespace Jynx.Api.Models.Responses
             Name = apiApp.Name;
             PublicKey = apiApp.PublicKey;
             PrivateKey = apiApp.PrivateKey;
-            CallbackUrl = apiApp.CallbackUrl;            
+            CallbackUrl = apiApp.CallbackUrl;
         }
 
         public string Id { get; set; } = "";

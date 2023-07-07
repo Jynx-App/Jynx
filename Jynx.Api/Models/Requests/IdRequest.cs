@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Jynx.Api.Models.Requests
+﻿namespace Jynx.Api.Models.Requests
 {
     public class IdRequest
     {

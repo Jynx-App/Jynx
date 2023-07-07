@@ -3,7 +3,6 @@ using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jynx.Api.Controllers.v1

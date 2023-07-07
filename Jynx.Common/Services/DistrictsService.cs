@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
-using Jynx.Abstractions.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
-using Jynx.Abstractions.Entities.Auth;
 
 namespace Jynx.Common.Services
 {

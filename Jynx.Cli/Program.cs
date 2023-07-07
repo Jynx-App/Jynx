@@ -1,14 +1,14 @@
 ﻿using ConsoleAppFramework;
+using Jynx.Abstractions.Entities;
 using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
-using Jynx.Abstractions.Entities;
+using Jynx.Data.Cosmos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Diagnostics;
-using Jynx.Data.Cosmos;
 
 namespace Jynx.Cli
 {

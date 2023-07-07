@@ -1,6 +1,6 @@
 ﻿using ConsoleAppFramework;
-using Jynx.Abstractions.Services;
 using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 
 namespace Jynx.Cli.Commands.RepositoryServices
 {
