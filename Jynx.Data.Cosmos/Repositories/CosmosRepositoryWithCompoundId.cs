@@ -1,7 +1,5 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Data.Cosmos.Repositories.Exceptions;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -78,7 +76,7 @@ namespace Jynx.Data.Cosmos.Repositories
         {
             string pk;
 
-            if(IsCompoundId(entity.Id!))
+            if (IsCompoundId(entity.Id!))
             {
                 (var id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
 

@@ -42,10 +42,10 @@ namespace Jynx.Core.Services
 
             var post = await GetAsync(postId);
 
-            if(post is null)
+            if (post is null)
                 return false;
 
-            if(postVote.Up)
+            if (postVote.Up)
             {
                 post.UpVotes--;
             }
