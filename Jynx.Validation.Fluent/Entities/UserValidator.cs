@@ -3,7 +3,7 @@ using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
     internal class UserValidator : BaseValidator<User>
     {

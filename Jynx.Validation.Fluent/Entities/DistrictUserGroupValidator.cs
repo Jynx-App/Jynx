@@ -2,11 +2,11 @@
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
-    internal class DistrictUserValidator : BaseValidator<DistrictUser>
+    internal class DistrictUserGroupValidator : BaseValidator<DistrictUserGroup>
     {
-        public DistrictUserValidator(IServiceProvider services)
+        public DistrictUserGroupValidator(IServiceProvider services)
             : base(services)
         {
         }
@@ -17,23 +17,21 @@ namespace Jynx.Common.Entities.Validation
 
             RuleSet(ValidationMode.Default, () =>
             {
-                RuleFor(x => x.Id)
-                    .MustExist().Using<IUsersService>(Services);
-
                 RuleFor(x => x.DistrictId)
                     .NotEmpty()
                     .MaximumLength(DefaultIdMaxLength)
                     .MustExist().Using<IDistrictsService>(Services);
 
-                RuleFor(x => x.DistrictUserGroupId)
-                    .MaximumLength(DefaultIdMaxLength)
-                    .MustExist().Using<IDistrictUserGroupsService>(Services);
+                RuleFor(x => x.Name)
+                    .NotEmpty()
+                    .MinimumLength(3)
+                    .MaximumLength(32);
+
+                RuleFor(x => x.Description)
+                    .MaximumLength(200);
 
                 RuleForEach(x => x.ModerationPermissions)
                     .IsInEnum();
-
-                RuleFor(x => x.BanReason)
-                    .MaximumLength(200);
             });
         }
     }

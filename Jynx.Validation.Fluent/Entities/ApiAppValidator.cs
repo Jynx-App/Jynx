@@ -2,11 +2,11 @@
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
-    internal class NotificationValidator : BaseValidator<Notification>
+    internal class ApiAppValidator : BaseValidator<ApiApp>
     {
-        public NotificationValidator(IServiceProvider services)
+        public ApiAppValidator(IServiceProvider services)
             : base(services)
         {
         }
@@ -22,14 +22,22 @@ namespace Jynx.Common.Entities.Validation
                     .MaximumLength(DefaultIdMaxLength)
                     .MustExist().Using<IUsersService>(Services);
 
-                RuleFor(x => x.Title)
+                RuleFor(x => x.Name)
                     .NotEmpty()
-                    .MinimumLength(3)
                     .MaximumLength(100);
 
-                RuleFor(x => x.Body)
+                RuleFor(x => x.PublicKey)
                     .NotEmpty()
-                    .MaximumLength(10000);
+                    .MaximumLength(22);
+
+                RuleFor(x => x.PrivateKey)
+                    .NotEmpty()
+                    .MaximumLength(22);
+
+                RuleFor(x => x.CallbackUrl)
+                    .NotEmpty()
+                    .MaximumLength(2000)
+                    .Url();
             });
         }
     }

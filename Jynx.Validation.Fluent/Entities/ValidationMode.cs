@@ -1,4 +1,4 @@
-﻿namespace Jynx.Common.Entities.Validation
+﻿namespace Jynx.Validation.Fluent.Entities
 {
     public enum ValidationMode
     {

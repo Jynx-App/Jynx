@@ -2,7 +2,7 @@
 using Jynx.Abstractions.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jynx.Common.Validation.Rules
+namespace Jynx.Validation.Fluent.Rules
 {
     public class MustExistRule<T>
     {

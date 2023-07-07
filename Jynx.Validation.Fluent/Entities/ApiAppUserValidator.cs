@@ -2,7 +2,7 @@
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
     internal class ApiAppUserValidator : BaseValidator<ApiAppUser>
     {

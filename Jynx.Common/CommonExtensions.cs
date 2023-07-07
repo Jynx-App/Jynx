@@ -1,7 +1,4 @@
-﻿using Jynx.Abstractions.Entities;
-using Jynx.Common.Entities.Validation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jynx.Common
@@ -10,11 +7,7 @@ namespace Jynx.Common
     {
         public static IServiceCollection AddCommon(this IServiceCollection services, IConfiguration configuration)
         {
-            services
-                // Other
-                .AddEntityValidators()
-                .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
-                .AddHttpContextAccessor();
+            // Empty
 
             return services;
         }

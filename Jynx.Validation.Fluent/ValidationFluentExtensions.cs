@@ -1,13 +1,14 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
-using Jynx.Common.Validation.Rules;
+using Jynx.Validation.Fluent.Entities;
+using Jynx.Validation.Fluent.Rules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent
 {
-    internal static class ValidationExtensions
+    public static class ValidationFluentExtensions
     {
-        public static IServiceCollection AddEntityValidators(this IServiceCollection services)
+        public static IServiceCollection AddFluentValidators(this IServiceCollection services)
         {
             services
                 .AddScoped<IValidator<ApiApp>, ApiAppValidator>()

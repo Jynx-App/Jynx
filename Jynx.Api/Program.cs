@@ -6,6 +6,7 @@ using Jynx.Common.AspNetCore.ErrorHandling;
 using Jynx.Common.AspNetCore.Logging;
 using Jynx.Core;
 using Jynx.Data.Cosmos;
+using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -52,6 +53,7 @@ namespace Jynx.Api
                 .AddCommon(builder.Configuration)
                 .AddCore(builder.Configuration)
                 .AddCosmos(builder.Configuration)
+                .AddFluentValidators()
                 // PolicyProviders
                 .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
                 // Other

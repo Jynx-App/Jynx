@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
     internal class DistrictValidator : BaseValidator<District>
     {

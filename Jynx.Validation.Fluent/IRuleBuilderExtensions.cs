@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Jynx.Common.Validation
+namespace Jynx.Validation.Fluent
 {
     internal static class IRuleBuilderExtensions
     {

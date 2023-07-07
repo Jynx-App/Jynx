@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
-using Jynx.Common.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jynx.Common.Entities.Validation
+namespace Jynx.Validation.Fluent.Entities
 {
     internal class PostValidator : BaseValidator<Post>
     {

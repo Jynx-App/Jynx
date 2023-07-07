@@ -3,7 +3,7 @@ using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
 using Jynx.Abstractions.Services.Exceptions;
-using Jynx.Common.Entities.Validation;
+using Jynx.Validation.Fluent.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
