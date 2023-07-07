@@ -19,6 +19,7 @@ namespace Jynx.Api.Models.Responses
             UpVotes = post.UpVotes;
             DownVotes = post.DownVotes;
             TotalVotes = post.TotalVotes;
+            Score = post.Score;
         }
 
         public string Id { get; set; } = "";
@@ -46,5 +47,7 @@ namespace Jynx.Api.Models.Responses
         public int DownVotes { get; set; }
 
         public int TotalVotes { get; set; }
+
+        public int Score { get; set; }
     }
 }
