@@ -12,6 +12,6 @@ namespace Jynx.Abstractions.Services
         Task<TEntity?> GetAsync(string id);
         Task<bool> UpdateAsync(TEntity entity);
         void Patch(TEntity target, ICanPatch<TEntity> source);
-        void ExistsAsync(string id);
+        Task<bool> ExistsAsync(string id);
     }
 }

@@ -84,7 +84,7 @@ namespace Jynx.Common.Services
             return await Repository.RemoveAsync(id);
         }
 
-        public virtual void ExistsAsync(string id)
+        public virtual Task<bool> ExistsAsync(string id)
             => Repository.ExistsAsync(id);
 
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
