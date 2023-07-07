@@ -6,6 +6,6 @@
 
         public string PostId { get; set; } = "";
 
-        public bool Negative { get; set; }
+        public bool Up { get; set; }
     }
 }

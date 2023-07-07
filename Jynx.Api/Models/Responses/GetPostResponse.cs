@@ -16,6 +16,9 @@ namespace Jynx.Api.Models.Responses
             Body = post.Body;
             Url = post.Url;
             CommentsLocked = post.CommentsLocked;
+            UpVotes = post.UpVotes;
+            DownVotes = post.DownVotes;
+            TotalVotes = post.TotalVotes;
         }
 
         public string Id { get; set; } = "";
@@ -37,5 +40,11 @@ namespace Jynx.Api.Models.Responses
         public string? Url { get; set; }
 
         public bool CommentsLocked { get; set; }
+
+        public int UpVotes { get; set; }
+
+        public int DownVotes { get; set; }
+
+        public int TotalVotes { get; set; }
     }
 }

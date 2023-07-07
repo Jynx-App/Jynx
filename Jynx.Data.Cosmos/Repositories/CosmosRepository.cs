@@ -44,14 +44,12 @@ namespace Jynx.Data.Cosmos.Repositories
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
         public virtual async Task<string> CreateAsync(TEntity entity)
-            => await InternalCreateAsync(entity, null);
+            => await InternalCreateAsync(entity, GetPartitionKey(entity));
 
-        protected async Task<string> InternalCreateAsync(TEntity entity, string? partitionKey)
+        protected async Task<string> InternalCreateAsync(TEntity entity, string partitionKey)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
-
-            partitionKey ??= GetPartitionKey(entity);
 
             try
             {
@@ -89,14 +87,12 @@ namespace Jynx.Data.Cosmos.Repositories
         }
 
         public virtual Task<bool> UpdateAsync(TEntity entity)
-            => InternalUpdateAsync(entity, null);
+            => InternalUpdateAsync(entity, GetPartitionKey(entity));
 
-        protected async Task<bool> InternalUpdateAsync(TEntity entity, string? partitionKey)
+        protected async Task<bool> InternalUpdateAsync(TEntity entity, string partitionKey)
         {
             try
             {
-                partitionKey ??= GetPartitionKey(entity);
-
                 if (string.IsNullOrWhiteSpace(entity.Id))
                     throw new InvalidIdException();
 
@@ -106,7 +102,7 @@ namespace Jynx.Data.Cosmos.Repositories
             }
             catch (CosmosException ex)
             {
-                if(ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == HttpStatusCode.NotFound)
                     throw new NotFoundException(entity.GetType().Name, ex);
 
                 Logger.LogError(ex, null);
@@ -156,14 +152,12 @@ namespace Jynx.Data.Cosmos.Repositories
         }
 
         public virtual async Task<string> UpsertAsync(TEntity entity)
-            => await InternalUpsertAsync(entity, null);
+            => await InternalUpsertAsync(entity, GetPartitionKey(entity));
 
-        protected async Task<string> InternalUpsertAsync(TEntity entity, string? partitionKey)
+        protected async Task<string> InternalUpsertAsync(TEntity entity, string partitionKey)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
-
-            partitionKey ??= GetPartitionKey(entity);
 
             var result = await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
 

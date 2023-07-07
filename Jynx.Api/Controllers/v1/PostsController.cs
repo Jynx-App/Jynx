@@ -87,11 +87,31 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> Vote([FromBody] PostVoteRequest request)
+        public async Task<IActionResult> UpVote([FromBody] IdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
-            _ = await _postsService.VoteAsync(request.PostId, userId, request.Negative);
+            _ = await _postsService.UpVoteAsync(request.Id, userId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> DownVote([FromBody] IdRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _postsService.DownVoteAsync(request.Id, userId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ClearVote([FromBody] IdRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _postsService.ClearVoteAsync(request.Id, userId);
 
             return Ok();
         }

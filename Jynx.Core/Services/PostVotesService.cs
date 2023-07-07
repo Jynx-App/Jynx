@@ -18,6 +18,9 @@ namespace Jynx.Core.Services
         {
         }
 
+        public Task<bool> RemoveByPostIdAndUserIdAsync(string postId, string userId)
+            => Repository.RemoveByPostIdAndUserIdAsync(postId, userId);
+
         public Task<PostVote?> GetByPostIdAndUserIdAsync(string postId, string userId)
             => Repository.GetByPostIdAndUserIdAsync(postId, userId);
     }
