@@ -118,7 +118,7 @@ namespace Jynx.Data.Cosmos.Repositories
         {
             var result = await _container.DeleteItemAsync<TEntity>(id, new PartitionKey(partitionKey));
 
-            return result.StatusCode == HttpStatusCode.OK;
+            return result.StatusCode == HttpStatusCode.NoContent;
         }
 
         public virtual Task<bool> ExistsAsync(string id)
