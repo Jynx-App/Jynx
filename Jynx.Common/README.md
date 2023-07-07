@@ -1,0 +1,1 @@
+This project contains code that is share between all the other projects such as general ExtensionMethods and Utility classes
