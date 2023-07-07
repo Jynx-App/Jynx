@@ -2,6 +2,6 @@
 {
     public class GetCommentsByPostIdResponse
     {
-        public IEnumerable<ReadCommentResponse> Comments { get; set; } = Array.Empty<ReadCommentResponse>();
+        public IEnumerable<GetCommentResponse> Comments { get; set; } = Array.Empty<GetCommentResponse>();
     }
 }

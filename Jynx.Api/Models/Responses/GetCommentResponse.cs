@@ -2,9 +2,9 @@
 
 namespace Jynx.Api.Models.Responses
 {
-    public class ReadCommentResponse
+    public class GetCommentResponse
     {
-        public ReadCommentResponse(Comment post)
+        public GetCommentResponse(Comment post)
         {
             Id = post.Id ?? "";
             Created = post.Created ?? DateTime.MinValue;

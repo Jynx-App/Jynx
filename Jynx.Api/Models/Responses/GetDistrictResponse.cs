@@ -2,9 +2,9 @@
 
 namespace Jynx.Api.Models.Responses
 {
-    public class ReadDistrictResponse
+    public class GetDistrictResponse
     {
-        public ReadDistrictResponse(District district)
+        public GetDistrictResponse(District district)
         {
             Id = district.Id!;
             Description = district.Description;

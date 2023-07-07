@@ -57,7 +57,7 @@ namespace Jynx.Api.Controllers.v1
             if (entity is null)
                 return NotFound(_usersService.DefaultNotFoundMessage);
 
-            var response = new ReadUserResponse(entity);
+            var response = new GetUserResponse(entity);
 
             return Ok(response);
         }

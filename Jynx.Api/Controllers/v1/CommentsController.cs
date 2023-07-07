@@ -60,7 +60,7 @@ namespace Jynx.Api.Controllers.v1
             if (entity is null)
                 return NotFound(_commentsService.DefaultNotFoundMessage);
 
-            var response = new ReadCommentResponse(entity);
+            var response = new GetCommentResponse(entity);
 
             return Ok(response);
         }
@@ -73,7 +73,7 @@ namespace Jynx.Api.Controllers.v1
 
             var response = new GetCommentsByPostIdResponse
             {
-                Comments = entities.Select(e => new ReadCommentResponse(e))
+                Comments = entities.Select(e => new GetCommentResponse(e))
             };
 
             return Ok(response);

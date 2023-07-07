@@ -2,9 +2,9 @@
 
 namespace Jynx.Api.Models.Responses
 {
-    public class ReadUserResponse
+    public class GetUserResponse
     {
-        public ReadUserResponse(User user)
+        public GetUserResponse(User user)
         {
             Username = user.Username;
             Created = user.Created ?? DateTime.MinValue;

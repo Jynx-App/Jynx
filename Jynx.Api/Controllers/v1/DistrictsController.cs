@@ -53,7 +53,7 @@ namespace Jynx.Api.Controllers.v1
             if (entity is null)
                 return NotFound(_districtsService.DefaultNotFoundMessage);
 
-            var response = new ReadDistrictResponse(entity);
+            var response = new GetDistrictResponse(entity);
 
             return Ok(response);
         }

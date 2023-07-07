@@ -50,7 +50,7 @@ namespace Jynx.Api.Controllers.v1
             if (entity is null)
                 return NotFound(_postsService.DefaultNotFoundMessage);
 
-            var response = new ReadPostResponse(entity);
+            var response = new GetPostResponse(entity);
 
             return Ok(response);
         }
