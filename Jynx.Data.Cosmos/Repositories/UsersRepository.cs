@@ -34,14 +34,14 @@ namespace Jynx.Data.Cosmos.Repositories
             return results.FirstOrDefault();
         }
 
-        public async Task<bool> IsUsernameUsed(string username)
+        public async Task<bool> IsUsernameUnique(string username)
         {
-            var query = new QueryDefinition("SELECT id FROM c WHERE c.username = @username")
+            var query = new QueryDefinition("SELECT c.id FROM c WHERE c.username = @username")
                 .WithParameter("@username", username);
 
             var results = await ExecuteQueryAsync(query);
 
-            return results.Any();
+            return !results.Any();
         }
     }
 }

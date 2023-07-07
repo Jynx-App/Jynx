@@ -1,8 +1,8 @@
-﻿using FluentValidation;
-using Jynx.Abstractions.Entities;
+﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
+using Jynx.Common.Entities.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -20,10 +20,9 @@ namespace Jynx.Common.Services
             IDistrictsRepository districtRepository,
             IDistrictUsersService districtUsersService,
             IDistrictUserGroupsService districtUserGroupsService,
-            IValidator<District> validator,
             ISystemClock systemClock,
             ILogger<DistrictsService> logger)
-            : base(districtRepository, validator, systemClock, logger)
+            : base(districtRepository, new DistrictValidator(), systemClock, logger)
         {
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;

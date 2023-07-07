@@ -1,7 +1,7 @@
-﻿using FluentValidation;
-using Jynx.Abstractions.Entities;
+﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
+using Jynx.Common.Entities.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
@@ -12,10 +12,9 @@ namespace Jynx.Common.Services
     {
         public ApiAppService(
             IApiAppsRepository repository,
-            IValidator<ApiApp> validator,
             ISystemClock systemClock,
             ILogger<ApiAppService> logger)
-            : base(repository, validator, systemClock, logger)
+            : base(repository, new ApiAppValidator(), systemClock, logger)
         {
         }
 

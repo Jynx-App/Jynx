@@ -42,6 +42,11 @@ namespace Jynx.Common.Services
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
 
+            return await InternalCreateAsync(entity);
+        }
+
+        protected async Task<string> InternalCreateAsync(TEntity entity)
+        {
             entity.Created = SystemClock.UtcNow.Date;
 
             return await Repository.CreateAsync(entity);

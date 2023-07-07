@@ -2,7 +2,6 @@
 using Jynx.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Configuration;
-using Jynx.Common.Entities.Validation;
 using Jynx.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,7 +30,6 @@ namespace Jynx.Common
                 // PolicyProviders
                 .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
                 // Other
-                .AddEntityValidators()
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
                 .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>();

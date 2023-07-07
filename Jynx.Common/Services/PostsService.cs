@@ -1,7 +1,7 @@
-﻿using FluentValidation;
-using Jynx.Abstractions.Entities;
+﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
+using Jynx.Common.Entities.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -13,10 +13,9 @@ namespace Jynx.Common.Services
 
         public PostsService(
             IPostsRepository postRepository,
-            IValidator<Post> validator,
             ISystemClock systemClock,
             ILogger<PostsService> logger)
-            : base(postRepository, validator, systemClock, logger)
+            : base(postRepository, new PostValidator(), systemClock, logger)
         {
 
         }

@@ -5,6 +5,6 @@ namespace Jynx.Abstractions.Repositories
     public interface IUsersRepository : IRepository<User>
     {
         Task<User?> GetByUsernameAsync(string username);
-        Task<bool> IsUsernameUsed(string username);
+        Task<bool> IsUsernameUnique(string username);
     }
 }
