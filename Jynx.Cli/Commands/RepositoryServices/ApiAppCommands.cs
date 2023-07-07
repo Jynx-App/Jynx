@@ -5,9 +5,9 @@ using Jynx.Abstractions.Entities;
 namespace Jynx.Cli.Commands.RepositoryServices
 {
     [Command("api-apps")]
-    internal class ApiAppCommands : RepositoryServiceCommands<IApiAppService, ApiApp>, IDisposable
+    internal class ApiAppCommands : RepositoryServiceCommands<IApiAppsService, ApiApp>, IDisposable
     {
-        public ApiAppCommands(IApiAppService repository)
+        public ApiAppCommands(IApiAppsService repository)
             : base(repository)
         {
         }
