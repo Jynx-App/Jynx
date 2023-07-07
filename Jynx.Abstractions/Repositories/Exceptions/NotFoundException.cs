@@ -5,8 +5,8 @@ namespace Jynx.Abstractions.Repositories.Exceptions
 {
     public class NotFoundException : JynxException
     {
-        public NotFoundException(string name)
-            : base($"{name} not found", null, null)
+        public NotFoundException(string name, Exception? innerException = null)
+            : base($"{name} not found", null, innerException)
         {
             StatusCode = HttpStatusCode.NotFound;
         }

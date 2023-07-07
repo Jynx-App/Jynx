@@ -93,17 +93,26 @@ namespace Jynx.Data.Cosmos.Repositories
 
         protected async Task<bool> InternalUpdateAsync(TEntity entity, string? partitionKey)
         {
-            partitionKey ??= GetPartitionKey(entity);
+            try
+            {
+                partitionKey ??= GetPartitionKey(entity);
 
-            if (string.IsNullOrWhiteSpace(entity.Id))
-                throw new InvalidIdException();
+                if (string.IsNullOrWhiteSpace(entity.Id))
+                    throw new InvalidIdException();
 
-            if (!await InternalExistsAsync(entity.Id, partitionKey))
-                throw new NotFoundException(entity.GetType().Name);
+                var result = await _container.ReplaceItemAsync(entity, entity.Id, new PartitionKey(partitionKey));
 
-            var result = await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
+                return result.StatusCode == HttpStatusCode.OK;
+            }
+            catch (CosmosException ex)
+            {
+                if(ex.StatusCode == HttpStatusCode.NotFound)
+                    throw new NotFoundException(entity.GetType().Name, ex);
 
-            return result.StatusCode == HttpStatusCode.OK;
+                Logger.LogError(ex, null);
+
+                return false;
+            }
         }
 
         public virtual Task<bool> RemoveAsync(string id)
