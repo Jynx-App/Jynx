@@ -25,7 +25,7 @@ namespace Jynx.Data.Cosmos.Repositories
         };
 
         protected override string GenerateId(DistrictUser entity)
-            => throw new GenerateIdException(); // Id should be same as Id of User entity
+            => throw new UnableToGenerateIdException(); // Id should be same as Id of User entity
 
         public async Task<DistrictUser?> GetByDistrictIdAndUserId(string districtId, string userId)
         {

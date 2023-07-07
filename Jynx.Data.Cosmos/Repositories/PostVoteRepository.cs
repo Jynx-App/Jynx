@@ -24,7 +24,7 @@ namespace Jynx.Data.Cosmos.Repositories
         };
 
         protected override string GenerateId(PostVote entity)
-            => throw new GenerateIdException(); // Id should be same as Id of User entity
+            => throw new UnableToGenerateIdException(); // Id should be same as Id of User entity
 
         public async Task<PostVote?> GetByPostIdAndUserIdAsync(string postId, string userId)
         {

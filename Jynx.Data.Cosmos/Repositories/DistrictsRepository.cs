@@ -23,6 +23,6 @@ namespace Jynx.Data.Cosmos.Repositories
         };
 
         protected override string GenerateId(District entity)
-            => throw new GenerateIdException();
+            => throw new UnableToGenerateIdException();
     }
 }

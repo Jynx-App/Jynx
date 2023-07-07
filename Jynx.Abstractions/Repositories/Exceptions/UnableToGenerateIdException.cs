@@ -2,9 +2,9 @@
 
 namespace Jynx.Abstractions.Repositories.Exceptions
 {
-    public class GenerateIdException : JynxException
+    public class UnableToGenerateIdException : JynxException
     {
-        public GenerateIdException(Exception? innerException = null)
+        public UnableToGenerateIdException(Exception? innerException = null)
             : base(null, null, innerException)
         {
         }
