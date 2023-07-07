@@ -13,7 +13,7 @@ namespace Jynx.Common.Web.Http
         public static string GetIp(this HttpRequest request)
         {
             if (!request.Headers.ContainsKey(_xForwardForHeaderName))
-                return request.HttpContext.Connection.RemoteIpAddress.ToString();
+                return request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? throw new Exception();
 
             return request.Headers[_xForwardForHeaderName].ToString().Split(':')[0];
         }

@@ -1,6 +1,7 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Common.Repositories;
 using Jynx.Common.Repositories.Exceptions;
+using Jynx.Data.Cosmos.Repositories.Exceptions;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -144,7 +145,7 @@ namespace Jynx.Data.Cosmos.Repositories
         }
 
         protected string GetPartitionKey(TEntity entity)
-            => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string;
+            => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string ?? throw new MissingPartitionKeyException();
 
         private PropertyInfo? GetPartitionKeyPropertyInfo()
             => typeof(TEntity).GetProperty(ContainerInfo.PartitionKey);
