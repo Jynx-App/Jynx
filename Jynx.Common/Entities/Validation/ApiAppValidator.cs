@@ -13,8 +13,8 @@ namespace Jynx.Common.Entities.Validation
             RuleSet(ValidationMode.Default, () =>
             {
                 RuleFor(x => x.UserId)
-                .NotEmpty()
-                .MaximumLength(22);
+                    .NotEmpty()
+                    .MaximumLength(22);
 
                 RuleFor(x => x.Name)
                     .NotEmpty()

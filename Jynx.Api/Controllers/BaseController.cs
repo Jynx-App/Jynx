@@ -35,5 +35,8 @@ namespace Jynx.Api.Controllers
                 Errors = errors,
                 RequestId = Request.HttpContext.GetRequestId()
             });
+
+        public IActionResult NullRequestError()
+            => BadRequest("Empty or invalid body of request");
     }
 }
