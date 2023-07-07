@@ -1,6 +1,6 @@
 ﻿namespace Jynx.Common.Entities.Validation
 {
-    internal enum ValidationMode
+    public enum ValidationMode
     {
         Default,
         Create,

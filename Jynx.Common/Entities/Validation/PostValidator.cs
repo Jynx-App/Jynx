@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
-using Jynx.Common.Services;
 using Jynx.Common.Validation;
 using Microsoft.Extensions.DependencyInjection;
 

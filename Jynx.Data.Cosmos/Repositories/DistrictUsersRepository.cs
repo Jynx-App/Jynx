@@ -1,6 +1,6 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
-using Jynx.Common.Repositories.Exceptions;
+using Jynx.Abstractions.Repositories.Exceptions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

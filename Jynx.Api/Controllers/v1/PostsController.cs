@@ -1,7 +1,7 @@
 ﻿using Jynx.Abstractions.Services;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
-using Jynx.Common.Security.Claims;
+using Jynx.Api.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

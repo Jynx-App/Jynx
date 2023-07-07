@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jynx.Data.Cosmos", "Jynx.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jynx.Abstractions", "Jynx.Abstractions\Jynx.Abstractions.csproj", "{F1A2FFEA-71C4-4622-A8FF-DFFE7BF2EFDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jynx.Core", "Jynx.Core\Jynx.Core.csproj", "{B5C5AD04-9FF4-48A3-929C-A0AF2887062E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F1A2FFEA-71C4-4622-A8FF-DFFE7BF2EFDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1A2FFEA-71C4-4622-A8FF-DFFE7BF2EFDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1A2FFEA-71C4-4622-A8FF-DFFE7BF2EFDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C5AD04-9FF4-48A3-929C-A0AF2887062E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C5AD04-9FF4-48A3-929C-A0AF2887062E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C5AD04-9FF4-48A3-929C-A0AF2887062E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C5AD04-9FF4-48A3-929C-A0AF2887062E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

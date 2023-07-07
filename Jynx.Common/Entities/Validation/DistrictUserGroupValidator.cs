@@ -4,7 +4,7 @@ using Jynx.Abstractions.Services;
 
 namespace Jynx.Common.Entities.Validation
 {
-    internal class DistrictUserGroupValidator: BaseValidator<DistrictUserGroup>
+    internal class DistrictUserGroupValidator : BaseValidator<DistrictUserGroup>
     {
         public DistrictUserGroupValidator(IServiceProvider services)
             : base(services)

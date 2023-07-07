@@ -1,7 +1,7 @@
 ﻿using ConsoleAppFramework;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
-using Jynx.Common.Services.Exceptions;
+using Jynx.Abstractions.Services.Exceptions;
 using Newtonsoft.Json;
 
 namespace Jynx.Cli.Commands.RepositoryServices

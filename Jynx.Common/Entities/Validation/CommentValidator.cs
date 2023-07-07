@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
-using Jynx.Common.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jynx.Common.Entities.Validation
@@ -61,7 +60,7 @@ namespace Jynx.Common.Entities.Validation
 
             var postsService = Services.GetService<IPostsService>();
 
-            if(postsService is null)
+            if (postsService is null)
                 return true;
 
             var post = await postsService.GetAsync(postId);

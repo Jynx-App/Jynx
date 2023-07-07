@@ -1,6 +1,6 @@
 ﻿using Jynx.Api.Models.Responses;
+using Jynx.Common.AspNetCore.ErrorHandling;
 using Jynx.Common.AspNetCore.Http;
-using Jynx.Common.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jynx.Api.Controllers

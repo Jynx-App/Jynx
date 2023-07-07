@@ -1,6 +1,4 @@
-﻿using Jynx.Abstractions.Entities;
-
-namespace Jynx.Api.Models.Requests
+﻿namespace Jynx.Api.Models.Requests
 {
     public class PostVoteRequest
     {

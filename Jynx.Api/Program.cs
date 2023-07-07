@@ -1,9 +1,12 @@
+using Jynx.Api.Auth;
+using Jynx.Api.Security.Claims;
 using Jynx.Common;
 using Jynx.Common.AspNetCore;
-using Jynx.Common.Auth;
-using Jynx.Common.ErrorHandling;
-using Jynx.Common.Logging;
+using Jynx.Common.AspNetCore.ErrorHandling;
+using Jynx.Common.AspNetCore.Logging;
+using Jynx.Core;
 using Jynx.Data.Cosmos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json;
@@ -45,8 +48,14 @@ namespace Jynx.Api
                     options.GroupNameFormat = "v'VVV";
                     options.SubstituteApiVersionInUrl = true;
                 })
+                // Other Projects
                 .AddCommon(builder.Configuration)
+                .AddCore(builder.Configuration)
                 .AddCosmos(builder.Configuration)
+                // PolicyProviders
+                .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
+                // Other
+                .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>()
                 .AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddSeq();
@@ -78,7 +87,7 @@ namespace Jynx.Api
                 .EnableRequestBodyBuffering()
                 .AddJynxLogging((context, state) =>
                 {
-                    //
+                    state.Add("UserId", context.User.GetId() ?? "");
                 })
                 .AddJynxErrorHandling(ex =>
                 {

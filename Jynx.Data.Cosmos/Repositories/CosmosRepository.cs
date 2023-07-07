@@ -1,6 +1,6 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
-using Jynx.Common.Repositories.Exceptions;
+using Jynx.Abstractions.Repositories.Exceptions;
 using Jynx.Data.Cosmos.Repositories.Exceptions;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Azure.Cosmos;

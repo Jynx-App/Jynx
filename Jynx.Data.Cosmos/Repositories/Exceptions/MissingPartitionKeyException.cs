@@ -1,4 +1,4 @@
-﻿using Jynx.Common.ErrorHandling.Exceptions;
+﻿using Jynx.Abstractions.Exceptions;
 using System.Net;
 
 namespace Jynx.Data.Cosmos.Repositories.Exceptions
