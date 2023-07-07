@@ -1,1 +1,1 @@
-This project contains code related to Interfaces and Entities
+This project contains code related to Interfaces, Entities, and Exceptions
