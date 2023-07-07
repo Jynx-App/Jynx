@@ -4,10 +4,10 @@ using Jynx.Abstractions.Services;
 
 namespace Jynx.Cli.Commands.RepositoryServices
 {
-    [Command("district-users")]
-    internal class DistrictUserCommands : RepositoryServiceCommands<IDistrictUsersService, DistrictUser>
+    [Command("notifications")]
+    internal class NotificationCommands : EntityServiceCommands<INotificationsService, Notification>
     {
-        public DistrictUserCommands(IDistrictUsersService service)
+        public NotificationCommands(INotificationsService service)
             : base(service)
         {
         }

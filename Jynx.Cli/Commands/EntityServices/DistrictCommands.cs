@@ -5,7 +5,7 @@ using Jynx.Abstractions.Services;
 namespace Jynx.Cli.Commands.RepositoryServices
 {
     [Command("districts")]
-    internal class DistrictCommands : RepositoryServiceCommands<IDistrictsService, District>
+    internal class DistrictCommands : EntityServiceCommands<IDistrictsService, District>
     {
         public DistrictCommands(IDistrictsService service)
             : base(service)

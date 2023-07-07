@@ -4,10 +4,10 @@ using Jynx.Abstractions.Services;
 
 namespace Jynx.Cli.Commands.RepositoryServices
 {
-    [Command("notifications")]
-    internal class NotificationCommands : RepositoryServiceCommands<INotificationsService, Notification>
+    [Command("comments")]
+    internal class CommentCommands : EntityServiceCommands<ICommentsService, Comment>
     {
-        public NotificationCommands(INotificationsService service)
+        public CommentCommands(ICommentsService service)
             : base(service)
         {
         }

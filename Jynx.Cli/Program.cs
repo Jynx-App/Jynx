@@ -3,7 +3,9 @@ using Jynx.Abstractions.Entities;
 using Jynx.Cli.Commands;
 using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
+using Jynx.Core;
 using Jynx.Data.Cosmos;
+using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +39,9 @@ namespace Jynx.Cli
                 {
                     services
                         .AddCommon(context.Configuration)
+                        .AddCore(context.Configuration)
                         .AddCosmos(context.Configuration)
+                        .AddFluentValidators()
                         .AddSingleton<ISystemClock, SystemClock>();
                 });
 

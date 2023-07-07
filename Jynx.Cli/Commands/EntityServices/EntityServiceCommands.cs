@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 
 namespace Jynx.Cli.Commands.RepositoryServices
 {
-    internal abstract class RepositoryServiceCommands<TService, TEntity> : ConsoleAppBase
+    internal abstract class EntityServiceCommands<TService, TEntity> : ConsoleAppBase
         where TService : IEntityService<TEntity>
         where TEntity : BaseEntity
     {
-        public RepositoryServiceCommands(TService service)
+        public EntityServiceCommands(TService service)
         {
             Service = service;
         }

@@ -4,10 +4,10 @@ using Jynx.Abstractions.Services;
 
 namespace Jynx.Cli.Commands.RepositoryServices
 {
-    [Command("comments")]
-    internal class CommentCommands : RepositoryServiceCommands<ICommentsService, Comment>
+    [Command("users")]
+    internal class UserCommands : EntityServiceCommands<IUsersService, User>
     {
-        public CommentCommands(ICommentsService service)
+        public UserCommands(IUsersService service)
             : base(service)
         {
         }
