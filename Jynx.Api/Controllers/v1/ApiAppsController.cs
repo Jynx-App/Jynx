@@ -11,10 +11,10 @@ namespace Jynx.Api.Controllers.v1
     [ApiVersion("1.0")]
     public class ApiAppsController : BaseController
     {
-        private readonly IApiAppService _apiAppService;
+        private readonly IApiAppsService _apiAppService;
 
         public ApiAppsController(
-            IApiAppService apiAppService,
+            IApiAppsService apiAppService,
             ILogger<CommentsController> logger)
             : base(logger)
         {

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Jynx.Common.Services
 {
-    internal class ApiAppService : RepositoryService<IApiAppsRepository, ApiApp>, IApiAppService
+    internal class ApiAppService : RepositoryService<IApiAppsRepository, ApiApp>, IApiAppsService
     {
         public ApiAppService(
             IApiAppsRepository repository,

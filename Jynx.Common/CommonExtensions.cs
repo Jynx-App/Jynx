@@ -19,7 +19,7 @@ namespace Jynx.Common
                 // Configuration
                 .ConfigureByDefaultKey<OfficialApiAppOptions>(configuration)
                 // Services
-                .AddScoped<IApiAppService, ApiAppService>()
+                .AddScoped<IApiAppsService, ApiAppService>()
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
                 .AddScoped<ICommentsService, CommentsService>()
                 .AddScoped<IDistrictsService, DistrictsService>()
