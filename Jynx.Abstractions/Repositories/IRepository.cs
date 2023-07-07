@@ -10,5 +10,6 @@ namespace Jynx.Abstractions.Repositories
         Task<TEntity?> GetAsync(string id);
         Task<bool> UpdateAsync(TEntity entity);
         Task<bool> ExistsAsync(string compoundId);
+        Task<string> UpsertAsync(TEntity entity);
     }
 }

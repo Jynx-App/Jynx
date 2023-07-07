@@ -1,9 +1,8 @@
-﻿using Jynx.Abstractions.Entities;
+﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
-using Jynx.Common.Entities.Validation;
-using Jynx.Common.Repositories.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +12,6 @@ namespace Jynx.Common.Services
     {
         private readonly IDistrictUsersService _districtUsersService;
         private readonly IDistrictUserGroupsService _districtUserGroupsService;
-        private readonly IUsersService _usersService;
 
         public string DefaultNotAllowedToPostMessage => "You are not allowed to post in this district";
         public string DefaultNotAllowedToCommentMessage => "You are not allowed to comment in this district";
@@ -22,23 +20,17 @@ namespace Jynx.Common.Services
             IDistrictsRepository districtRepository,
             IDistrictUsersService districtUsersService,
             IDistrictUserGroupsService districtUserGroupsService,
-            IUsersService usersService,
+            IValidator<District> validator,
             ISystemClock systemClock,
             ILogger<DistrictsService> logger)
-            : base(districtRepository, new DistrictValidator(), systemClock, logger)
+            : base(districtRepository, validator, systemClock, logger)
         {
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;
-            _usersService = usersService;
         }
 
         public async Task<string> CreateAndAssignModerator(District district, string userId)
         {
-            var userExists = await _usersService.ExistsAsync(userId);
-
-            if (!userExists)
-                throw new NotFoundException(nameof(User));
-
             district.Id = await Repository.CreateAsync(district);
 
             var districtUser = new DistrictUser

@@ -144,6 +144,21 @@ namespace Jynx.Data.Cosmos.Repositories
             return results;
         }
 
+        public override async Task<string> UpsertAsync(TEntity entity)
+            => await InternalUpsertAsync(entity, null);
+
+        protected async Task<string> InternalUpsertAsync(TEntity entity, string? partitionKey)
+        {
+            if (string.IsNullOrWhiteSpace(entity.Id))
+                entity.Id = GenerateId(entity);
+
+            partitionKey ??= GetPartitionKey(entity);
+
+            var result = await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
+
+            return result.Resource.Id!;
+        }
+
         protected string GetPartitionKey(TEntity entity)
             => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string ?? throw new MissingPartitionKeyException();
 

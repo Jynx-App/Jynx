@@ -2,6 +2,7 @@
 using Jynx.Abstractions.Services;
 using Jynx.Common.Auth;
 using Jynx.Common.Configuration;
+using Jynx.Common.Entities.Validation;
 using Jynx.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,10 +27,12 @@ namespace Jynx.Common
                 .AddScoped<IDistrictUserGroupsService, DistrictUserGroupsService>()
                 .AddScoped<INotificationsService, NotificationsService>()
                 .AddScoped<IPostsService, PostsService>()
+                .AddScoped<IPostVotesService, PostVotesService>()
                 .AddScoped<IUsersService, UsersService>()
                 // PolicyProviders
                 .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
                 // Other
+                .AddEntityValidators()
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor()
                 .AddScoped<IAuthorizationHandler, RequireModerationPermissionHandler>();

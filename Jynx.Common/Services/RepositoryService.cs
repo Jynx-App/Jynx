@@ -87,6 +87,9 @@ namespace Jynx.Common.Services
         public virtual Task<bool> ExistsAsync(string id)
             => Repository.ExistsAsync(id);
 
+        public virtual Task<string> UpsertAsync(TEntity entity)
+            => Repository.UpsertAsync(entity);
+
         public virtual void Patch(TEntity target, ICanPatch<TEntity> source)
             => source.Patch(target);
 

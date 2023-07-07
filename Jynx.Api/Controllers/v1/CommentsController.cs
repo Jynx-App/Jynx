@@ -31,17 +31,6 @@ namespace Jynx.Api.Controllers.v1
         {
             var userId = Request.HttpContext.User.GetId()!;
 
-            var parentPost = await _postsService.GetAsync(request.PostId);
-
-            if (parentPost is null)
-                return NotFound(_postsService.DefaultNotFoundMessage);
-
-            if (parentPost.CommentsLocked)
-                return BadRequest(_postsService.DefaultLockedMessage);
-
-            if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(request.DistrictId, userId))
-                return BadRequest(_districtsService.DefaultNotAllowedToCommentMessage);
-
             var entity = request.ToEntity();
 
             entity.UserId = userId;
@@ -90,9 +79,6 @@ namespace Jynx.Api.Controllers.v1
 
             if (entity is null || entity.UserId != userId)
                 return NotFound(_commentsService.DefaultNotFoundMessage);
-
-            if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(entity.DistrictId, userId))
-                return BadRequest(_districtsService.DefaultNotAllowedToCommentMessage);
 
             _commentsService.Patch(entity, request);
 

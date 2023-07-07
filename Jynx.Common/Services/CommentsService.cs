@@ -1,4 +1,5 @@
-﻿using Jynx.Abstractions.Entities;
+﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
 using Jynx.Common.Entities.Validation;
@@ -11,9 +12,10 @@ namespace Jynx.Common.Services
     {
         public CommentsService(
             ICommentsRepository repository,
+            IValidator<Comment> validator,
             ISystemClock systemClock,
             ILogger<CommentsService> logger)
-            : base(repository, new CommentValidator(), systemClock, logger)
+            : base(repository, validator, systemClock, logger)
         {
         }
 

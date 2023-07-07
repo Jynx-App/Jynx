@@ -1,4 +1,5 @@
-﻿using Jynx.Abstractions.Entities;
+﻿using FluentValidation;
+using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Services;
 using Jynx.Common.Entities.Validation;
@@ -15,14 +16,13 @@ namespace Jynx.Common.Services
 
         public UsersService(
             IUsersRepository repository,
+            IValidator<User> validator,
             ISystemClock systemClock,
             IPasswordHasher<User> passwordHasher,
             ILogger<UsersService> logger)
-            : base(repository, new UserValidator(), systemClock, logger)
+            : base(repository, validator, systemClock, logger)
         {
             _passwordHasher = passwordHasher;
-
-            ((UserValidator)Validator).UsersService = this; // We can't use DI for this sadly, it causes a circular dependency.
         }
 
         public async override Task<string> CreateAsync(User entity)

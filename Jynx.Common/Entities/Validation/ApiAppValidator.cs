@@ -1,11 +1,17 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 using Jynx.Common.Validation;
 
 namespace Jynx.Common.Entities.Validation
 {
     internal class ApiAppValidator : BaseValidator<ApiApp>
     {
+        public ApiAppValidator(IServiceProvider services)
+            : base(services)
+        {
+        }
+
         protected override void ConfigureRules()
         {
             base.ConfigureRules();
@@ -14,7 +20,8 @@ namespace Jynx.Common.Entities.Validation
             {
                 RuleFor(x => x.UserId)
                     .NotEmpty()
-                    .MaximumLength(22);
+                    .MaximumLength(DefaultIdMaxLength)
+                    .MustExist().Using<IUsersService>(Services);
 
                 RuleFor(x => x.Name)
                     .NotEmpty()
@@ -30,8 +37,8 @@ namespace Jynx.Common.Entities.Validation
 
                 RuleFor(x => x.CallbackUrl)
                     .NotEmpty()
-                    .Url()
-                    .MaximumLength(2000);
+                    .MaximumLength(2000)
+                    .Url();
             });
         }
     }

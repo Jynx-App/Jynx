@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 
 namespace Jynx.Common.Entities.Validation
 {
-    internal class DistrictValidator : BaseValidator<District>
+    internal class PostVoteValidator : BaseValidator<PostVote>
     {
-        public DistrictValidator(IServiceProvider services)
+        public PostVoteValidator(IServiceProvider services)
             : base(services)
         {
-            IdMaxLength = 32;
         }
 
         protected override void ConfigureRules()
@@ -18,12 +18,12 @@ namespace Jynx.Common.Entities.Validation
             RuleSet(ValidationMode.Default, () =>
             {
                 RuleFor(x => x.Id)
-                    .MinimumLength(3)
-                    .Matches("^[a-z][a-z0-9_-]+$");
+                    .MustExist().Using<IUsersService>(Services);
 
-                RuleFor(x => x.Description)
+                RuleFor(x => x.PostId)
                     .NotEmpty()
-                    .MaximumLength(200);
+                    .MaximumLength(DefaultIdMaxLength)
+                    .MustExist().Using<IPostsService>(Services);
             });
         }
     }

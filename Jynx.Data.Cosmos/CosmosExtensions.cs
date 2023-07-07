@@ -53,6 +53,7 @@ namespace Jynx.Data.Cosmos
                 .AddScoped<IDistrictUserGroupsRepository, DistrictUserGroupsRepository>()
                 .AddScoped<INotificationsRepository, NotificationsRepository>()
                 .AddScoped<IPostsRepository, PostsRepository>()
+                .AddScoped<IPostVotesRepository, PostVoteRepository>()
                 .AddScoped<IUsersRepository, UsersRepository>();
 
             return services;

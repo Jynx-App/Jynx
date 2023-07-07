@@ -16,5 +16,13 @@
 
         public bool CommentsLocked { get; set; }
         public DateTime? Removed { get; set; }
+
+        public int UpVotes { get; set; }
+
+        public int DownVotes { get; set; }
+
+        public int Score => UpVotes - DownVotes;
+
+        public int TotalVotes => UpVotes + DownVotes;
     }
 }

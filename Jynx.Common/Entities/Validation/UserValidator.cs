@@ -1,12 +1,16 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jynx.Common.Entities.Validation
 {
     internal class UserValidator : BaseValidator<User>
     {
-        public IUsersService? UsersService { get; set; }
+        public UserValidator(IServiceProvider services)
+            : base(services)
+        {
+        }
 
         protected override void ConfigureRules()
         {
@@ -16,15 +20,15 @@ namespace Jynx.Common.Entities.Validation
             {
                 RuleFor(x => x.Username)
                     .NotEmpty()
-                    .Matches("^[a-zA-Z][a-zA-Z0-9_-]+$")
                     .MaximumLength(32)
-                    .MustAsync(async (username, cancelation) => UsersService is not null && await UsersService.IsUsernameUnique(username))
+                    .Matches("^[a-zA-Z][a-zA-Z0-9_-]+$")
+                    .MustAsync(IsUsernameUniqueAsync)
                         .WithMessage("Username is not unique");
 
                 RuleFor(x => x.Email)
                     .NotEmpty()
-                    .EmailAddress()
-                    .MaximumLength(320);
+                    .MaximumLength(320)
+                    .EmailAddress();
 
                 RuleFor(x => x.Password)
                     .NotEmpty()
@@ -33,6 +37,16 @@ namespace Jynx.Common.Entities.Validation
                 RuleFor(x => x.BanReason)
                     .MaximumLength(200);
             });
+        }
+
+        private async Task<bool> IsUsernameUniqueAsync(string username, CancellationToken cancellationToken)
+        {
+            var usersService = Services.GetService<IUsersService>();
+
+            if (usersService is null)
+                return false;
+
+            return await usersService.IsUsernameUnique(username);
         }
     }
 }

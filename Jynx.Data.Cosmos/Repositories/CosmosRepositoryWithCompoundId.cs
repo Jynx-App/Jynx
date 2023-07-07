@@ -63,6 +63,15 @@ namespace Jynx.Data.Cosmos.Repositories
             return await InternalExistsAsync(id, pk);
         }
 
+        public override async Task<string> UpsertAsync(TEntity entity)
+        {
+            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
+
+            entity.Id = id;
+
+            return await InternalUpsertAsync(entity, pk);
+        }
+
         protected static string CreateCompoundId(params string[] parts)
             => string.Join(".", parts);
 

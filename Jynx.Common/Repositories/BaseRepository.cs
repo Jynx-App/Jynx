@@ -23,5 +23,7 @@ namespace Jynx.Common.Repositories
         public abstract Task<bool> RemoveAsync(string id);
 
         public abstract Task<bool> ExistsAsync(string id);
+
+        public abstract Task<string> UpsertAsync(TEntity entity);
     }
 }

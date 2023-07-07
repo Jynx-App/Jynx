@@ -1,22 +1,33 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
 
 namespace Jynx.Common.Entities.Validation
 {
     internal class DistrictUserValidator : BaseValidator<DistrictUser>
     {
+        public DistrictUserValidator(IServiceProvider services)
+            : base(services)
+        {
+        }
+
         protected override void ConfigureRules()
         {
             base.ConfigureRules();
 
             RuleSet(ValidationMode.Default, () =>
             {
+                RuleFor(x => x.Id)
+                    .MustExist().Using<IUsersService>(Services);
+
                 RuleFor(x => x.DistrictId)
-                .NotEmpty()
-                .MaximumLength(45);
+                    .NotEmpty()
+                    .MaximumLength(DefaultIdMaxLength)
+                    .MustExist().Using<IDistrictsService>(Services);
 
                 RuleFor(x => x.DistrictUserGroupId)
-                    .MaximumLength(80);
+                    .MaximumLength(DefaultIdMaxLength)
+                    .MustExist().Using<IDistrictUserGroupsService>(Services);
 
                 RuleForEach(x => x.ModerationPermissions)
                     .IsInEnum();

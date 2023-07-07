@@ -4,6 +4,6 @@ namespace Jynx.Abstractions.Services
 {
     public interface IPostsService : IRepositoryService<Post>
     {
-        string DefaultLockedMessage { get; }
+        Task<bool> VoteAsync(string postId, string userId, bool negative);
     }
 }

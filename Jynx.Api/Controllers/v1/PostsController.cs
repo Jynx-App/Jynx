@@ -10,8 +10,6 @@ namespace Jynx.Api.Controllers.v1
     [ApiVersion("1.0")]
     public class PostsController : BaseController
     {
-        private const string _notAllowedToPostMessage = "You are not allowed to post to this district";
-
         private readonly IDistrictsService _districtsService;
         private readonly IPostsService _postsService;
 
@@ -28,9 +26,6 @@ namespace Jynx.Api.Controllers.v1
         public async Task<IActionResult> Create([FromBody] CreatePostRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
-
-            if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(request.DistrictId, userId))
-                return BadRequest(_notAllowedToPostMessage);
 
             var entity = request.ToEntity();
 
@@ -67,9 +62,6 @@ namespace Jynx.Api.Controllers.v1
             if (entity is null || entity.UserId != userId)
                 return NotFound(_postsService.DefaultNotFoundMessage);
 
-            if (!await _districtsService.IsUserAllowedToPostAndCommentAsync(entity.DistrictId, userId))
-                return BadRequest(_notAllowedToPostMessage);
-
             _postsService.Patch(entity, request);
 
             entity.EditedById = userId;
@@ -90,6 +82,16 @@ namespace Jynx.Api.Controllers.v1
                 return NotFound(_postsService.DefaultNotFoundMessage);
 
             await _postsService.RemoveAsync(request.Id);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Vote([FromBody] PostVoteRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _postsService.VoteAsync(request.PostId, userId, request.Negative);
 
             return Ok();
         }
