@@ -1,5 +1,5 @@
 ﻿using Jynx.Abstractions.Entities;
-using Jynx.Common.Repositories;
+using Jynx.Abstractions.Repositories;
 using Jynx.Common.Repositories.Exceptions;
 using Jynx.Data.Cosmos.Repositories.Exceptions;
 using Microsoft.AspNetCore.WebUtilities;
@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace Jynx.Data.Cosmos.Repositories
 {
-    internal abstract class CosmosRepository<TEntity> : BaseRepository<TEntity>
+    internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
         where TEntity : BaseEntity
     {
         private readonly Container _container;
@@ -21,7 +21,6 @@ namespace Jynx.Data.Cosmos.Repositories
             CosmosClient cosmosClient,
             IOptions<CosmosOptions> CosmosOptions,
             ILogger logger)
-            : base(logger)
         {
             _container = cosmosClient.GetContainer(CosmosOptions.Value.DatabaseName, ContainerInfo.Name);
 
@@ -34,14 +33,17 @@ namespace Jynx.Data.Cosmos.Repositories
                     $"/{GetPartitionKeyFieldName()}",
                     ContainerInfo.Throughput).Wait();
             }
+            Logger = logger;
         }
 
         protected abstract CosmosContainerInfo ContainerInfo { get; }
 
+        protected ILogger Logger { get; }
+
         protected virtual string GenerateId(TEntity entity)
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
-        public override async Task<string> CreateAsync(TEntity entity)
+        public virtual async Task<string> CreateAsync(TEntity entity)
             => await InternalCreateAsync(entity, null);
 
         protected async Task<string> InternalCreateAsync(TEntity entity, string? partitionKey)
@@ -66,7 +68,7 @@ namespace Jynx.Data.Cosmos.Repositories
             }
         }
 
-        public override Task<TEntity?> GetAsync(string id)
+        public virtual Task<TEntity?> GetAsync(string id)
             => InternalGetAsync(id, id);
 
         protected async Task<TEntity?> InternalGetAsync(string id, string partitionKey)
@@ -86,7 +88,7 @@ namespace Jynx.Data.Cosmos.Repositories
             }
         }
 
-        public override Task<bool> UpdateAsync(TEntity entity)
+        public virtual Task<bool> UpdateAsync(TEntity entity)
             => InternalUpdateAsync(entity, null);
 
         protected async Task<bool> InternalUpdateAsync(TEntity entity, string? partitionKey)
@@ -104,7 +106,7 @@ namespace Jynx.Data.Cosmos.Repositories
             return result.StatusCode == HttpStatusCode.OK;
         }
 
-        public override Task<bool> RemoveAsync(string id)
+        public virtual Task<bool> RemoveAsync(string id)
             => InternalRemoveAsync(id, id);
 
         protected async Task<bool> InternalRemoveAsync(string id, string partitionKey)
@@ -114,7 +116,7 @@ namespace Jynx.Data.Cosmos.Repositories
             return result.StatusCode == HttpStatusCode.OK;
         }
 
-        public override Task<bool> ExistsAsync(string id)
+        public virtual Task<bool> ExistsAsync(string id)
             => InternalExistsAsync(id, id);
 
         protected async Task<bool> InternalExistsAsync(string id, string partitionKey)
@@ -144,7 +146,7 @@ namespace Jynx.Data.Cosmos.Repositories
             return results;
         }
 
-        public override async Task<string> UpsertAsync(TEntity entity)
+        public virtual async Task<string> UpsertAsync(TEntity entity)
             => await InternalUpsertAsync(entity, null);
 
         protected async Task<string> InternalUpsertAsync(TEntity entity, string? partitionKey)
