@@ -1,6 +1,4 @@
-﻿using Jynx.Abstractions.Entities;
-using Jynx.Abstractions.Entities.Auth;
-using Jynx.Abstractions.Services;
+﻿using Jynx.Abstractions.Services;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Common.Security.Claims;
@@ -12,16 +10,13 @@ namespace Jynx.Api.Controllers.v1
     public class DistrictsController : BaseController
     {
         private readonly IDistrictsService _districtsService;
-        private readonly IDistrictUsersService _districtUsersService;
 
         public DistrictsController(
             IDistrictsService districtsService,
-            IDistrictUsersService districtUsersService,
             ILogger<DistrictsController> logger)
             : base(logger)
         {
             _districtsService = districtsService;
-            _districtUsersService = districtUsersService;
         }
 
         [HttpPost]
@@ -31,16 +26,7 @@ namespace Jynx.Api.Controllers.v1
 
             var district = request.ToEntity();
 
-            _ = await _districtsService.CreateAsync(district);
-
-            var districtUser = new DistrictUser
-            {
-                Id = userId,
-                DistrictId = district.Id!,
-                ModerationPermissions = Enum.GetValues<ModerationPermission>().ToHashSet()
-            };
-
-            var id = await _districtUsersService.CreateAsync(districtUser);
+            var id = await _districtsService.CreateAndAssignModerator(district, userId);
 
             var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
 

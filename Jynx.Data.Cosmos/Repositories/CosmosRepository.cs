@@ -97,7 +97,7 @@ namespace Jynx.Data.Cosmos.Repositories
                 throw new InvalidIdException();
 
             if (!await InternalExistsAsync(entity.Id, partitionKey))
-                throw new NotFoundException();
+                throw new NotFoundException(entity.GetType().Name);
 
             var result = await _container.UpsertItemAsync(entity, new PartitionKey(partitionKey));
 
