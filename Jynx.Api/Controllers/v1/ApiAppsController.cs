@@ -35,7 +35,9 @@ namespace Jynx.Api.Controllers.v1
 
             var id = await _apiAppService.CreateAsync(entity);
 
-            return Ok($"\"{id}\"");
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+
+            return Created(newEntityUrl, $"\"{id}\"");
         }
 
         [HttpGet("{id}")]

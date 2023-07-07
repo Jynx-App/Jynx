@@ -40,9 +40,11 @@ namespace Jynx.Api.Controllers.v1
                 ModerationPermissions = Enum.GetValues<ModerationPermission>().ToHashSet()
             };
 
-            districtUser.Id = await _districtUsersService.CreateAsync(districtUser);
+            var id = await _districtUsersService.CreateAsync(districtUser);
 
-            return Ok($"\"{district.Id}\"");
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+
+            return Created(newEntityUrl, $"\"{id}\"");
         }
 
         [HttpGet("{id}")]
