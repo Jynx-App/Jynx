@@ -29,7 +29,35 @@ namespace Jynx.Core.Services
             => await VoteAsync(postId, userId, false);
 
         public async Task<bool> ClearVoteAsync(string postId, string userId)
-            => await _postVotesService.RemoveByPostIdAndUserIdAsync(postId, userId);
+        {
+            var postVote = await _postVotesService.GetByPostIdAndUserIdAsync(postId, userId);
+
+            if (postVote is null)
+                return false;
+
+            var removed = await _postVotesService.RemoveAsync(postVote.Id!);
+
+            if (!removed)
+                return false;
+
+            var post = await GetAsync(postId);
+
+            if(post is null)
+                return false;
+
+            if(postVote.Up)
+            {
+                post.UpVotes--;
+            }
+            else
+            {
+                post.DownVotes--;
+            }
+
+            var updated = await UpdateAsync(post);
+
+            return updated;
+        }
 
         public async Task<bool> VoteAsync(string postId, string userId, bool up)
         {
@@ -76,9 +104,9 @@ namespace Jynx.Core.Services
                 post.DownVotes++;
             }
 
-            var postUpdated = await UpdateAsync(post);
+            var updated = await UpdateAsync(post);
 
-            return postUpdated;
+            return updated;
         }
 
     }

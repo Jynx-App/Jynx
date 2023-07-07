@@ -22,17 +22,45 @@ namespace Jynx.Core.Services
             _commentVotesService = commentVotesService;
         }
 
-        public Task<IEnumerable<Comment>> GetByPostIdAsync(string postId)
-            => Repository.GetByPostIdAsync(postId);
+        public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId)
+            => Repository.GetByPostIdAsync(commentId);
 
-        public async Task<bool> UpVoteAsync(string postId, string userId)
-            => await VoteAsync(postId, userId, true);
+        public async Task<bool> UpVoteAsync(string commentId, string userId)
+            => await VoteAsync(commentId, userId, true);
 
-        public async Task<bool> DownVoteAsync(string postId, string userId)
-            => await VoteAsync(postId, userId, false);
+        public async Task<bool> DownVoteAsync(string commentId, string userId)
+            => await VoteAsync(commentId, userId, false);
 
-        public async Task<bool> ClearVoteAsync(string postId, string userId)
-            => await _commentVotesService.RemoveByCommentIdAndUserIdAsync(postId, userId);
+        public async Task<bool> ClearVoteAsync(string commentId, string userId)
+        {
+            var commentVote = await _commentVotesService.GetByCommentIdAndUserIdAsync(commentId, userId);
+
+            if (commentVote is null)
+                return false;
+
+            var removed = await _commentVotesService.RemoveAsync(commentVote.Id!);
+
+            if (!removed)
+                return false;
+
+            var comment = await GetAsync(commentId);
+
+            if (comment is null)
+                return false;
+
+            if (commentVote.Up)
+            {
+                comment.UpVotes--;
+            }
+            else
+            {
+                comment.DownVotes--;
+            }
+
+            var updated = await UpdateAsync(comment);
+
+            return updated;
+        }
 
         public async Task<bool> VoteAsync(string commentId, string userId, bool up)
         {
@@ -79,9 +107,9 @@ namespace Jynx.Core.Services
                 comment.DownVotes++;
             }
 
-            var commentedUpdated = await UpdateAsync(comment);
+            var updated = await UpdateAsync(comment);
 
-            return commentedUpdated;
+            return updated;
         }
     }
 }

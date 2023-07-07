@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Data.Cosmos.Repositories
 {
-    internal class PostVoteRepository : CosmosRepository<PostVote>, IPostVotesRepository
+    internal class PostVoteRepository : CosmosRepositoryWithCompoundId<PostVote>, IPostVotesRepository
     {
         public PostVoteRepository(
             CosmosClient cosmosClient,
@@ -33,7 +33,14 @@ namespace Jynx.Data.Cosmos.Repositories
 
         public async Task<PostVote?> GetByPostIdAndUserIdAsync(string postId, string userId)
         {
-            return await InternalGetAsync(userId, postId);
+            var entity = await InternalGetAsync(userId, postId);
+
+            if (entity is null)
+                return null;
+
+            entity.Id = CreateCompoundId(postId, userId);
+
+            return entity;
         }
     }
 }

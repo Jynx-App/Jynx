@@ -1,5 +1,7 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Data.Cosmos.Repositories.Exceptions;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -35,16 +37,25 @@ namespace Jynx.Data.Cosmos.Repositories
             var entity = await InternalGetAsync(id, pk);
 
             if (entity is not null)
-                entity.Id = compoundId;
+                entity.Id = GetCompoundId(entity);
 
             return entity;
         }
 
         public override async Task<bool> UpdateAsync(TEntity entity)
         {
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
+            string pk;
 
-            entity.Id = id;
+            if (IsCompoundId(entity.Id!))
+            {
+                (var id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
+
+                entity.Id = id;
+            }
+            else
+            {
+                pk = GetPartitionKey(entity);
+            }
 
             return await InternalUpdateAsync(entity, pk);
         }
@@ -65,9 +76,18 @@ namespace Jynx.Data.Cosmos.Repositories
 
         public override async Task<string> UpsertAsync(TEntity entity)
         {
-            var (id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
+            string pk;
 
-            entity.Id = id;
+            if(IsCompoundId(entity.Id!))
+            {
+                (var id, pk) = GetIdAndPartitionKeyFromCompoundKey(entity.Id!);
+
+                entity.Id = id;
+            }
+            else
+            {
+                pk = GetPartitionKey(entity);
+            }
 
             return await InternalUpsertAsync(entity, pk);
         }
@@ -91,5 +111,8 @@ namespace Jynx.Data.Cosmos.Repositories
 
         protected string GetCompoundId(TEntity entity)
             => CreateCompoundId(GetPartitionKey(entity), entity.Id!);
+
+        protected static bool IsCompoundId(string id)
+            => id.Contains('.');
     }
 }
