@@ -1,0 +1,1 @@
+This folder contains needed libraries that we can not include via Nuget for one reason or another.

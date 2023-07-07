@@ -1,0 +1,1 @@
+This project contains code needed for Jynx to interact with Azure Cosmos
