@@ -41,7 +41,6 @@ namespace Jynx.Cli
                         .AddCommon(context.Configuration)
                         .AddCore(context.Configuration)
                         .AddCosmos(context.Configuration)
-                        .AddFluentValidators()
                         .AddSingleton<ISystemClock, SystemClock>();
                 });
 

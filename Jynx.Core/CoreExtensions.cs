@@ -3,6 +3,7 @@ using Jynx.Abstractions.Services;
 using Jynx.Common.Configuration;
 using Jynx.Core.Configuration;
 using Jynx.Core.Services;
+using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ namespace Jynx.Core
                 .AddScoped<IPostVotesService, PostVotesService>()
                 .AddScoped<IUsersService, UsersService>()
                 // Other
+                .AddFluentValidators()
                 .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddHttpContextAccessor();
 

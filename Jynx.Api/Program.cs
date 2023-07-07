@@ -53,7 +53,6 @@ namespace Jynx.Api
                 .AddCommon(builder.Configuration)
                 .AddCore(builder.Configuration)
                 .AddCosmos(builder.Configuration)
-                .AddFluentValidators()
                 // PolicyProviders
                 .AddSingleton<IAuthorizationPolicyProvider, RequireModerationPermissionPolicyProvider>()
                 // Other
