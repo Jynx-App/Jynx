@@ -15,6 +15,9 @@ namespace Jynx.Api.Models.Responses
             UserId = post.UserId;
             EditedById = post.EditedById;
             Body = post.Body;
+            UpVotes = post.UpVotes;
+            DownVotes = post.DownVotes;
+            TotalVotes = post.TotalVotes;
         }
 
         public string Id { get; set; } = "";
@@ -34,5 +37,11 @@ namespace Jynx.Api.Models.Responses
         public string? EditedById { get; set; }
 
         public string Body { get; set; }
+
+        public int UpVotes { get; set; }
+
+        public int DownVotes { get; set; }
+
+        public int TotalVotes { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Jynx.Validation.Fluent
                 .AddScoped<IValidator<ApiApp>, ApiAppValidator>()
                 .AddScoped<IValidator<ApiAppUser>, ApiAppUserValidator>()
                 .AddScoped<IValidator<Comment>, CommentValidator>()
+                .AddScoped<IValidator<CommentVote>, CommentVoteValidator>()
                 .AddScoped<IValidator<DistrictUserGroup>, DistrictUserGroupValidator>()
                 .AddScoped<IValidator<DistrictUser>, DistrictUserValidator>()
                 .AddScoped<IValidator<District>, DistrictValidator>()

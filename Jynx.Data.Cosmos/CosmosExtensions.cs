@@ -48,6 +48,7 @@ namespace Jynx.Data.Cosmos
                 .AddScoped<IApiAppsRepository, ApiAppsRepository>()
                 .AddScoped<IApiAppUsersRepository, ApiAppUsersRepository>()
                 .AddScoped<ICommentsRepository, CommentsRepository>()
+                .AddScoped<ICommentVotesRepository, CommentVotesRepository>()
                 .AddScoped<IDistrictsRepository, DistrictsRepository>()
                 .AddScoped<IDistrictUsersRepository, DistrictUsersRepository>()
                 .AddScoped<IDistrictUserGroupsRepository, DistrictUserGroupsRepository>()

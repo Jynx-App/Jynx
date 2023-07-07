@@ -20,6 +20,7 @@ namespace Jynx.Core
                 .AddScoped<IApiAppsService, ApiAppService>()
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
                 .AddScoped<ICommentsService, CommentsService>()
+                .AddScoped<ICommentVotesService, CommentVotesService>()
                 .AddScoped<IDistrictsService, DistrictsService>()
                 .AddScoped<IDistrictUsersService, DistrictUsersService>()
                 .AddScoped<IDistrictUserGroupsService, DistrictUserGroupsService>()

@@ -103,5 +103,35 @@ namespace Jynx.Api.Controllers.v1
 
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpVote([FromBody] IdRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _commentsService.UpVoteAsync(request.Id, userId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> DownVote([FromBody] IdRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _commentsService.DownVoteAsync(request.Id, userId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ClearVote([FromBody] IdRequest request)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            _ = await _commentsService.ClearVoteAsync(request.Id, userId);
+
+            return Ok();
+        }
     }
 }
