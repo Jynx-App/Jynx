@@ -6,9 +6,9 @@ using Jynx.Cli.Commands.RepositoryServices;
 namespace Jynx.Cli.Commands.EntityServices
 {
     [Command("post-votes")]
-    internal class PostVoteCommands : EntityServiceCommands<IPostVotesService, PostVote>
+    internal class PostVotesCommands : EntityServiceCommands<IPostVotesService, PostVote>
     {
-        public PostVoteCommands(IPostVotesService service)
+        public PostVotesCommands(IPostVotesService service)
             : base(service)
         {
         }

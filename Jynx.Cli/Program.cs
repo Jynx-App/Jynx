@@ -47,15 +47,15 @@ namespace Jynx.Cli
             var app = builder.Build();
 
             app.AddSubCommands<SetupCommands>();
-            app.AddSubCommands<ApiAppCommands>();
-            app.AddSubCommands<ApiAppUserCommands>();
-            app.AddSubCommands<CommentCommands>();
-            app.AddSubCommands<DistrictCommands>();
-            app.AddSubCommands<DistrictUserCommands>();
-            app.AddSubCommands<DistrictUserGroupCommands>();
-            app.AddSubCommands<NotificationCommands>();
-            app.AddSubCommands<PostCommands>();
-            app.AddSubCommands<UserCommands>();
+            app.AddSubCommands<ApiAppsCommands>();
+            app.AddSubCommands<ApiAppUsersCommands>();
+            app.AddSubCommands<CommentsCommands>();
+            app.AddSubCommands<DistrictsCommands>();
+            app.AddSubCommands<DistrictUsersCommands>();
+            app.AddSubCommands<DistrictUserGroupsCommands>();
+            app.AddSubCommands<NotificationsCommands>();
+            app.AddSubCommands<PostsCommands>();
+            app.AddSubCommands<UsersCommands>();
 
             await app.RunAsync();
         }

@@ -5,9 +5,9 @@ using Jynx.Abstractions.Services;
 namespace Jynx.Cli.Commands.RepositoryServices
 {
     [Command("api-app-users")]
-    internal class ApiAppUserCommands : EntityServiceCommands<IApiAppUsersService, ApiAppUser>
+    internal class ApiAppUsersCommands : EntityServiceCommands<IApiAppUsersService, ApiAppUser>
     {
-        public ApiAppUserCommands(IApiAppUsersService repository)
+        public ApiAppUsersCommands(IApiAppUsersService repository)
             : base(repository)
         {
         }

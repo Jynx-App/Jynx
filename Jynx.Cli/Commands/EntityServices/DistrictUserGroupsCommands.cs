@@ -5,9 +5,9 @@ using Jynx.Abstractions.Services;
 namespace Jynx.Cli.Commands.RepositoryServices
 {
     [Command("district-user-group")]
-    internal class DistrictUserGroupCommands : EntityServiceCommands<IDistrictUserGroupsService, DistrictUserGroup>
+    internal class DistrictUserGroupsCommands : EntityServiceCommands<IDistrictUserGroupsService, DistrictUserGroup>
     {
-        public DistrictUserGroupCommands(IDistrictUserGroupsService service)
+        public DistrictUserGroupsCommands(IDistrictUserGroupsService service)
             : base(service)
         {
         }
