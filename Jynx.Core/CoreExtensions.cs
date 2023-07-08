@@ -17,6 +17,10 @@ namespace Jynx.Core
             services
                 // Configuration
                 .ConfigureByDefaultKey<OfficialApiAppOptions>(configuration)
+                .ConfigureByDefaultKey<DistrictsOptions>(configuration)
+                .ConfigureByDefaultKey<PostsOptions>(configuration)
+                .ConfigureByDefaultKey<CommentsOptions>(configuration)
+                .ConfigureByDefaultKey<UsersOptions>(configuration)
                 // Services
                 .AddScoped<IApiAppsService, ApiAppService>()
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
