@@ -24,5 +24,7 @@
         public int Score => UpVotes - DownVotes;
 
         public int TotalVotes => UpVotes + DownVotes;
+
+        public PostsSortOrder DefaultCommentsSortOrder { get; set; }
     }
 }

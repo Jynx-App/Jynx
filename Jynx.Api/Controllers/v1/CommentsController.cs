@@ -56,20 +56,6 @@ namespace Jynx.Api.Controllers.v1
             return Ok(response);
         }
 
-        [HttpGet("{postId}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetByPostId(string postId)
-        {
-            var entities = await _commentsService.GetByPostIdAsync(postId);
-
-            var response = new GetCommentsByPostIdResponse
-            {
-                Comments = entities.Select(e => new GetCommentResponse(e))
-            };
-
-            return Ok(response);
-        }
-
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateCommentRequest request)
         {

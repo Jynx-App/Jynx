@@ -22,8 +22,8 @@ namespace Jynx.Core.Services
             _commentVotesService = commentVotesService;
         }
 
-        public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId)
-            => Repository.GetByPostIdAsync(commentId);
+        public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
+            => Repository.GetByPostIdAsync(commentId, count, offset, sortOrder);
 
         public async Task<bool> UpVoteAsync(string commentId, string userId)
             => await VoteAsync(commentId, userId, true);

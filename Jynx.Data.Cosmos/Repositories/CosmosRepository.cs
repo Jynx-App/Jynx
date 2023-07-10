@@ -126,15 +126,9 @@ namespace Jynx.Data.Cosmos.Repositories
 
         protected async Task<bool> InternalExistsAsync(string id, string partitionKey)
         {
-            var partitionKeyFieldName = GetPartitionKeyFieldName();
+            var entity = await InternalGetAsync(id, partitionKey);
 
-            var query = new QueryDefinition($"SELECT c.id FROM c WHERE c.id = @id AND c.{partitionKeyFieldName} = @pk")
-                .WithParameter("@id", id)
-                .WithParameter("@pk", partitionKey);
-
-            var result = await ExecuteQueryAsync(query);
-
-            return result.Any(e => e is not ISoftRemovableEntity se || se.Removed is null);
+            return entity is not null;
         }
 
         protected async Task<IEnumerable<TEntity>> ExecuteQueryAsync(QueryDefinition queryDefinition)
@@ -167,7 +161,14 @@ namespace Jynx.Data.Cosmos.Repositories
         protected string GetPartitionKey(TEntity entity)
             => GetPartitionKeyPropertyInfo()?.GetValue(entity) as string ?? throw new MissingPartitionKeyException();
 
-        private PropertyInfo? GetPartitionKeyPropertyInfo()
+        protected static string GetSortSqlString(PostsSortOrder sortOrder, string target = "c")
+            => sortOrder switch
+            {
+                PostsSortOrder.Newest => $"ORDER BY {target}.created DESC",
+                _ => $"ORDER BY {target}.score DESC"
+            };
+
+    private PropertyInfo? GetPartitionKeyPropertyInfo()
             => typeof(TEntity).GetProperty(ContainerInfo.PartitionKey);
 
         private string GetPartitionKeyFieldName()

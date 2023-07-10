@@ -10,6 +10,7 @@ namespace Jynx.Abstractions.Services
 
         Task<string> CreateAndAssignModerator(District district, string userId);
         Task<bool> DoesUserHavePermissionAsync(string districtId, string userId, ModerationPermission permission);
+        Task<IEnumerable<Post>> GetPostsAsync(string districtId, int count, int offset = 0, PostsSortOrder? sortOrder = null);
         Task<bool> IsUserAllowedToPostAndCommentAsync(string districtId, string userId);
     }
 }

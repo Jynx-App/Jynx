@@ -112,5 +112,24 @@ namespace Jynx.Data.Cosmos.Repositories
 
         protected static bool IsCompoundId(string id)
             => id.Contains('.');
+
+        /// <summary>
+        /// Fixes Id on outbound entity so it is properly formatted compoundId.
+        /// </summary>
+        /// <param name="entity"></param>
+        protected void FixId(TEntity entity)
+            => entity.Id = GetCompoundId(entity);
+
+        /// <summary>
+        /// Fixes Ids on outbound entities so they are properly formatted compoundId.
+        /// </summary>
+        /// <param name="entities"></param>
+        protected void FixIds(IEnumerable<TEntity> entities)
+        {
+            foreach(var entity in entities)
+            {
+                FixId(entity);
+            }
+        }
     }
 }

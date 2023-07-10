@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Jynx.Common.Events;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jynx.Common
@@ -7,7 +8,7 @@ namespace Jynx.Common
     {
         public static IServiceCollection AddCommon(this IServiceCollection services, IConfiguration configuration)
         {
-            // Empty
+            services.AddEventPublisher();
 
             return services;
         }

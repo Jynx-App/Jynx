@@ -26,7 +26,9 @@ namespace Jynx.Validation.Fluent.Rules
                 if (service is null)
                     return false;
 
-                return await service.ExistsAsync(v);
+                var exists = await service.ExistsAsync(v);
+
+                return exists;
             });
 
             return _ruleBuilder;

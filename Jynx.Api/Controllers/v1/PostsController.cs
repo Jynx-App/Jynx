@@ -1,4 +1,6 @@
-﻿using Jynx.Abstractions.Services;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Services;
+using Jynx.Api.Models;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Api.Security.Claims;
@@ -10,15 +12,12 @@ namespace Jynx.Api.Controllers.v1
     [ApiVersion("1.0")]
     public class PostsController : BaseController
     {
-        private readonly IDistrictsService _districtsService;
         private readonly IPostsService _postsService;
 
         public PostsController(
-            IDistrictsService districtsService,
             IPostsService postsService,
             ILogger<PostsController> logger) : base(logger)
         {
-            _districtsService = districtsService;
             _postsService = postsService;
         }
 
@@ -114,6 +113,16 @@ namespace Jynx.Api.Controllers.v1
             _ = await _postsService.ClearVoteAsync(request.Id, userId);
 
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetComments(string id, [FromQuery] int offset = 0, [FromQuery] int count = 1000, PostsSortOrder? sortOrder = null)
+        {
+            var posts = await _postsService.GetCommentsAsync(id, count, offset, sortOrder);
+
+            var commentModels = posts.Select(c => new CommentModel(c));
+
+            return Ok(commentModels);
         }
     }
 }

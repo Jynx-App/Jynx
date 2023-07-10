@@ -21,5 +21,23 @@ namespace Jynx.Data.Cosmos.Repositories
             Name = "Posts",
             PartitionKey = nameof(Post.DistrictId)
         };
+
+        public async Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
+        {
+            var queryString = $@"
+                SELECT *
+                FROM c
+                WHERE c.districtId = @districtId
+                {GetSortSqlString(sortOrder)}
+                OFFSET {offset} LIMIT {count}
+            ";
+
+            var query = new QueryDefinition(queryString)
+                .WithParameter("@districtId", districtId);
+
+            var entities = await ExecuteQueryAsync(query);
+
+            return entities;
+        }
     }
 }

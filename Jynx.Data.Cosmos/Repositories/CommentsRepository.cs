@@ -22,19 +22,22 @@ namespace Jynx.Data.Cosmos.Repositories
             PartitionKey = nameof(Comment.PostId)
         };
 
-        public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId)
+        public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
         {
-            var (_, postPk) = GetIdAndPartitionKeyFromCompoundKey(compoundPostId);
+            var queryString = $@"
+                SELECT *
+                FROM c
+                WHERE c.postId = @postId
+                {GetSortSqlString(sortOrder)}
+                OFFSET {offset} LIMIT {count}
+            ";
 
-            var query = new QueryDefinition("SELECT * FROM c WHERE c.postId = @postId")
+            var query = new QueryDefinition(queryString)
                 .WithParameter("@postId", compoundPostId);
 
             var entities = await ExecuteQueryAsync(query);
 
-            foreach (var entity in entities)
-            {
-                entity.Id = GetCompoundId(entity);
-            }
+            FixIds(entities);
 
             return entities;
         }

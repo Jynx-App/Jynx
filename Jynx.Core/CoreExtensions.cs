@@ -1,8 +1,11 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
 using Jynx.Common.Configuration;
+using Jynx.Common.DependencyInjection;
+using Jynx.Common.Events;
 using Jynx.Core.Configuration;
 using Jynx.Core.Services;
+using Jynx.Core.Services.Events;
 using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +29,12 @@ namespace Jynx.Core
                 .AddScoped<IApiAppUsersService, ApiAppUsersService>()
                 .AddScoped<ICommentsService, CommentsService>()
                 .AddScoped<ICommentVotesService, CommentVotesService>()
-                .AddScoped<IDistrictsService, DistrictsService>()
+                .AddScoped<DistrictsService>()
+                    .ForwardScoped<IDistrictsService, DistrictsService>()
+                    .ForwardScoped<IEventSubscriber<CreatePostEvent>, DistrictsService>()
+                .AddScoped<DistrictsService>()
+                .AddScoped<IDistrictsService>(sp => sp.GetService<DistrictsService>()!)
+                .AddScoped<IEventSubscriber<CreatePostEvent>>(sp => sp.GetService<DistrictsService>()!)
                 .AddScoped<IDistrictUsersService, DistrictUsersService>()
                 .AddScoped<IDistrictUserGroupsService, DistrictUserGroupsService>()
                 .AddScoped<INotificationsService, NotificationsService>()

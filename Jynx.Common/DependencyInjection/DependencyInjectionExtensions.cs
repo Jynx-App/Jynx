@@ -14,5 +14,32 @@ namespace Jynx.Common.DependencyInjection
         public static IOptions<TOption> GetIOptions<TOption>(this IServiceProvider services)
             where TOption : class
             => services.GetService<IOptions<TOption>>() ?? throw new Exception($"Could not pull IOptions<{typeof(TOption).Name}> out of DI");
+
+        public static IServiceCollection ForwardScoped<TInterface, TImplementation>(this IServiceCollection services)
+            where TInterface : class
+            where TImplementation : TInterface
+        {
+            services.AddScoped<TInterface>(sp => sp.GetService<TImplementation>()!);
+
+            return services;
+        }
+
+        public static IServiceCollection ForwardTransient<TInterface, TImplementation>(this IServiceCollection services)
+            where TInterface : class
+            where TImplementation : TInterface
+        {
+            services.AddTransient<TInterface>(sp => sp.GetService<TImplementation>()!);
+
+            return services;
+        }
+
+        public static IServiceCollection ForwardSingleton<TInterface, TImplementation>(this IServiceCollection services)
+            where TInterface : class
+            where TImplementation : TInterface
+        {
+            services.AddSingleton<TInterface>(sp => sp.GetService<TImplementation>()!);
+
+            return services;
+        }
     }
 }
