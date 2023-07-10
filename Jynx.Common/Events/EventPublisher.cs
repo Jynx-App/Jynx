@@ -17,7 +17,7 @@ namespace Jynx.Common.Events
 
             var handlers = scope.ServiceProvider.GetEventSubscribers<TEvent>();
 
-            foreach(var handler in handlers)
+            foreach (var handler in handlers)
             {
                 await handler.HandleAsync(sender, @event);
             }

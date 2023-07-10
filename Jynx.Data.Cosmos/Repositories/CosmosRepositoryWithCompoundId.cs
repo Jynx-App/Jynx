@@ -126,7 +126,7 @@ namespace Jynx.Data.Cosmos.Repositories
         /// <param name="entities"></param>
         protected void FixIds(IEnumerable<TEntity> entities)
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 FixId(entity);
             }

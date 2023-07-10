@@ -6,7 +6,6 @@ using Jynx.Common.AspNetCore.ErrorHandling;
 using Jynx.Common.AspNetCore.Logging;
 using Jynx.Core;
 using Jynx.Data.Cosmos;
-using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;

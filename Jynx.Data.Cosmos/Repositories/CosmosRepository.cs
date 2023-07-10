@@ -167,8 +167,8 @@ namespace Jynx.Data.Cosmos.Repositories
                 _ => $"ORDER BY {target}.score DESC"
             };
 
-    private PropertyInfo? GetPartitionKeyPropertyInfo()
-            => typeof(TEntity).GetProperty(ContainerInfo.PartitionKey);
+        private PropertyInfo? GetPartitionKeyPropertyInfo()
+                => typeof(TEntity).GetProperty(ContainerInfo.PartitionKey);
 
         private string GetPartitionKeyFieldName()
             => JsonNamingPolicy.CamelCase.ConvertName(ContainerInfo.PartitionKey);

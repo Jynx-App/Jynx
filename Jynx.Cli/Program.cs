@@ -5,7 +5,6 @@ using Jynx.Cli.Commands.RepositoryServices;
 using Jynx.Common;
 using Jynx.Core;
 using Jynx.Data.Cosmos;
-using Jynx.Validation.Fluent;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
