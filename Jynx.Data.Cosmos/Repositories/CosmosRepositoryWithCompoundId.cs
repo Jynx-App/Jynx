@@ -19,9 +19,9 @@ namespace Jynx.Data.Cosmos.Repositories
 
         public override async Task<string> CreateAsync(TEntity entity)
         {
-            var partitionKey = GetPartitionKey(entity);
+            var id = await base.CreateAsync(entity);
 
-            var id = await InternalCreateAsync(entity, partitionKey);
+            var partitionKey = GetPartitionKey(entity);
 
             var compoundId = CreateCompoundId(partitionKey, id);
 

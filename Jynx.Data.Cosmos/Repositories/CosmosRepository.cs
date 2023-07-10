@@ -44,12 +44,11 @@ namespace Jynx.Data.Cosmos.Repositories
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
         public virtual async Task<string> CreateAsync(TEntity entity)
-            => await InternalCreateAsync(entity, GetPartitionKey(entity));
-
-        protected async Task<string> InternalCreateAsync(TEntity entity, string partitionKey)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
+
+            var partitionKey = ContainerInfo.PartitionKey == nameof(BaseEntity.Id) ? entity.Id : GetPartitionKey(entity);
 
             try
             {
