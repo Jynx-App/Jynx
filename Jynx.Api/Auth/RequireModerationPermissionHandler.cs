@@ -1,5 +1,4 @@
-﻿using Jynx.Abstractions.Entities;
-using Jynx.Abstractions.Entities.Auth;
+﻿using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
 using Jynx.Api.Security.Claims;
 using Jynx.Common.AspNetCore.Http;

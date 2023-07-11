@@ -28,8 +28,29 @@ namespace Jynx.Data.Cosmos.Repositories
                 SELECT *
                 FROM c
                 WHERE c.districtId = @districtId
+                AND IS_NULL(c.pinned)
                 {GetSortSqlString(sortOrder)}
                 OFFSET {offset} LIMIT {count}
+            ";
+
+            var query = new QueryDefinition(queryString)
+                .WithParameter("@districtId", districtId);
+
+            var entities = await ExecuteQueryAsync(query);
+
+            FixIds(entities);
+
+            return entities;
+        }
+
+        public async Task<IEnumerable<Post>> GetPinnedByDistrictIdAsync(string districtId)
+        {
+            var queryString = $@"
+                SELECT *
+                FROM c
+                WHERE c.districtId = @districtId
+                AND NOT IS_NULL(c.pinned)
+                ORDER BY c.pinned DESC
             ";
 
             var query = new QueryDefinition(queryString)

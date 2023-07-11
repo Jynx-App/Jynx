@@ -8,6 +8,7 @@
         ApprovePosts,
         EditPosts,
         DeletePosts,
+        PinPosts,
 
         ApproveComments,
         EditComments,

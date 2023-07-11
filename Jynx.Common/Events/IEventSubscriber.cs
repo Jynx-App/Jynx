@@ -2,6 +2,6 @@
 {
     public interface IEventSubscriber<TEvent>
     {
-        Task HandleAsync(object sender, TEvent ev);
+        Task HandleAsync(object sender, TEvent @event);
     }
 }

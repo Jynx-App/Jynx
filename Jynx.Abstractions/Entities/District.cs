@@ -7,7 +7,5 @@
         public PostsSortOrder DefaultPostSortOrder = PostsSortOrder.HighestScore;
 
         public PostsSortOrder DefaultCommentsSortOrder = PostsSortOrder.HighestScore;
-
-        public List<string> PinnedPostIds { get; set; } = new List<string>();
     }
 }

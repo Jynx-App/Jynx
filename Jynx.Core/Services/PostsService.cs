@@ -31,7 +31,7 @@ namespace Jynx.Core.Services
             _eventPublisher = eventPublisher;
         }
 
-        public async override Task<string> CreateAsync(Post entity)
+        public override async Task<string> CreateAsync(Post entity)
         {
             var @event = new CreatePostEvent(entity);
 
@@ -45,6 +45,9 @@ namespace Jynx.Core.Services
 
         public Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
             => Repository.GetByDistrictIdAsync(districtId, offset, count, sortOrder);
+
+        public Task<IEnumerable<Post>> GetPinnedByDistrictIdAsync(string districtId)
+            => Repository.GetPinnedByDistrictIdAsync(@districtId);
 
         public async Task<bool> UpVoteAsync(string postId, string userId)
             => await VoteAsync(postId, userId, true);
@@ -142,6 +145,36 @@ namespace Jynx.Core.Services
             var comments = await _commentsService.GetByPostIdAsync(postId, count, offset, sortOrder.Value);
 
             return comments;
+        }
+
+        public async Task<bool> PinAsync(string id)
+            => await PinAsync(await GetAsync(id) ?? throw new NotFoundException(nameof(Post)));
+
+        public async Task<bool> PinAsync(Post entity)
+        {
+            if (entity.Pinned is not null)
+                return true;
+
+            entity.Pinned = SystemClock.UtcNow.Date;
+
+            var updated = await UpdateAsync(entity);
+
+            return updated;
+        }
+
+        public async Task<bool> UnpinAsync(string id)
+            => await UnpinAsync(await GetAsync(id) ?? throw new NotFoundException(nameof(Post)));
+
+        public async Task<bool> UnpinAsync(Post entity)
+        {
+            if (entity.Pinned is null)
+                return true;
+
+            entity.Pinned = null;
+
+            var updated = await UpdateAsync(entity);
+
+            return updated;
         }
     }
 }

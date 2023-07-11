@@ -30,6 +30,6 @@ namespace Jynx.Abstractions.Entities
         public PostsSortOrder DefaultCommentsSortOrder { get; set; }
 
         [JsonIgnore]
-        public bool Pinned { get; set; }
+        public DateTime? Pinned { get; set; }
     }
 }

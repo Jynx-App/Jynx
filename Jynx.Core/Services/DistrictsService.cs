@@ -109,62 +109,17 @@ namespace Jynx.Core.Services
 
             sortOrder ??= district.DefaultPostSortOrder;
 
-            var posts = await _postsService.GetByDistrictIdAsync(districtId, offset, count, sortOrder.Value);
-
-            posts = posts.OrderBy(p => !district.PinnedPostIds.Contains(p.Id!));
-
-            foreach(var pinnedPostId in district.PinnedPostIds)
-            {
-                var post = posts.FirstOrDefault(p => p.Id == pinnedPostId);
-
-                if(post is null)
-                    continue;
-
-                post.Pinned = true;
-            }
+            var posts = (await _postsService.GetPinnedByDistrictIdAsync(district.Id!)).ToList();
+            posts.AddRange(await _postsService.GetByDistrictIdAsync(district.Id!, offset, count - posts.Count, sortOrder.Value));
 
             return posts;
         }
 
-        public async Task<bool> PinAsync(string districtId, string postId)
+        async Task IEventSubscriber<CreatePostEvent>.HandleAsync(object sender, CreatePostEvent @event)
         {
-            var district = await GetAsync(districtId) ?? throw new NotFoundException(nameof(District));
+            var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
 
-            if (district.PinnedPostIds.Contains(postId))
-                return true;
-
-            var maxPinnedPosts = _districtOptions.Value.MaxPinnedPosts;
-
-            if (district.PinnedPostIds.Count >= maxPinnedPosts)
-                throw new PinnedLimitException(maxPinnedPosts, nameof(Post));
-
-            var post = await _postsService.GetAsync(postId);
-
-            if (post?.DistrictId != districtId)
-                throw new NotFoundException(nameof(Post));
-
-            district.PinnedPostIds.Add(postId);
-
-            return await UpdateAsync(district);
-        }
-
-        public async Task<bool> UnpinAsync(string districtId, string postId)
-        {
-            var district = await GetAsync(districtId) ?? throw new NotFoundException(nameof(District));
-
-            if (!district.PinnedPostIds.Contains(postId))
-                return true;
-
-            district.PinnedPostIds.Remove(postId);
-
-            return await UpdateAsync(district);
-        }
-
-        async Task IEventSubscriber<CreatePostEvent>.HandleAsync(object seender, CreatePostEvent ev)
-        {
-            var district = await GetAsync(ev.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
-
-            ev.Post.DefaultCommentsSortOrder = district.DefaultCommentsSortOrder;
+            @event.Post.DefaultCommentsSortOrder = district.DefaultCommentsSortOrder;
         }
     }
 }

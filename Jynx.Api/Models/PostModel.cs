@@ -51,6 +51,6 @@ namespace Jynx.Api.Models
 
         public int Score { get; set; }
 
-        public bool Pinned { get; set; }
+        public DateTime? Pinned { get; set; }
     }
 }
