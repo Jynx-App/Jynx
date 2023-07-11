@@ -37,6 +37,8 @@ namespace Jynx.Data.Cosmos.Repositories
 
             var entities = await ExecuteQueryAsync(query);
 
+            FixIds(entities);
+
             return entities;
         }
     }

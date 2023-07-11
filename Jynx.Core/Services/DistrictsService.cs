@@ -4,10 +4,13 @@ using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Repositories;
 using Jynx.Abstractions.Repositories.Exceptions;
 using Jynx.Abstractions.Services;
+using Jynx.Abstractions.Services.Exceptions;
 using Jynx.Common.Events;
+using Jynx.Core.Configuration;
 using Jynx.Core.Services.Events;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Jynx.Core.Services
 {
@@ -16,6 +19,7 @@ namespace Jynx.Core.Services
         private readonly IDistrictUsersService _districtUsersService;
         private readonly IDistrictUserGroupsService _districtUserGroupsService;
         private readonly IPostsService _postsService;
+        private readonly IOptions<DistrictsOptions> _districtOptions;
 
         public string DefaultNotAllowedToPostMessage => "You are not allowed to post in this district";
         public string DefaultNotAllowedToCommentMessage => "You are not allowed to comment in this district";
@@ -27,12 +31,14 @@ namespace Jynx.Core.Services
             IPostsService postsService,
             IValidator<District> validator,
             ISystemClock systemClock,
+            IOptions<DistrictsOptions> districtOptions,
             ILogger<DistrictsService> logger)
             : base(districtRepository, validator, systemClock, logger)
         {
             _districtUsersService = districtUsersService;
             _districtUserGroupsService = districtUserGroupsService;
             _postsService = postsService;
+            _districtOptions = districtOptions;
         }
 
         public async Task<string> CreateAndAssignModerator(District district, string userId)
@@ -105,7 +111,53 @@ namespace Jynx.Core.Services
 
             var posts = await _postsService.GetByDistrictIdAsync(districtId, offset, count, sortOrder.Value);
 
+            posts = posts.OrderBy(p => !district.PinnedPostIds.Contains(p.Id!));
+
+            foreach(var pinnedPostId in district.PinnedPostIds)
+            {
+                var post = posts.FirstOrDefault(p => p.Id == pinnedPostId);
+
+                if(post is null)
+                    continue;
+
+                post.Pinned = true;
+            }
+
             return posts;
+        }
+
+        public async Task<bool> PinAsync(string districtId, string postId)
+        {
+            var district = await GetAsync(districtId) ?? throw new NotFoundException(nameof(District));
+
+            if (district.PinnedPostIds.Contains(postId))
+                return true;
+
+            var maxPinnedPosts = _districtOptions.Value.MaxPinnedPosts;
+
+            if (district.PinnedPostIds.Count >= maxPinnedPosts)
+                throw new PinnedLimitException(maxPinnedPosts, nameof(Post));
+
+            var post = await _postsService.GetAsync(postId);
+
+            if (post?.DistrictId != districtId)
+                throw new NotFoundException(nameof(Post));
+
+            district.PinnedPostIds.Add(postId);
+
+            return await UpdateAsync(district);
+        }
+
+        public async Task<bool> UnpinAsync(string districtId, string postId)
+        {
+            var district = await GetAsync(districtId) ?? throw new NotFoundException(nameof(District));
+
+            if (!district.PinnedPostIds.Contains(postId))
+                return true;
+
+            district.PinnedPostIds.Remove(postId);
+
+            return await UpdateAsync(district);
         }
 
         async Task IEventSubscriber<CreatePostEvent>.HandleAsync(object seender, CreatePostEvent ev)

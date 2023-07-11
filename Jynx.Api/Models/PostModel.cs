@@ -20,6 +20,7 @@ namespace Jynx.Api.Models
             DownVotes = post.DownVotes;
             TotalVotes = post.TotalVotes;
             Score = post.Score;
+            Pinned = post.Pinned;
         }
 
         public string Id { get; set; } = "";
@@ -49,5 +50,7 @@ namespace Jynx.Api.Models
         public int TotalVotes { get; set; }
 
         public int Score { get; set; }
+
+        public bool Pinned { get; set; }
     }
 }

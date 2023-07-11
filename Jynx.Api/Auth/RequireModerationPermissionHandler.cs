@@ -1,4 +1,5 @@
-﻿using Jynx.Abstractions.Entities.Auth;
+﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
 using Jynx.Api.Security.Claims;
 using Jynx.Common.AspNetCore.Http;
@@ -9,14 +10,17 @@ namespace Jynx.Api.Auth
 {
     public class RequireModerationPermissionHandler : AuthorizationHandler<RequireModerationPermissionRequirement>
     {
-        private readonly IDistrictsService _districtsService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private const string _routeIdKeyName = "id";
         private readonly string[] _httpMethodsThatUseModel = new[]
         {
             "post",
             "put",
             "delete",
         };
+
+
+        private readonly IDistrictsService _districtsService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RequireModerationPermissionHandler(
             IDistrictsService districtsService,
@@ -36,25 +40,18 @@ namespace Jynx.Api.Auth
             if (context.User is null)
                 return;
 
-            var districtId = httpContext.GetRouteData().Values.ContainsKey("id")
-                ? httpContext.GetRouteData().Values["id"]?.ToString()
-                : null;
-
             var httpMethod = httpContext.Request.Method.ToLower();
 
-            if (string.IsNullOrWhiteSpace(districtId) && _httpMethodsThatUseModel.Contains(httpMethod))
-            {
-                var json = await httpContext.Request.GetBodyAsStringAsync();
-
-                var model = JsonConvert.DeserializeObject<RequireModerationPermissionModel>(json);
-
-                districtId = model?.DistrictId ?? model?.Id;
-            }
-
-            var userId = context.User.GetId()!;
+            var districtId = httpContext.GetRouteData().Values.ContainsKey(_routeIdKeyName)
+                ? httpContext.GetRouteData().Values[_routeIdKeyName]?.ToString()
+                : _httpMethodsThatUseModel.Contains(httpMethod)
+                    ? await GetDistrictIdFromRequestAsync(httpContext)
+                    : null;
 
             if (string.IsNullOrWhiteSpace(districtId))
                 return;
+
+            var userId = context.User.GetId()!;
 
             var hasPermission = await _districtsService.DoesUserHavePermissionAsync(districtId, userId, requirement.Permission);
 
@@ -62,6 +59,24 @@ namespace Jynx.Api.Auth
                 context.Succeed(requirement);
 
             return;
+        }
+
+        private async Task<string?> GetDistrictIdFromRequestAsync(HttpContext context)
+        {
+            var json = await context.Request.GetBodyAsStringAsync();
+
+            var model = JsonConvert.DeserializeObject<RequireModerationPermissionModel>(json);
+
+            var districtId = model?.DistrictId ?? model?.Id;
+
+            return districtId;
+        }
+
+        private class RequireModerationPermissionModel
+        {
+            public string? Id { get; set; }
+
+            public string? DistrictId { get; set; }
         }
     }
 

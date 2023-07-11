@@ -4,6 +4,6 @@
     {
         public const string DefaultKey = "Districts";
 
-
+        public int MaxPinnedPosts { get; set; } = 2;
     }
 }

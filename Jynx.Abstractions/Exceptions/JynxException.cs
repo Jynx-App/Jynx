@@ -15,6 +15,6 @@ namespace Jynx.Abstractions.Exceptions
 
         public bool HasSafeMessage => !string.IsNullOrWhiteSpace(SafeMessage);
 
-        public HttpStatusCode StatusCode { get; protected set; }
+        public HttpStatusCode StatusCode { get; protected set; } = HttpStatusCode.InternalServerError;
     }
 }

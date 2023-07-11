@@ -36,5 +36,23 @@ namespace Jynx.Api.Areas.Moderation.Controllers.v1
 
             return Ok();
         }
+
+        [HttpPut]
+        [RequireModerationPermission(ModerationPermission.EditDistrict)]
+        public async Task<IActionResult> Pin([FromBody] PinRequest request)
+        {
+            _ = await _districtsService.PinAsync(request.Id, request.PostId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [RequireModerationPermission(ModerationPermission.EditDistrict)]
+        public async Task<IActionResult> Unpin([FromBody] PinRequest request)
+        {
+            _ = await _districtsService.UnpinAsync(request.Id, request.PostId);
+
+            return Ok();
+        }
     }
 }

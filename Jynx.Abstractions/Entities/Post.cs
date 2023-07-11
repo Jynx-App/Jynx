@@ -1,4 +1,6 @@
-﻿namespace Jynx.Abstractions.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Jynx.Abstractions.Entities
 {
     public class Post : BaseEntity, ISoftRemovableEntity
     {
@@ -26,5 +28,8 @@
         public int TotalVotes => UpVotes + DownVotes;
 
         public PostsSortOrder DefaultCommentsSortOrder { get; set; }
+
+        [JsonIgnore]
+        public bool Pinned { get; set; }
     }
 }
