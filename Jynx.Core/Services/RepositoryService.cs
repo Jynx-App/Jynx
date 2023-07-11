@@ -47,7 +47,7 @@ namespace Jynx.Core.Services
 
         protected async Task<string> InternalCreateAsync(TEntity entity)
         {
-            entity.Created = SystemClock.UtcNow.Date;
+            entity.Created = SystemClock.UtcNow.DateTime;
 
             return await Repository.CreateAsync(entity);
         }
@@ -62,7 +62,7 @@ namespace Jynx.Core.Services
             if (!isEntityValid)
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
 
-            entity.Edited = SystemClock.UtcNow.Date;
+            entity.Edited = SystemClock.UtcNow.DateTime;
 
             return await Repository.UpdateAsync(entity);
         }
@@ -75,7 +75,7 @@ namespace Jynx.Core.Services
 
                 if (entity is ISoftRemovableEntity softRemovableEntity)
                 {
-                    softRemovableEntity.Removed = SystemClock.UtcNow.Date;
+                    softRemovableEntity.Removed = SystemClock.UtcNow.DateTime;
 
                     return await Repository.UpdateAsync(entity);
                 }

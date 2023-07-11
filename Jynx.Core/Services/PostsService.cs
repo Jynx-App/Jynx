@@ -165,7 +165,7 @@ namespace Jynx.Core.Services
             if (@event.Canceled)
                 return false;
 
-            entity.Pinned = SystemClock.UtcNow.Date;
+            entity.Pinned = SystemClock.UtcNow.DateTime;
 
             var updated = await UpdateAsync(entity);
 
