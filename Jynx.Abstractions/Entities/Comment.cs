@@ -21,5 +21,7 @@
         public int Score => UpVotes - DownVotes;
 
         public int TotalVotes => UpVotes + DownVotes;
+
+        public DateTime? Pinned { get; set; }
     }
 }

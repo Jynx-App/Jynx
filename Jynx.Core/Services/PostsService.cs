@@ -142,7 +142,8 @@ namespace Jynx.Core.Services
 
             sortOrder ??= post.DefaultCommentsSortOrder;
 
-            var comments = await _commentsService.GetByPostIdAsync(postId, count, offset, sortOrder.Value);
+            var comments = (await _commentsService.GetPinnedByPostIdAsync(post.Id!)).ToList();
+            comments.AddRange(await _commentsService.GetByPostIdAsync(post.Id!, count, offset, sortOrder.Value));
 
             return comments;
         }
@@ -154,6 +155,15 @@ namespace Jynx.Core.Services
         {
             if (entity.Pinned is not null)
                 return true;
+
+            var pinnedPosts = await GetPinnedByDistrictIdAsync(entity.DistrictId);
+
+            var @event = new PinPostEvent(entity, true, pinnedPosts.Count());
+
+            await _eventPublisher.PublishAsync(this, @event);
+
+            if (@event.Canceled)
+                return false;
 
             entity.Pinned = SystemClock.UtcNow.Date;
 
@@ -169,6 +179,13 @@ namespace Jynx.Core.Services
         {
             if (entity.Pinned is null)
                 return true;
+
+            var @event = new PinPostEvent(entity, false, 0);
+
+            await _eventPublisher.PublishAsync(this, @event);
+
+            if (@event.Canceled)
+                return false;
 
             entity.Pinned = null;
 

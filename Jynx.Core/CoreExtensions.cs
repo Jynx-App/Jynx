@@ -32,6 +32,8 @@ namespace Jynx.Core
                 .AddScoped<DistrictsService>()
                     .ForwardScoped<IDistrictsService, DistrictsService>()
                     .ForwardScoped<IEventSubscriber<CreatePostEvent>, DistrictsService>()
+                    .ForwardScoped<IEventSubscriber<PinPostEvent>, DistrictsService>()
+                    .ForwardScoped<IEventSubscriber<PinCommentEvent>, DistrictsService>()
                 .AddScoped<DistrictsService>()
                 .AddScoped<IDistrictsService>(sp => sp.GetService<DistrictsService>()!)
                 .AddScoped<IEventSubscriber<CreatePostEvent>>(sp => sp.GetService<DistrictsService>()!)

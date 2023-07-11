@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Repositories;
+using Jynx.Abstractions.Repositories.Exceptions;
 using Jynx.Abstractions.Services;
+using Jynx.Common.Events;
+using Jynx.Core.Services.Events;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -10,20 +13,26 @@ namespace Jynx.Core.Services
     internal class CommentsService : RepositoryService<ICommentsRepository, Comment>, ICommentsService
     {
         private readonly ICommentVotesService _commentVotesService;
+        private readonly IEventPublisher _eventPublisher;
 
         public CommentsService(
             ICommentsRepository repository,
             ICommentVotesService commentVotesService,
             IValidator<Comment> validator,
             ISystemClock systemClock,
+            IEventPublisher eventPublisher,
             ILogger<CommentsService> logger)
             : base(repository, validator, systemClock, logger)
         {
             _commentVotesService = commentVotesService;
+            _eventPublisher = eventPublisher;
         }
 
         public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
             => Repository.GetByPostIdAsync(commentId, count, offset, sortOrder);
+
+        public Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string postId)
+            => Repository.GetPinnedByPostIdAsync(postId);
 
         public async Task<bool> UpVoteAsync(string commentId, string userId)
             => await VoteAsync(commentId, userId, true);
@@ -108,6 +117,54 @@ namespace Jynx.Core.Services
             }
 
             var updated = await UpdateAsync(comment);
+
+            return updated;
+        }
+
+        public async Task<bool> PinAsync(string id)
+            => await PinAsync(await GetAsync(id) ?? throw new NotFoundException(nameof(Post)));
+
+        public async Task<bool> PinAsync(Comment entity)
+        {
+            if (entity.Pinned is not null)
+                return true;
+
+            var pinnedComments = await GetPinnedByPostIdAsync(entity.PostId);
+
+            var @event = new PinCommentEvent(entity, true, pinnedComments.Count());
+
+            await _eventPublisher.PublishAsync(this, @event);
+
+            if (@event.Canceled)
+                return false;
+
+            entity.Pinned = SystemClock.UtcNow.Date;
+
+            var updated = await UpdateAsync(entity);
+
+            return updated;
+        }
+
+        public async Task<bool> UnpinAsync(string id)
+            => await UnpinAsync(await GetAsync(id) ?? throw new NotFoundException(nameof(Post)));
+
+        public async Task<bool> UnpinAsync(Comment entity)
+        {
+            if (entity.Pinned is null)
+                return true;
+
+            var pinnedComments = await GetPinnedByPostIdAsync(entity.PostId);
+
+            var @event = new PinCommentEvent(entity, false, pinnedComments.Count());
+
+            await _eventPublisher.PublishAsync(this, @event);
+
+            if (@event.Canceled)
+                return false;
+
+            entity.Pinned = null;
+
+            var updated = await UpdateAsync(entity);
 
             return updated;
         }

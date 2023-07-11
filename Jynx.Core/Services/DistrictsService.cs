@@ -14,7 +14,11 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Core.Services
 {
-    internal class DistrictsService : RepositoryService<IDistrictsRepository, District>, IDistrictsService, IEventSubscriber<CreatePostEvent>
+    internal class DistrictsService : RepositoryService<IDistrictsRepository, District>,
+        IDistrictsService,
+        IEventSubscriber<CreatePostEvent>,
+        IEventSubscriber<PinPostEvent>,
+        IEventSubscriber<PinCommentEvent>
     {
         private readonly IDistrictUsersService _districtUsersService;
         private readonly IDistrictUserGroupsService _districtUserGroupsService;
@@ -120,6 +124,26 @@ namespace Jynx.Core.Services
             var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
 
             @event.Post.DefaultCommentsSortOrder = district.DefaultCommentsSortOrder;
+        }
+
+        async Task IEventSubscriber<PinPostEvent>.HandleAsync(object sender, PinPostEvent @event)
+        {
+            var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
+
+            var maxPinnedPosts = _districtOptions.Value.MaxPinnedPosts;
+
+            if (@event.NumberOfCurrentlyPinnedPosts >= maxPinnedPosts)
+                throw new PinnedLimitException(maxPinnedPosts, nameof(Post));
+        }
+
+        async Task IEventSubscriber<PinCommentEvent>.HandleAsync(object sender, PinCommentEvent @event)
+        {
+            var district = await GetAsync(@event.Comment.DistrictId) ?? throw new NotFoundException(nameof(District));
+
+            var maxPinnedComments = _districtOptions.Value.MaxPinnedComments;
+
+            if (@event.NumberOfCurrentlyPinnedComments >= maxPinnedComments)
+                throw new PinnedLimitException(maxPinnedComments, nameof(Comment));
         }
     }
 }

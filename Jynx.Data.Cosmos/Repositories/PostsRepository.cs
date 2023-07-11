@@ -28,7 +28,7 @@ namespace Jynx.Data.Cosmos.Repositories
                 SELECT *
                 FROM c
                 WHERE c.districtId = @districtId
-                AND IS_NULL(c.pinned)
+                AND (NOT IS_DEFINED(c.pinned) OR IS_NULL(c.pinned))
                 {GetSortSqlString(sortOrder)}
                 OFFSET {offset} LIMIT {count}
             ";
@@ -49,7 +49,7 @@ namespace Jynx.Data.Cosmos.Repositories
                 SELECT *
                 FROM c
                 WHERE c.districtId = @districtId
-                AND NOT IS_NULL(c.pinned)
+                AND (IS_DEFINED(c.pinned) AND NOT IS_NULL(c.pinned))
                 ORDER BY c.pinned DESC
             ";
 
