@@ -16,7 +16,7 @@ namespace Jynx.Core.Services
 {
     internal class DistrictsService : RepositoryService<IDistrictsRepository, District>,
         IDistrictsService,
-        IEventSubscriber<CreatePostEvent>,
+        IEventSubscriber<CreatingPostEvent>,
         IEventSubscriber<PinPostEvent>,
         IEventSubscriber<PinCommentEvent>
     {
@@ -119,7 +119,7 @@ namespace Jynx.Core.Services
             return posts;
         }
 
-        async Task IEventSubscriber<CreatePostEvent>.HandleAsync(object sender, CreatePostEvent @event)
+        async Task IEventSubscriber<CreatingPostEvent>.HandleAsync(object sender, CreatingPostEvent @event)
         {
             var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
 

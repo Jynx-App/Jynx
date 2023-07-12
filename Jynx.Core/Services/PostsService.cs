@@ -33,7 +33,7 @@ namespace Jynx.Core.Services
 
         public override async Task<string> CreateAsync(Post entity)
         {
-            var @event = new CreatePostEvent(entity);
+            var @event = new CreatingPostEvent(entity);
 
             await _eventPublisher.PublishAsync(this, @event);
 

@@ -2,9 +2,9 @@
 
 namespace Jynx.Core.Services.Events
 {
-    internal class CreatePostEvent
+    internal class CreatingPostEvent
     {
-        public CreatePostEvent(Post post)
+        public CreatingPostEvent(Post post)
         {
             Post = post;
         }
