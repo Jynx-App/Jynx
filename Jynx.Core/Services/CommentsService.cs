@@ -131,7 +131,7 @@ namespace Jynx.Core.Services
 
             var pinnedComments = await GetPinnedByPostIdAsync(entity.PostId);
 
-            var @event = new PinCommentEvent(entity, true, pinnedComments.Count());
+            var @event = new PinningCommentEvent(entity, true, pinnedComments.Count());
 
             await _eventPublisher.PublishAsync(this, @event);
 
@@ -155,7 +155,7 @@ namespace Jynx.Core.Services
 
             var pinnedComments = await GetPinnedByPostIdAsync(entity.PostId);
 
-            var @event = new PinCommentEvent(entity, false, pinnedComments.Count());
+            var @event = new PinningCommentEvent(entity, false, pinnedComments.Count());
 
             await _eventPublisher.PublishAsync(this, @event);
 

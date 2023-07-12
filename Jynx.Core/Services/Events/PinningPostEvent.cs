@@ -2,9 +2,9 @@
 
 namespace Jynx.Core.Services.Events
 {
-    public class PinPostEvent
+    public class PinningPostEvent
     {
-        public PinPostEvent(Post post, bool pin, int numberOfCurrentlyPinnedPosts)
+        public PinningPostEvent(Post post, bool pin, int numberOfCurrentlyPinnedPosts)
         {
             Post = post;
             Pin = pin;

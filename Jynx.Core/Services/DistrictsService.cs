@@ -17,8 +17,8 @@ namespace Jynx.Core.Services
     internal class DistrictsService : RepositoryService<IDistrictsRepository, District>,
         IDistrictsService,
         IEventSubscriber<CreatingPostEvent>,
-        IEventSubscriber<PinPostEvent>,
-        IEventSubscriber<PinCommentEvent>
+        IEventSubscriber<PinningPostEvent>,
+        IEventSubscriber<PinningCommentEvent>
     {
         private readonly IDistrictUsersService _districtUsersService;
         private readonly IDistrictUserGroupsService _districtUserGroupsService;
@@ -126,7 +126,7 @@ namespace Jynx.Core.Services
             @event.Post.DefaultCommentsSortOrder = district.DefaultCommentsSortOrder;
         }
 
-        async Task IEventSubscriber<PinPostEvent>.HandleAsync(object sender, PinPostEvent @event)
+        async Task IEventSubscriber<PinningPostEvent>.HandleAsync(object sender, PinningPostEvent @event)
         {
             var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
 
@@ -136,7 +136,7 @@ namespace Jynx.Core.Services
                 throw new PinnedLimitException(maxPinnedPosts, nameof(Post));
         }
 
-        async Task IEventSubscriber<PinCommentEvent>.HandleAsync(object sender, PinCommentEvent @event)
+        async Task IEventSubscriber<PinningCommentEvent>.HandleAsync(object sender, PinningCommentEvent @event)
         {
             var district = await GetAsync(@event.Comment.DistrictId) ?? throw new NotFoundException(nameof(District));
 

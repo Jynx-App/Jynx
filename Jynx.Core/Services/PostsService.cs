@@ -158,7 +158,7 @@ namespace Jynx.Core.Services
 
             var pinnedPosts = await GetPinnedByDistrictIdAsync(entity.DistrictId);
 
-            var @event = new PinPostEvent(entity, true, pinnedPosts.Count());
+            var @event = new PinningPostEvent(entity, true, pinnedPosts.Count());
 
             await _eventPublisher.PublishAsync(this, @event);
 
@@ -180,7 +180,7 @@ namespace Jynx.Core.Services
             if (entity.Pinned is null)
                 return true;
 
-            var @event = new PinPostEvent(entity, false, 0);
+            var @event = new PinningPostEvent(entity, false, 0);
 
             await _eventPublisher.PublishAsync(this, @event);
 

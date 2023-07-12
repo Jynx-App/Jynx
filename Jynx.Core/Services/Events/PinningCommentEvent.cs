@@ -2,9 +2,9 @@
 
 namespace Jynx.Core.Services.Events
 {
-    public class PinCommentEvent
+    public class PinningCommentEvent
     {
-        public PinCommentEvent(Comment comment, bool pin, int numberOfCurrentlyPinnedComments)
+        public PinningCommentEvent(Comment comment, bool pin, int numberOfCurrentlyPinnedComments)
         {
             Comment = comment;
             Pin = pin;
