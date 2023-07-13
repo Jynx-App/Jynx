@@ -125,6 +125,9 @@ namespace Jynx.Core.Services
 
         async Task IEventSubscriber<PinningPostEvent>.HandleAsync(object sender, PinningPostEvent @event)
         {
+            if (!@event.Pin)
+                return;
+
             var district = await GetAsync(@event.Post.DistrictId) ?? throw new NotFoundException(nameof(District));
 
             var maxPinnedPosts = _districtOptions.Value.MaxPinnedPosts;
@@ -135,6 +138,9 @@ namespace Jynx.Core.Services
 
         async Task IEventSubscriber<PinningCommentEvent>.HandleAsync(object sender, PinningCommentEvent @event)
         {
+            if (!@event.Pin)
+                return;
+
             var district = await GetAsync(@event.Comment.DistrictId) ?? throw new NotFoundException(nameof(District));
 
             var maxPinnedComments = _districtOptions.Value.MaxPinnedComments;
