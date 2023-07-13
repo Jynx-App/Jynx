@@ -1,6 +1,7 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
+using Jynx.Api.Auth;
 using Jynx.Api.Models;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
@@ -132,6 +133,7 @@ namespace Jynx.Api.Controllers.v1
 
         #region Moderation
         [HttpPut]
+        [RequireModerationPermission(ModerationPermission.PinPosts)]
         public async Task<IActionResult> Pin([FromBody] IdRequest request)
         {
             _ = await _postsService.PinAsync(request.Id);
@@ -140,6 +142,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
+        [RequireModerationPermission(ModerationPermission.PinPosts)]
         public async Task<IActionResult> Unpin([FromBody] IdRequest request)
         {
             _ = await _postsService.UnpinAsync(request.Id);
