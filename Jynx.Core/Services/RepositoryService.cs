@@ -35,18 +35,19 @@ namespace Jynx.Core.Services
             _isSoftRemovable = typeof(TEntity).IsAssignableTo(typeof(ISoftRemovableEntity));
         }
 
-        public virtual async Task<string> CreateAsync(TEntity entity)
+        public virtual Task<TEntity> CreateAsync(TEntity entity)
+            => CreateAsync(entity, true);
+
+        protected async Task<TEntity> CreateAsync(TEntity entity, bool validateEntity)
         {
-            var (isEntityValid, validationErrors) = await IsValidAsync(entity, ValidationMode.Create);
+            if(validateEntity)
+            {
+                var (isEntityValid, validationErrors) = await IsValidAsync(entity, ValidationMode.Create);
 
-            if (!isEntityValid)
-                throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
+                if (!isEntityValid)
+                    throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
+            }
 
-            return await InternalCreateAsync(entity);
-        }
-
-        protected async Task<string> InternalCreateAsync(TEntity entity)
-        {
             entity.Created = SystemClock.UtcNow.DateTime;
 
             return await Repository.CreateAsync(entity);

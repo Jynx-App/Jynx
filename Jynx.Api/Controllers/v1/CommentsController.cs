@@ -35,11 +35,11 @@ namespace Jynx.Api.Controllers.v1
 
             entity.UserId = userId;
 
-            var id = await _commentsService.CreateAsync(entity);
+            var comment = await _commentsService.CreateAsync(entity);
 
-            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { comment.Id })!;
 
-            return Created(newEntityUrl, $"\"{id}\"");
+            return Created(newEntityUrl, $"\"{comment.Id}\"");
         }
 
         [HttpGet("{id}")]

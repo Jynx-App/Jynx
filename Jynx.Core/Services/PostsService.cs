@@ -10,11 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Jynx.Core.Services
 {
-    internal class PostsService : RepositoryService<IPostsRepository, Post>, IPostsService
+    internal class PostsService : RepositoryService<IPostsRepository, Post>,
+        IPostsService,
+        IEventSubscriber<CreatedCommentEvent>
     {
         private readonly IPostVotesService _postVotesService;
         private readonly ICommentsService _commentsService;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IUsersService _usersService;
+        private readonly INotificationsService _notificationsService;
 
         public PostsService(
             IPostsRepository postRepository,
@@ -23,24 +27,32 @@ namespace Jynx.Core.Services
             IValidator<Post> validator,
             ISystemClock systemClock,
             IEventPublisher eventPublisher,
+            IUsersService usersService,
+            INotificationsService notificationsService,
             ILogger<PostsService> logger)
             : base(postRepository, validator, systemClock, logger)
         {
             _postVotesService = postVotesService;
             _commentsService = commentsService;
             _eventPublisher = eventPublisher;
+            _usersService = usersService;
+            _notificationsService = notificationsService;
         }
 
-        public override async Task<string> CreateAsync(Post entity)
+        public override async Task<Post> CreateAsync(Post entity)
         {
-            var @event = new CreatingPostEvent(entity);
+            var creatingEvent = new CreatingPostEvent(entity);
 
-            await _eventPublisher.PublishAsync(this, @event);
+            await _eventPublisher.PublishAsync(this, creatingEvent);
 
-            if (@event.Canceled)
+            if (creatingEvent.Canceled)
                 throw new TaskCanceledException();
 
-            return await base.CreateAsync(entity);
+            entity = await base.CreateAsync(entity);
+
+            await _eventPublisher.PublishAsync(this, new CreatedPostEvent(entity));
+
+            return entity;
         }
 
         public Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
@@ -192,6 +204,22 @@ namespace Jynx.Core.Services
             var updated = await UpdateAsync(entity);
 
             return updated;
+        }
+
+        async Task IEventSubscriber<CreatedCommentEvent>.HandleAsync(object sender, CreatedCommentEvent @event)
+        {
+            var post = await GetAsync(@event.Comment.PostId) ?? throw new NotFoundException(nameof(Post));
+
+            var commenter = await _usersService.GetAsync(@event.Comment.UserId);
+
+            var notification = new Notification
+            {
+                UserId = post.UserId,
+                Title = $"@{commenter.Username} has replied to your comment in #{@event.Comment.DistrictId}",
+                CommentId = @event.Comment.Id
+            };
+
+            _ = await _notificationsService.CreateAsync(notification);
         }
     }
 }

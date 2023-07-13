@@ -29,7 +29,18 @@ namespace Jynx.Validation.Fluent.Entities
 
                 RuleFor(x => x.Body)
                     .NotEmpty()
+                        .When(x => string.IsNullOrWhiteSpace(x.CommentId))
+                    .Empty()
+                        .When(x => !string.IsNullOrEmpty(x.CommentId))
                     .MaximumLength(10000);
+
+                RuleFor(x => x.CommentId)
+                    .NotEmpty()
+                        .When(x => string.IsNullOrWhiteSpace(x.Body))
+                    .Empty()
+                        .When(x => !string.IsNullOrEmpty(x.Body))
+                    .MaximumLength(DefaultIdMaxLength)
+                    .MustExist().Using<ICommentsService>(Services);
             });
         }
     }

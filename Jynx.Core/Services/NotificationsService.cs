@@ -17,5 +17,12 @@ namespace Jynx.Core.Services
             : base(repository, validator, systemClock, logger)
         {
         }
+
+        public Task<IEnumerable<Notification>> GetByUserIdAsync(string userId, DateTime? since = null, int limit = 100, int offset = 0)
+        {
+            since ??= SystemClock.UtcNow.DateTime.AddDays(-7);
+
+            return Repository.GetByUserIdAsync(userId, since.Value, limit, offset);
+        }
     }
 }

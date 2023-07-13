@@ -34,7 +34,7 @@ namespace Jynx.Cli.Commands
                     Email = email
                 };
 
-                user.Id = await _usersService.CreateAsync(user);
+                user = await _usersService.CreateAsync(user);
 
                 var apiApp = new ApiApp
                 {
@@ -43,7 +43,7 @@ namespace Jynx.Cli.Commands
                     CallbackUrl = "https://google.com" // this needs to be changed when frontend feature is implemented.
                 };
 
-                apiApp.Id = await _apiAppService.CreateAsync(apiApp);
+                apiApp = await _apiAppService.CreateAsync(apiApp);
 
                 var apiAppUser = new ApiAppUser
                 {
@@ -51,7 +51,7 @@ namespace Jynx.Cli.Commands
                     UserId = user.Id,
                 };
 
-                apiAppUser.Id = await _apiAppUsersService.CreateAsync(apiAppUser);
+                apiAppUser = await _apiAppUsersService.CreateAsync(apiAppUser);
 
                 Console.WriteLine("Setup complete! You're ready to start using the API!");
                 Console.WriteLine($"User: {user.Id}");

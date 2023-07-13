@@ -43,7 +43,7 @@ namespace Jynx.Data.Cosmos.Repositories
         protected virtual string GenerateId(TEntity entity)
             => WebEncoders.Base64UrlEncode(Guid.NewGuid().ToByteArray());
 
-        public virtual async Task<string> CreateAsync(TEntity entity)
+        public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
             if (string.IsNullOrWhiteSpace(entity.Id))
                 entity.Id = GenerateId(entity);
@@ -54,7 +54,7 @@ namespace Jynx.Data.Cosmos.Repositories
             {
                 var result = await _container.CreateItemAsync(entity, new PartitionKey(partitionKey));
 
-                return result.Resource.Id!;
+                return result.Resource;
             }
             catch (CosmosException ex)
             {

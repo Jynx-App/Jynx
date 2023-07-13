@@ -6,7 +6,9 @@
 
         public string Title { get; set; } = "";
 
-        public string Body { get; set; } = "";
+        public string? Body { get; set; }
+
+        public string? CommentId { get; set; }
 
         public bool Read { get; set; }
     }

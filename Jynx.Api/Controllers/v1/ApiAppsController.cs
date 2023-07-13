@@ -32,11 +32,11 @@ namespace Jynx.Api.Controllers.v1
 
             entity.UserId = userId;
 
-            var id = await _apiAppService.CreateAsync(entity);
+            var apiApp = await _apiAppService.CreateAsync(entity);
 
-            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { apiApp.Id })!;
 
-            return Created(newEntityUrl, $"\"{id}\"");
+            return Created(newEntityUrl, $"\"{apiApp.Id}\"");
         }
 
         [HttpGet("{id}")]

@@ -40,7 +40,9 @@ namespace Jynx.Core
                 .AddScoped<IDistrictUsersService, DistrictUsersService>()
                 .AddScoped<IDistrictUserGroupsService, DistrictUserGroupsService>()
                 .AddScoped<INotificationsService, NotificationsService>()
-                .AddScoped<IPostsService, PostsService>()
+                .AddScoped<PostsService>()
+                    .ForwardScoped<IPostsService, PostsService>()
+                    .ForwardScoped<IEventSubscriber<CreatedCommentEvent>, PostsService>()
                 .AddScoped<IPostVotesService, PostVotesService>()
                 .AddScoped<IUsersService, UsersService>()
                 // Other

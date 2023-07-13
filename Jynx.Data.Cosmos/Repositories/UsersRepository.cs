@@ -21,7 +21,7 @@ namespace Jynx.Data.Cosmos.Repositories
             Name = "Users"
         };
 
-        public override Task<string> CreateAsync(User entity)
+        public override Task<User> CreateAsync(User entity)
             => base.CreateAsync(entity);
 
         public async Task<User?> GetByUsernameAsync(string username)

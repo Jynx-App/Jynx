@@ -17,15 +17,13 @@ namespace Jynx.Data.Cosmos.Repositories
         {
         }
 
-        public override async Task<string> CreateAsync(TEntity entity)
+        public override async Task<TEntity> CreateAsync(TEntity entity)
         {
-            var id = await base.CreateAsync(entity);
+            entity = await base.CreateAsync(entity);
 
-            var partitionKey = GetPartitionKey(entity);
+            FixId(entity);
 
-            var compoundId = CreateCompoundId(partitionKey, id);
-
-            return compoundId;
+            return entity;
         }
 
         public override async Task<TEntity?> GetAsync(string compoundId)

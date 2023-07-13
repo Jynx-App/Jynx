@@ -19,7 +19,7 @@ namespace Jynx.Core.Services
         {
         }
 
-        public override async Task<string> CreateAsync(ApiApp entity)
+        public override async Task<ApiApp> CreateAsync(ApiApp entity)
         {
             entity.PublicKey = GenerateBase64Guid();
 

@@ -45,20 +45,20 @@ namespace Jynx.Core.Services
             _districtOptions = districtOptions;
         }
 
-        public async Task<string> CreateAndAssignModerator(District district, string userId)
+        public async Task<District> CreateAndAssignModerator(District district, string userId)
         {
-            district.Id = await CreateAsync(district);
+            district = await CreateAsync(district);
 
             var districtUser = new DistrictUser
             {
                 Id = userId,
-                DistrictId = district.Id,
+                DistrictId = district.Id!,
                 ModerationPermissions = Enum.GetValues<ModerationPermission>().ToHashSet()
             };
 
-            districtUser.Id = await _districtUsersService.CreateAsync(districtUser);
+            districtUser = await _districtUsersService.CreateAsync(districtUser);
 
-            return district.Id;
+            return district;
         }
 
         public async Task<bool> IsUserAllowedToPostAndCommentAsync(string districtId, string userId)

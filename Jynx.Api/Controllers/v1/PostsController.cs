@@ -30,11 +30,11 @@ namespace Jynx.Api.Controllers.v1
 
             entity.UserId = userId;
 
-            var id = await _postsService.CreateAsync(entity);
+            var post = await _postsService.CreateAsync(entity);
 
-            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { post.Id })!;
 
-            return Created(newEntityUrl, $"\"{id}\"");
+            return Created(newEntityUrl, $"\"{post.Id}\"");
         }
 
         [HttpGet("{id}")]

@@ -1,5 +1,6 @@
 ﻿using Jynx.Abstractions.Entities;
 using Jynx.Abstractions.Services;
+using Jynx.Api.Models;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Api.Security.Claims;
@@ -35,7 +36,7 @@ namespace Jynx.Api.Controllers.v1
         {
             var user = request.ToEntity();
 
-            user.Id = await _usersService.CreateAsync(user);
+            user = await _usersService.CreateAsync(user);
 
             var apiAppUser = new ApiAppUser
             {
@@ -81,6 +82,21 @@ namespace Jynx.Api.Controllers.v1
             await _usersService.UpdateAsync(entity);
 
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetNotifications([FromQuery] DateTime? since = null)
+        {
+            var userId = Request.HttpContext.User.GetId()!;
+
+            var notifications = await _usersService.GetNotifications(userId, since, 30);
+
+            var response = new GetNotificationsResponse
+            {
+                Notifications = notifications.Select(n => new NotificationModel(n))
+            };
+
+            return Ok(response);
         }
     }
 }

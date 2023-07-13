@@ -38,12 +38,16 @@ namespace Jynx.Validation.Fluent.Entities
 
                 RuleFor(x => x.Body)
                     .NotEmpty()
-                        .When(x => !Uri.TryCreate(x.Url, UriKind.Absolute, out _))
+                        .When(x => string.IsNullOrWhiteSpace(x.Url))
+                    .Empty()
+                        .When(x => !string.IsNullOrWhiteSpace(x.Url))
                     .MaximumLength(40000);
 
                 RuleFor(x => x.Url)
                     .NotEmpty()
                         .When(x => string.IsNullOrWhiteSpace(x.Body))
+                    .Empty()
+                        .When(x => !string.IsNullOrWhiteSpace(x.Body))
                     .Url();
 
                 RuleFor(x => x)

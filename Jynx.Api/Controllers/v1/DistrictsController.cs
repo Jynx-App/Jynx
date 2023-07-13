@@ -28,11 +28,11 @@ namespace Jynx.Api.Controllers.v1
 
             var district = request.ToEntity();
 
-            var id = await _districtsService.CreateAndAssignModerator(district, userId);
+            district = await _districtsService.CreateAndAssignModerator(district, userId);
 
-            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { id })!;
+            var newEntityUrl = Url.ActionLink(nameof(Get), null, new { district.Id })!;
 
-            return Created(newEntityUrl, $"\"{id}\"");
+            return Created(newEntityUrl, $"\"{district.Id}\"");
         }
 
         [HttpGet("{id}")]

@@ -28,6 +28,22 @@ namespace Jynx.Core.Services
             _eventPublisher = eventPublisher;
         }
 
+        public override async Task<Comment> CreateAsync(Comment entity)
+        {
+            var creatingEvent = new CreatingCommentEvent(entity);
+
+            await _eventPublisher.PublishAsync(this, creatingEvent);
+
+            if (creatingEvent.Canceled)
+                throw new TaskCanceledException();
+
+            entity = await base.CreateAsync(entity);
+
+            await _eventPublisher.PublishAsync(this, new CreatedCommentEvent(entity));
+
+            return entity;
+        }
+
         public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
             => Repository.GetByPostIdAsync(commentId, count, offset, sortOrder);
 
