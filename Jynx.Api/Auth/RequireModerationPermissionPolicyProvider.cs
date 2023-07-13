@@ -29,8 +29,8 @@ namespace Jynx.Api.Auth
 
                 if (Enum.TryParse<ModerationPermission>(permissionName, out var permission))
                 {
-                    var policy = new AuthorizationPolicyBuilder();
-                    policy.AddRequirements(new RequireModerationPermissionRequirement(permission));
+                    var policy = new AuthorizationPolicyBuilder()
+                        .AddRequirements(new RequireModerationPermissionRequirement(permission));
 
                     return policy.Build();
                 }

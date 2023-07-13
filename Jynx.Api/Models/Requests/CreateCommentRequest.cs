@@ -2,7 +2,7 @@
 
 namespace Jynx.Api.Models.Requests
 {
-    public class CreateCommentRequest
+    public class CreateCommentRequest : IDistrictRelated
     {
         public string DistrictId { get; set; } = "";
 

@@ -76,7 +76,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Remove([FromBody] IdRequest request)
+        public async Task<IActionResult> Remove([FromBody] DistrictRelatedIdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
@@ -91,7 +91,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpVote([FromBody] IdRequest request)
+        public async Task<IActionResult> UpVote([FromBody] DistrictRelatedIdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
@@ -101,7 +101,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> DownVote([FromBody] IdRequest request)
+        public async Task<IActionResult> DownVote([FromBody] DistrictRelatedIdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
@@ -111,7 +111,7 @@ namespace Jynx.Api.Controllers.v1
         }
 
         [HttpPut]
-        public async Task<IActionResult> ClearVote([FromBody] IdRequest request)
+        public async Task<IActionResult> ClearVote([FromBody] DistrictRelatedIdRequest request)
         {
             var userId = Request.HttpContext.User.GetId()!;
 
@@ -134,7 +134,7 @@ namespace Jynx.Api.Controllers.v1
         #region Moderation
         [HttpPut]
         [RequireModerationPermission(ModerationPermission.PinPosts)]
-        public async Task<IActionResult> Pin([FromBody] IdRequest request)
+        public async Task<IActionResult> Pin([FromBody] DistrictRelatedIdRequest request)
         {
             _ = await _postsService.PinAsync(request.Id);
 
@@ -143,7 +143,7 @@ namespace Jynx.Api.Controllers.v1
 
         [HttpPut]
         [RequireModerationPermission(ModerationPermission.PinPosts)]
-        public async Task<IActionResult> Unpin([FromBody] IdRequest request)
+        public async Task<IActionResult> Unpin([FromBody] DistrictRelatedIdRequest request)
         {
             _ = await _postsService.UnpinAsync(request.Id);
 

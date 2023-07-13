@@ -1,5 +1,6 @@
 ﻿using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
+using Jynx.Api.Models.Requests;
 using Jynx.Api.Security.Claims;
 using Jynx.Common.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -17,23 +18,17 @@ namespace Jynx.Api.Auth
             "delete",
         };
 
-
         private readonly IDistrictsService _districtsService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RequireModerationPermissionHandler(
-            IDistrictsService districtsService,
-            IHttpContextAccessor httpContextAccessor)
+            IDistrictsService districtsService)
         {
             _districtsService = districtsService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, RequireModerationPermissionRequirement requirement)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-
-            if (httpContext is null)
+            if (context.Resource is not HttpContext httpContext)
                 return;
 
             if (context.User is null)
@@ -64,18 +59,9 @@ namespace Jynx.Api.Auth
         {
             var json = await context.Request.GetBodyAsStringAsync();
 
-            var model = JsonConvert.DeserializeObject<RequireModerationPermissionModel>(json);
+            var model = JsonConvert.DeserializeObject<DistrictRelatedIdRequest>(json);
 
-            var districtId = model?.DistrictId ?? model?.Id;
-
-            return districtId;
-        }
-
-        private class RequireModerationPermissionModel
-        {
-            public string? Id { get; set; }
-
-            public string? DistrictId { get; set; }
+            return model?.DistrictId;
         }
     }
 
