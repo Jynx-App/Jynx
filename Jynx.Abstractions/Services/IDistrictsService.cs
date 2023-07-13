@@ -5,9 +5,6 @@ namespace Jynx.Abstractions.Services
 {
     public interface IDistrictsService : IEntityService<District>
     {
-        string DefaultNotAllowedToPostMessage { get; }
-        string DefaultNotAllowedToCommentMessage { get; }
-
         Task<District> CreateAndAssignModerator(District district, string userId);
         Task<bool> DoesUserHavePermissionAsync(string districtId, string userId, ModerationPermission permission);
         Task<IEnumerable<Post>> GetPostsAsync(string districtId, int count, int offset = 0, PostsSortOrder? sortOrder = null);

@@ -25,9 +25,6 @@ namespace Jynx.Core.Services
         private readonly IPostsService _postsService;
         private readonly IOptions<DistrictsOptions> _districtOptions;
 
-        public string DefaultNotAllowedToPostMessage => "You are not allowed to post in this district";
-        public string DefaultNotAllowedToCommentMessage => "You are not allowed to comment in this district";
-
         public DistrictsService(
             IDistrictsRepository districtRepository,
             IDistrictUsersService districtUsersService,
