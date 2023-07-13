@@ -1,6 +1,6 @@
 ﻿namespace Jynx.Abstractions.Entities
 {
-    public class Comment : BaseEntity
+    public class Comment : BaseEntity, ISoftRemovableEntity
     {
         public string DistrictId { get; set; } = "";
 
@@ -23,5 +23,7 @@
         public int TotalVotes => UpVotes + DownVotes;
 
         public DateTime? Pinned { get; set; }
+
+        public DateTime? Removed { get; set; }
     }
 }

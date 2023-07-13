@@ -15,7 +15,6 @@
         public string? Url { get; set; }
 
         public bool CommentsLocked { get; set; }
-        public DateTime? Removed { get; set; }
 
         public int UpVotes { get; set; }
 
@@ -28,6 +27,8 @@
         public PostsSortOrder DefaultCommentsSortOrder { get; set; }
 
         public DateTime? Pinned { get; set; }
+
+        public DateTime? Removed { get; set; }
 
         public int Comments { get; set; }
     }
