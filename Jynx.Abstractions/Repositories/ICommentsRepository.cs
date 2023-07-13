@@ -4,7 +4,7 @@ namespace Jynx.Abstractions.Repositories
 {
     public interface ICommentsRepository : IRepository<Comment>
     {
-        Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore);
-        Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string compoundPostId);
+        Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false);
+        Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string compoundPostId, bool includeRemoved = false);
     }
 }

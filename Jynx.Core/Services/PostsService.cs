@@ -55,8 +55,8 @@ namespace Jynx.Core.Services
             return entity;
         }
 
-        public Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
-            => Repository.GetByDistrictIdAsync(districtId, offset, count, sortOrder);
+        public Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false)
+            => Repository.GetByDistrictIdAsync(districtId, offset, count, sortOrder, includeRemoved);
 
         public Task<IEnumerable<Post>> GetPinnedByDistrictIdAsync(string districtId)
             => Repository.GetPinnedByDistrictIdAsync(@districtId);
@@ -148,7 +148,7 @@ namespace Jynx.Core.Services
             return updated;
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsAsync(string postId, int count, int offset = 0, PostsSortOrder? sortOrder = PostsSortOrder.HighestScore)
+        public async Task<IEnumerable<Comment>> GetCommentsAsync(string postId, int count, int offset = 0, PostsSortOrder? sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false)
         {
             var post = await GetAsync(postId) ?? throw new NotFoundException(nameof(Post));
 

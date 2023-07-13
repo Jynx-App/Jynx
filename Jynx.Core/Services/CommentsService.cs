@@ -44,10 +44,10 @@ namespace Jynx.Core.Services
             return entity;
         }
 
-        public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
+        public Task<IEnumerable<Comment>> GetByPostIdAsync(string commentId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false)
             => Repository.GetByPostIdAsync(commentId, count, offset, sortOrder);
 
-        public Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string postId)
+        public Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string postId, bool includeRemoved = false)
             => Repository.GetPinnedByPostIdAsync(postId);
 
         public async Task<bool> UpVoteAsync(string commentId, string userId)

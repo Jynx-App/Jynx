@@ -22,14 +22,16 @@ namespace Jynx.Data.Cosmos.Repositories
             PartitionKey = nameof(Comment.PostId)
         };
 
-        public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore)
+        public async Task<IEnumerable<Comment>> GetByPostIdAsync(string compoundPostId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false)
         {
+            var removeQueryString = !includeRemoved ? "AND (NOT IS_DEFINED(c.removed) OR IS_NULL(c.removed))" : "";
+
             var queryString = $@"
                 SELECT *
                 FROM c
                 WHERE c.postId = @postId
                 AND (NOT IS_DEFINED(c.pinned) OR IS_NULL(c.pinned))
-                AND (NOT IS_DEFINED(c.removed) OR IS_NULL(c.removed))
+                {removeQueryString}
                 {GetSortSqlString(sortOrder)}
                 OFFSET {offset} LIMIT {count}
             ";
@@ -44,14 +46,16 @@ namespace Jynx.Data.Cosmos.Repositories
             return entities;
         }
 
-        public async Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string compoundPostId)
+        public async Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string compoundPostId, bool includeRemoved = false)
         {
+            var removeQueryString = !includeRemoved ? "AND (NOT IS_DEFINED(c.removed) OR IS_NULL(c.removed))" : "";
+
             var queryString = $@"
                 SELECT *
                 FROM c
                 WHERE c.postId = @postId
                 AND (IS_DEFINED(c.pinned) AND NOT IS_NULL(c.pinned))
-                AND (NOT IS_DEFINED(c.removed) OR IS_NULL(c.removed))
+                {removeQueryString}
                 ORDER BY c.pinned DESC
             ";
 

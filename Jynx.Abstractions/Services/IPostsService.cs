@@ -6,8 +6,8 @@ namespace Jynx.Abstractions.Services
     {
         Task<bool> ClearVoteAsync(string postId, string userId);
         Task<bool> DownVoteAsync(string postId, string userId);
-        Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore);
-        Task<IEnumerable<Comment>> GetCommentsAsync(string postId, int count, int offset = 0, PostsSortOrder? sortOrder = PostsSortOrder.HighestScore);
+        Task<IEnumerable<Post>> GetByDistrictIdAsync(string districtId, int count, int offset = 0, PostsSortOrder sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false);
+        Task<IEnumerable<Comment>> GetCommentsAsync(string postId, int count, int offset = 0, PostsSortOrder? sortOrder = PostsSortOrder.HighestScore, bool includeRemoved = false);
         Task<IEnumerable<Post>> GetPinnedByDistrictIdAsync(string districtId);
         Task<bool> PinAsync(string id);
         Task<bool> PinAsync(Post entity);
