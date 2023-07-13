@@ -13,10 +13,10 @@ namespace Jynx.Validation.Fluent.Rules
             _ruleBuilder = ruleBuilder;
         }
 
-        public IRuleBuilder<T, string?> Using<TRepositoryService>(IServiceProvider services)
+        public IRuleBuilderOptions<T, string?> Using<TRepositoryService>(IServiceProvider services)
             where TRepositoryService : IEntityService
         {
-            _ruleBuilder.MustAsync(async (v, c) =>
+            return _ruleBuilder.MustAsync(async (v, c) =>
             {
                 if (string.IsNullOrWhiteSpace(v))
                     return true;
@@ -30,8 +30,6 @@ namespace Jynx.Validation.Fluent.Rules
 
                 return exists;
             });
-
-            return _ruleBuilder;
         }
     }
 }
