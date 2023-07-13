@@ -226,6 +226,10 @@ namespace Jynx.Core.Services
             };
 
             _ = await _notificationsService.CreateAsync(notification);
+
+            post.Comments++;
+
+            _ = await UpdateAsync(post);
         }
     }
 }

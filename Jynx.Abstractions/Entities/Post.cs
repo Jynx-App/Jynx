@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Jynx.Abstractions.Entities
+﻿namespace Jynx.Abstractions.Entities
 {
     public class Post : BaseEntity, ISoftRemovableEntity
     {
@@ -30,5 +28,7 @@ namespace Jynx.Abstractions.Entities
         public PostsSortOrder DefaultCommentsSortOrder { get; set; }
 
         public DateTime? Pinned { get; set; }
+
+        public int Comments { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace Jynx.Api.Models
             TotalVotes = post.TotalVotes;
             Score = post.Score;
             Pinned = post.Pinned;
+            Comments = post.Comments;
         }
 
         public string Id { get; set; } = "";
@@ -52,5 +53,7 @@ namespace Jynx.Api.Models
         public int Score { get; set; }
 
         public DateTime? Pinned { get; set; }
+
+        public int Comments { get; set; }
     }
 }
