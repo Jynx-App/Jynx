@@ -1,6 +1,5 @@
 ﻿using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
-using Jynx.Api.Models.Requests;
 using Jynx.Api.Security.Claims;
 using Jynx.Common.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -18,17 +17,23 @@ namespace Jynx.Api.Auth
             "delete",
         };
 
+
         private readonly IDistrictsService _districtsService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RequireModerationPermissionHandler(
-            IDistrictsService districtsService)
+            IDistrictsService districtsService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _districtsService = districtsService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, RequireModerationPermissionRequirement requirement)
         {
-            if (context.Resource is not HttpContext httpContext)
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext is null)
                 return;
 
             if (context.User is null)
@@ -36,11 +41,13 @@ namespace Jynx.Api.Auth
 
             var httpMethod = httpContext.Request.Method.ToLower();
 
-            var districtId = httpContext.GetRouteData().Values.ContainsKey(_routeIdKeyName)
+            var id = httpContext.GetRouteData().Values.ContainsKey(_routeIdKeyName)
                 ? httpContext.GetRouteData().Values[_routeIdKeyName]?.ToString()
                 : _httpMethodsThatUseModel.Contains(httpMethod)
-                    ? await GetDistrictIdFromRequestAsync(httpContext)
+                    ? await GetIdFromRequestAsync(httpContext)
                     : null;
+
+            var districtId = GetDistrictIdFromId(id);
 
             if (string.IsNullOrWhiteSpace(districtId))
                 return;
@@ -55,13 +62,25 @@ namespace Jynx.Api.Auth
             return;
         }
 
-        private async Task<string?> GetDistrictIdFromRequestAsync(HttpContext context)
+        private async Task<string?> GetIdFromRequestAsync(HttpContext context)
         {
             var json = await context.Request.GetBodyAsStringAsync();
 
-            var model = JsonConvert.DeserializeObject<DistrictRelatedIdRequest>(json);
+            var model = JsonConvert.DeserializeObject<RequireModerationPermissionModel>(json);
 
-            return model?.DistrictId;
+            var districtId = model?.Id;
+
+            return districtId;
+        }
+
+        private string? GetDistrictIdFromId(string? districtId)
+            => districtId?.Split('.').FirstOrDefault() ?? districtId;
+
+        private class RequireModerationPermissionModel
+        {
+            public string? Id { get; set; }
+
+            public string? DistrictId { get; set; }
         }
     }
 

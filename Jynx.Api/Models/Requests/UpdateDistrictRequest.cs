@@ -2,8 +2,10 @@
 
 namespace Jynx.Api.Models.Requests
 {
-    public class UpdateDistrictRequest : DistrictRelatedIdRequest, ICanPatch<District>
+    public class UpdateDistrictRequest : ICanPatch<District>
     {
+        public string Id { get; set; } = "";
+
         public string Description { get; set; } = "";
 
         void ICanPatch<District>.Patch(District entity)

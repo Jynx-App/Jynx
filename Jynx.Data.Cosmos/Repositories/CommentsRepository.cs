@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jynx.Data.Cosmos.Repositories
 {
-    internal class CommentsRepository : CosmosRepositoryWithCompoundId<Comment>, ICommentsRepository
+    internal class CommentsRepository : CosmosRepositoryWithCompoundId<Comment>, ICommentsRepository, IDistrictRelatedRepository
     {
         public CommentsRepository(
             CosmosClient cosmosClient,
@@ -45,6 +45,9 @@ namespace Jynx.Data.Cosmos.Repositories
 
             return entities;
         }
+
+        public string GetDistrictId(string id)
+            => id.Split('.').FirstOrDefault()!;
 
         public async Task<IEnumerable<Comment>> GetPinnedByPostIdAsync(string compoundPostId, bool includeRemoved = false)
         {
