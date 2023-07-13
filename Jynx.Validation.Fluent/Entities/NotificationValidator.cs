@@ -17,6 +17,9 @@ namespace Jynx.Validation.Fluent.Entities
 
             RuleSet(ValidationMode.Default, () =>
             {
+                RuleFor(x => x.Type)
+                    .IsInEnum();
+
                 RuleFor(x => x.UserId)
                     .NotEmpty()
                     .MaximumLength(DefaultIdMaxLength)
@@ -28,19 +31,12 @@ namespace Jynx.Validation.Fluent.Entities
                     .MaximumLength(100);
 
                 RuleFor(x => x.Body)
-                    .NotEmpty()
-                        .When(x => string.IsNullOrWhiteSpace(x.CommentId))
-                    .Empty()
-                        .When(x => !string.IsNullOrEmpty(x.CommentId))
-                    .MaximumLength(10000);
+                    .MaximumLength(200);
 
-                RuleFor(x => x.CommentId)
-                    .NotEmpty()
-                        .When(x => string.IsNullOrWhiteSpace(x.Body))
-                    .Empty()
-                        .When(x => !string.IsNullOrEmpty(x.Body))
+                RuleFor(x => x.ForeignId)
                     .MaximumLength(DefaultIdMaxLength)
-                    .MustExist().Using<ICommentsService>(Services);
+                    .MustExist().Using<ICommentsService>(Services)
+                        .When(x => x.Type == NotificationType.CommentReply);
             });
         }
     }

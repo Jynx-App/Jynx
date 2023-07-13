@@ -210,13 +210,19 @@ namespace Jynx.Core.Services
         {
             var post = await GetAsync(@event.Comment.PostId) ?? throw new NotFoundException(nameof(Post));
 
-            var commenter = await _usersService.GetAsync(@event.Comment.UserId);
+            var commenter = await _usersService.GetAsync(@event.Comment.UserId) ?? throw new NotFoundException(nameof(User));
+
+            var summaryLength = Math.Clamp(@event.Comment.Body?.Length ?? 0, 0, 200);
+
+            var summary = summaryLength > 0 ? @event.Comment.Body![..summaryLength] : null;
 
             var notification = new Notification
             {
+                Type = NotificationType.CommentReply,
                 UserId = post.UserId,
                 Title = $"@{commenter.Username} has replied to your comment in #{@event.Comment.DistrictId}",
-                CommentId = @event.Comment.Id
+                ForeignId = @event.Comment.Id,
+                Body = summary
             };
 
             _ = await _notificationsService.CreateAsync(notification);

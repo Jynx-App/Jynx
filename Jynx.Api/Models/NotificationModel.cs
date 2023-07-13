@@ -6,13 +6,14 @@ namespace Jynx.Api.Models
     {
         public NotificationModel(Notification entity)
         {
-            Id = entity.Id;
+            Id = entity.Id!;
             Created = entity.Created ?? DateTime.MinValue;
             Edited = entity.Edited ?? DateTime.MinValue;
+            Type = entity.Type;
             UserId = entity.UserId;
             Title = entity.Title;
             Body = entity.Body;
-            CommentId = entity.CommentId;
+            ForeignId = entity.ForeignId;
             Read = entity.Read;
         }
 
@@ -22,13 +23,15 @@ namespace Jynx.Api.Models
 
         public DateTime Edited { get; set; }
 
+        public NotificationType Type { get; set; }
+
         public string UserId { get; set; } = "";
 
         public string Title { get; set; } = "";
 
         public string? Body { get; set; }
 
-        public string? CommentId { get; set; }
+        public string? ForeignId { get; set; }
 
         public bool Read { get; set; }
     }
