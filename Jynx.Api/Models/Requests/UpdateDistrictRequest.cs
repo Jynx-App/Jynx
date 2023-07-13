@@ -1,6 +1,6 @@
 ﻿using Jynx.Abstractions.Entities;
 
-namespace Jynx.Api.Areas.Moderation.Models.Requests
+namespace Jynx.Api.Models.Requests
 {
     public class UpdateDistrictRequest : ICanPatch<District>
     {

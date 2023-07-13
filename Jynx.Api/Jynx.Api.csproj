@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Moderation\Models\Responses\**" />
-    <Content Remove="Areas\Moderation\Models\Responses\**" />
-    <EmbeddedResource Remove="Areas\Moderation\Models\Responses\**" />
-    <None Remove="Areas\Moderation\Models\Responses\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
     <PackageReference Include="Seq.Extensions.Logging" Version="6.1.0" />

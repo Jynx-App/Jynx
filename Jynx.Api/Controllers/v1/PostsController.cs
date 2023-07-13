@@ -1,4 +1,5 @@
 ﻿using Jynx.Abstractions.Entities;
+using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
 using Jynx.Api.Models;
 using Jynx.Api.Models.Requests;
@@ -10,17 +11,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace Jynx.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class PostsController : BaseController
+    public class PostsController : DistrictRelatedController
     {
         private readonly IPostsService _postsService;
 
         public PostsController(
             IPostsService postsService,
-            ILogger<PostsController> logger) : base(logger)
+            IDistrictsService districtsService,
+            ILogger<PostsController> logger)
+            : base(districtsService, logger)
         {
             _postsService = postsService;
         }
 
+        #region General Access
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePostRequest request)
         {
@@ -124,5 +128,24 @@ namespace Jynx.Api.Controllers.v1
 
             return Ok(commentModels);
         }
+        #endregion
+
+        #region Moderation
+        [HttpPut]
+        public async Task<IActionResult> Pin([FromBody] IdRequest request)
+        {
+            _ = await _postsService.PinAsync(request.Id);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Unpin([FromBody] IdRequest request)
+        {
+            _ = await _postsService.UnpinAsync(request.Id);
+
+            return Ok();
+        }
+        #endregion
     }
 }

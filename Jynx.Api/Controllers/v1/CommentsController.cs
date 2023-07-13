@@ -1,4 +1,6 @@
-﻿using Jynx.Abstractions.Services;
+﻿using Jynx.Abstractions.Entities.Auth;
+using Jynx.Abstractions.Services;
+using Jynx.Api.Auth;
 using Jynx.Api.Models.Requests;
 using Jynx.Api.Models.Responses;
 using Jynx.Api.Security.Claims;
@@ -8,24 +10,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace Jynx.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class CommentsController : BaseController
+    public class CommentsController : DistrictRelatedController
     {
-        private readonly IDistrictsService _districtsService;
         private readonly IPostsService _postsService;
         private readonly ICommentsService _commentsService;
 
         public CommentsController(
-            IDistrictsService districtsService,
             IPostsService postsService,
             ICommentsService commentsService,
+            IDistrictsService districtsService,
             ILogger<CommentsController> logger)
-            : base(logger)
+            : base(districtsService, logger)
         {
-            _districtsService = districtsService;
             _postsService = postsService;
             _commentsService = commentsService;
         }
 
+        #region General Access
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCommentRequest request)
         {
@@ -119,5 +120,26 @@ namespace Jynx.Api.Controllers.v1
 
             return Ok();
         }
+        #endregion
+
+        #region Moderation
+        [HttpPut]
+        [RequireModerationPermission(ModerationPermission.PinPosts)]
+        public async Task<IActionResult> Pin([FromBody] IdRequest request)
+        {
+            _ = await _commentsService.PinAsync(request.Id);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [RequireModerationPermission(ModerationPermission.PinPosts)]
+        public async Task<IActionResult> Unpin([FromBody] IdRequest request)
+        {
+            _ = await _commentsService.UnpinAsync(request.Id);
+
+            return Ok();
+        }
+        #endregion
     }
 }

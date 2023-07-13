@@ -1,28 +1,27 @@
 ﻿using Jynx.Abstractions.Entities.Auth;
 using Jynx.Abstractions.Services;
 using Jynx.Api.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Jynx.Api.Areas.Moderation.Controllers
+namespace Jynx.Api.Controllers
 {
-    [Area("Moderation")]
-    public class ModerationBaseController : BaseAreaController
+    public class DistrictRelatedController : BaseController
     {
-        private readonly IDistrictsService _districtsService;
 
-        public ModerationBaseController(
+        public DistrictRelatedController(
             IDistrictsService districtsService,
             ILogger logger)
             : base(logger)
         {
-            _districtsService = districtsService;
+            DistrictsService = districtsService;
         }
+
+        public IDistrictsService DistrictsService { get; }
 
         protected async Task<bool> DoesCurrentUserHavePermissionAsync(string districtId, ModerationPermission permission)
         {
             var userId = User.GetId()!;
 
-            var hasPermission = await _districtsService.DoesUserHavePermissionAsync(districtId, userId, ModerationPermission.PinPosts);
+            var hasPermission = await DistrictsService.DoesUserHavePermissionAsync(districtId, userId, ModerationPermission.PinPosts);
 
             return hasPermission;
         }
