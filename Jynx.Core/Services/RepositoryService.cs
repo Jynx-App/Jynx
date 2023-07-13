@@ -15,6 +15,9 @@ namespace Jynx.Core.Services
     {
         private readonly bool _isSoftRemovable;
 
+        // Using memory cache helps cut down on requests to the database, Repository should have lifetime of scoped so this cache should be only per request.
+        private readonly Dictionary<string, IEnumerable<TEntity>> _cache = new();
+
         public TRepository Repository { get; }
         public IValidator<TEntity> Validator { get; }
         public ISystemClock SystemClock { get; }
@@ -40,7 +43,7 @@ namespace Jynx.Core.Services
 
         protected async Task<TEntity> CreateAsync(TEntity entity, bool validateEntity)
         {
-            if(validateEntity)
+            if (validateEntity)
             {
                 var (isEntityValid, validationErrors) = await IsValidAsync(entity, ValidationMode.Create);
 
@@ -53,8 +56,18 @@ namespace Jynx.Core.Services
             return await Repository.CreateAsync(entity);
         }
 
-        public virtual Task<TEntity?> GetAsync(string id)
-            => Repository.GetAsync(id);
+        public async virtual Task<TEntity?> GetAsync(string id)
+        {
+            if (TryGetFromCache(id, out var cachedEntities))
+                return cachedEntities.FirstOrDefault();
+
+            var entity = await Repository.GetAsync(id);
+
+            if(entity is not null)
+                SetInCache(id, entity);
+
+            return entity;
+        }
 
         public virtual async Task<bool> UpdateAsync(TEntity entity)
         {
@@ -64,6 +77,8 @@ namespace Jynx.Core.Services
                 throw new EntityValidationException(typeof(TEntity).Name, validationErrors);
 
             entity.Edited = SystemClock.UtcNow.DateTime;
+
+            RemoveFromCache(entity.Id!);
 
             return await Repository.UpdateAsync(entity);
         }
@@ -81,6 +96,8 @@ namespace Jynx.Core.Services
                     return await Repository.UpdateAsync(entity);
                 }
             }
+
+            RemoveFromCache(id);
 
             return await Repository.RemoveAsync(id);
         }
@@ -102,5 +119,28 @@ namespace Jynx.Core.Services
 
             return (validationResult.IsValid, errorMessages);
         }
+
+        protected bool TryGetFromCache(string key, out IEnumerable<TEntity> entities)
+        {
+            if(!_cache.ContainsKey(key))
+            {
+                entities = Array.Empty<TEntity>();
+
+                return false;
+            }
+
+            entities = _cache[key];
+
+            return true;
+        }
+
+        protected void SetInCache(string key, TEntity entity)
+            => _cache[key] = new[] { entity };
+
+        protected void SetInCache(string key, IEnumerable<TEntity> entity)
+            => _cache[key] = entity.ToArray();
+
+        protected void RemoveFromCache(string key)
+            => _cache.Remove(key);
     }
 }
