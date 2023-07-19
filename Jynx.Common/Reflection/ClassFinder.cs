@@ -1,48 +1,94 @@
-﻿namespace Jynx.Common.Reflection
+﻿using System.Reflection;
+
+namespace Jynx.Common.Reflection
 {
     public static class ClassFinder
     {
-        public static IEnumerable<Type> GetChildrenOf(Type parent, FilterTypes validTypes = FilterTypes.Classes, string? ns = null)
+        public static IEnumerable<Type> GetChildrenOf(Type parentType, FilterTypes validTypes = FilterTypes.Classes, string? ns = null)
         {
-            return AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(t => {
-                    if (!parent.IsAssignableFrom(t)) return false;
-                    if (IsNamespaceInNamespace(ns, t.Namespace)) return false;
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                    if (validTypes.HasFlag(FilterTypes.Classes) && t.IsClass && !t.IsAbstract) return true;
-                    if (validTypes.HasFlag(FilterTypes.Abstracts) && t.IsAbstract) return true;
-                    if (validTypes.HasFlag(FilterTypes.Interfaces) && !t.IsClass) return true;
+            var returnTypes = new List<Type>();
 
-                    return false;
-                });
+            foreach(var assembly in assemblies)
+            {
+                var assemblyTypes = assembly.GetLoadedTypes();
+
+                foreach (var assemblyType in assemblyTypes)
+                {
+                    if (TypeMeetsRequirements(assemblyType, parentType, validTypes, ns))
+                        continue;
+
+                    returnTypes.Add(assemblyType);
+                }
+            }
+
+            return returnTypes;
         }
 
-        public static IEnumerable<Type> GetChildrenOf<T>(FilterTypes validTypes = FilterTypes.Classes, string? ns = null) => GetChildrenOf(typeof(T), validTypes, ns);
+        public static IEnumerable<Type> GetChildrenOf<T>(FilterTypes validTypes = FilterTypes.Classes, string? ns = null)
+            => GetChildrenOf(typeof(T), validTypes, ns);
 
         public static IEnumerable<Type> GetWithAttribute(Type attributeType, string? ns = null)
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.IsDefined(attributeType, true));
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            foreach (var t in types)
+            var returnTypes = new List<Type>();
+
+            foreach (var assembly in assemblies)
             {
-                if (IsNamespaceInNamespace(ns, t.Namespace)) continue;
+                var assemblyTypes = assembly.GetLoadedTypes();
 
-                yield return t;
+                foreach (var assemblyType in assemblyTypes)
+                {
+                    if (IsNamespaceInNamespace(ns, assemblyType.Namespace))
+                        continue;
+
+                    if (!assemblyType.IsDefined(attributeType, true))
+                        continue;
+
+                    returnTypes.Add(assemblyType);
+                }
             }
+
+            return returnTypes;
         }
 
-        public static IEnumerable<Type> GetWithAttribute<T>(string? ns = null) where T : class => GetWithAttribute(typeof(T), ns);
+        public static IEnumerable<Type> GetWithAttribute<T>(string? ns = null)
+            => GetWithAttribute(typeof(T), ns);
+
+        private static bool TypeMeetsRequirements(Type childType, Type parentType, FilterTypes validTypes = FilterTypes.Classes, string? ns = null)
+        {
+            if (!parentType.IsAssignableFrom(childType))
+                return false;
+
+            if (IsNamespaceInNamespace(ns, childType.Namespace))
+                return false;
+
+            if (childType.IsAbstract && !validTypes.HasFlag(FilterTypes.Abstracts))
+                return false;
+
+            if (childType.IsClass && !validTypes.HasFlag(FilterTypes.Classes))
+                return false;
+            
+            if (!childType.IsClass && !validTypes.HasFlag(FilterTypes.Interfaces))
+                return false;
+
+            return true;
+        }
 
         private static bool IsNamespaceInNamespace(string? namespaceNeedle, string? namespaceHaystack)
         {
-            if (namespaceNeedle == null) return false;
+            if (string.IsNullOrWhiteSpace(namespaceNeedle))
+                return true;
             
-            if (namespaceHaystack == null) return false;
+            if (string.IsNullOrWhiteSpace(namespaceHaystack))
+                return false;
 
-            if (namespaceNeedle.Length > namespaceHaystack.Length) return false;
+            if (namespaceHaystack[..Math.Min(namespaceNeedle.Length, namespaceHaystack.Length)] != namespaceNeedle)
+                return false;
 
-            return namespaceHaystack[..namespaceNeedle.Length] != namespaceNeedle;
+            return true;
         }
 
         [Flags]
