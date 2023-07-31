@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Jynx.Common.AspNetCore.Http
 {
     public static class HttpRequestExtensions
     {
+        private const string _xRequestedWithHeaderName = "X-Requested-With";
+        private const string _acceptHeaderName = "Accept";
+        private const string _xRequestedWithAjaxValue = "XMLHttpRequest";
         private const string _authorizationHeaderName = "Authorization";
 
         public static async Task<string> GetBodyAsStringAsync(this HttpRequest request)
@@ -31,5 +35,14 @@ namespace Jynx.Common.AspNetCore.Http
 
             return value;
         }
+
+        public static string GetIp(this HttpRequest request)
+            => request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? throw new Exception();
+
+        public static bool IsAjax(this HttpRequest request)
+            => request.Headers.ContainsKey(_xRequestedWithHeaderName) && request.Headers[_xRequestedWithHeaderName] == _xRequestedWithAjaxValue;
+
+        public static bool IsJson(this HttpRequest request)
+            => request.Headers.ContainsKey(_acceptHeaderName) && request.Headers[_acceptHeaderName].ToString().Split(',').Any(t => t.Equals(Application.Json, StringComparison.OrdinalIgnoreCase));
     }
 }

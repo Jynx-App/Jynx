@@ -1,4 +1,4 @@
-﻿using Jynx.Common.Web.Http;
+﻿using Jynx.Common.AspNetCore.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
